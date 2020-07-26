@@ -1,7 +1,12 @@
 package com.taveeshsharma.httprequesthandler.controllers;
 
+import com.bugbusters.orchastrator.Measurement;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.taveeshsharma.httprequesthandler.Constants;
 import com.taveeshsharma.httprequesthandler.dto.ScheduleRequest;
 import com.taveeshsharma.httprequesthandler.repository.ScheduleRequestRepository;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +26,12 @@ public class RequestHandler {
         logger.info("Received POST request for scheduling measurement : "+request);
         // TODO: Add validations here
         scheduleRequestRepository.insert(request);
-        // TODO: Add measurement to scheduled jobs here
+        if(request.getRequestType().equals(Constants.SCHEDULE_MEASUREMENT_TYPE)){
+            Gson gson = new GsonBuilder().create();
+            String json = gson.toJson(request);
+            JSONObject reqObject = new JSONObject(json);
+            Measurement.addMeasurement(reqObject);
+        }
         return ResponseEntity.ok().build();
     }
 
