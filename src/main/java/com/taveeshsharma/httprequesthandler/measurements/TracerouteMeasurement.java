@@ -1,12 +1,13 @@
 package com.taveeshsharma.httprequesthandler.measurements;
 
 
+import com.taveeshsharma.httprequesthandler.Constants;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
 import java.util.concurrent.TimeUnit;
 
-@Measurement(name="traceroute", timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(name= Constants.TRACERT_TYPE, timeUnit = TimeUnit.MILLISECONDS)
 public class TracerouteMeasurement extends Measurements {
     @Column(name="num_hops")
     private Integer numberOfHops;

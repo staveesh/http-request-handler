@@ -1,6 +1,7 @@
 package com.taveeshsharma.httprequesthandler.measurements;
 
 
+import com.taveeshsharma.httprequesthandler.Constants;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Http measurement, which extends from the base measurement.
  */
-@Measurement(name = "http", timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(name = Constants.HTTP_TYPE, timeUnit = TimeUnit.MILLISECONDS)
 public class HTTPMeasurement extends Measurements {
 
     @Column(name="time_ms")

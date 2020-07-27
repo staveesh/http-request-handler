@@ -1,6 +1,7 @@
 package com.taveeshsharma.httprequesthandler.measurements;
 
 
+import com.taveeshsharma.httprequesthandler.Constants;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /***
  * Class to store the TCP measurement we get.
  */
-@Measurement(name="tcp_speed_test", timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(name= Constants.TCP_TYPE, timeUnit = TimeUnit.MILLISECONDS)
 public class TCPMeasurement extends Measurements{
 
     @Column(name="tcp_speed_results")

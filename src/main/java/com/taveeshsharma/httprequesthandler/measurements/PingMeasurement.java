@@ -1,6 +1,7 @@
 package com.taveeshsharma.httprequesthandler.measurements;
 
 
+import com.taveeshsharma.httprequesthandler.Constants;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
@@ -9,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Class resembling the important fields from a ping measurement results.
  */
-@Measurement(name = "ping", timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(name = Constants.PING_TYPE, timeUnit = TimeUnit.MILLISECONDS)
 public class PingMeasurement extends Measurements{
     @Column(name ="target_ip ")
     private String  targetIpAddress;

@@ -1,6 +1,7 @@
 package com.taveeshsharma.httprequesthandler.measurements;
 
 
+import com.taveeshsharma.httprequesthandler.Constants;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * This is a dns measurement, which extends from the base measurement.
  * DNS measurement is used to store DNS results.
  */
-@Measurement(name="dns_lookup", timeUnit = TimeUnit.MILLISECONDS)
+@Measurement(name= Constants.DNS_TYPE, timeUnit = TimeUnit.MILLISECONDS)
 public class DNSLookupMeasurement extends Measurements {
 
     @Column(name = "address")

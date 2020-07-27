@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -40,19 +41,21 @@ public class RequestHandler {
     }
 
     @RequestMapping(value = "/results", method = RequestMethod.GET)
-    public ResponseEntity<?> getJobResults(@RequestParam("id") String id,
-                                           @RequestParam("type") String type){
+    public ResponseEntity<?> getJobResults(@RequestParam(value = "id", required = false) String id,
+                                           @RequestParam(value = "type") String type){
         logger.info(String.format(
                 "Received GET request for retrieving jobs with id = %s and type = %s",
                 id, type));
-        return ResponseEntity.ok().build();
+        JSONObject results = dbManager.getMeasurement(id, type);
+        return ResponseEntity.ok().body(results);
     }
 
     @RequestMapping(value = "/results/jobs",method = RequestMethod.GET)
     public ResponseEntity<?> getJobDescription(@RequestParam("type") String type){
         logger.info(String.format(
                 "Received GET request for retrieving job description with type = %s", type));
-        return ResponseEntity.ok().build();
+        List<ScheduleRequest> jobs = dbManager.getScheduledJobs(type.toUpperCase());
+        return ResponseEntity.ok().body(jobs);
     }
 
     @RequestMapping(value = "/app-usage",method = RequestMethod.GET)

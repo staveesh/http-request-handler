@@ -9,7 +9,6 @@ public class ScheduleRequest {
     private JobDescription jobDescription;
     private String userId;
 
-    @JsonProperty("request_type")
     public String getRequestType() {
         return requestType;
     }
@@ -17,7 +16,7 @@ public class ScheduleRequest {
     public void setRequestType(String requestType) {
         this.requestType = requestType;
     }
-    @JsonProperty("job_description")
+
     public JobDescription getJobDescription() {
         return jobDescription;
     }
@@ -26,7 +25,6 @@ public class ScheduleRequest {
         this.jobDescription = jobDescription;
     }
 
-    @JsonProperty("user_id")
     public String getUserId() {
         return userId;
     }
