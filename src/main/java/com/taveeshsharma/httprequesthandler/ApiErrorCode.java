@@ -2,7 +2,9 @@ package com.taveeshsharma.httprequesthandler;
 
 public enum ApiErrorCode {
 
-    ;
+    API001("API001", "Invalid request type"),
+    API002("API002", "Invalid measurement type"),
+    API003("API003", "Invalid start/end date");
 
     private String errorCode;
     private String errorMessage;

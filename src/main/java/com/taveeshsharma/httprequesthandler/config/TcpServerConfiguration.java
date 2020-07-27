@@ -1,4 +1,4 @@
-package com.taveeshsharma.httprequesthandler.tcpserver;
+package com.taveeshsharma.httprequesthandler.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import org.springframework.integration.ip.tcp.connection.TcpNioServerConnectionF
 import org.springframework.messaging.MessageChannel;
 
 @Configuration
-public class TcpServerConfig {
+public class TcpServerConfiguration {
 
     @Value("${tcp.server.port}")
     private int port;

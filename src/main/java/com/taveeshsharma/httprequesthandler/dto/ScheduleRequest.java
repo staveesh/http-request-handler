@@ -1,7 +1,9 @@
 package com.taveeshsharma.httprequesthandler.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(value = "job_data")
 public class ScheduleRequest {
     private String requestType;
     private JobDescription jobDescription;

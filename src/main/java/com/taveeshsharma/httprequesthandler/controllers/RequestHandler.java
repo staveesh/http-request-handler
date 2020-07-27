@@ -3,15 +3,19 @@ package com.taveeshsharma.httprequesthandler.controllers;
 import com.bugbusters.orchastrator.Measurement;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.taveeshsharma.httprequesthandler.Constants;
+import com.taveeshsharma.httprequesthandler.ApiError;
+import com.taveeshsharma.httprequesthandler.ApiUtils;
 import com.taveeshsharma.httprequesthandler.dto.ScheduleRequest;
-import com.taveeshsharma.httprequesthandler.repository.ScheduleRequestRepository;
+import com.taveeshsharma.httprequesthandler.manager.DatabaseManager;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 public class RequestHandler {
@@ -19,19 +23,19 @@ public class RequestHandler {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     @Autowired
-    private ScheduleRequestRepository scheduleRequestRepository;
+    private DatabaseManager dbManager;
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
     public ResponseEntity<?> scheduleMeasurement(@RequestBody ScheduleRequest request){
         logger.info("Received POST request for scheduling measurement : "+request);
-        // TODO: Add validations here
-        scheduleRequestRepository.insert(request);
-        if(request.getRequestType().equals(Constants.SCHEDULE_MEASUREMENT_TYPE)){
-            Gson gson = new GsonBuilder().create();
-            String json = gson.toJson(request);
-            JSONObject reqObject = new JSONObject(json);
-            Measurement.addMeasurement(reqObject);
-        }
+        Optional<ApiError> error = ApiUtils.isValidScheduleRequest(request);
+        if(error.isPresent())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.get());
+        dbManager.insertScheduledJob(request);
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(request);
+        JSONObject reqObject = new JSONObject(json);
+        Measurement.addMeasurement(reqObject);
         return ResponseEntity.ok().build();
     }
 

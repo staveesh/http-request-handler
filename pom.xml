@@ -46,6 +46,11 @@
 			<version>2.8.6</version>
 		</dependency>
 		<dependency>
+			<groupId>com.github.miwurster</groupId>
+			<artifactId>spring-data-influxdb</artifactId>
+			<version>1.8</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
