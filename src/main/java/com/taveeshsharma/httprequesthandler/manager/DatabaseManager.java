@@ -1,7 +1,6 @@
 package com.taveeshsharma.httprequesthandler.manager;
 
 import com.taveeshsharma.httprequesthandler.dto.ScheduleRequest;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 

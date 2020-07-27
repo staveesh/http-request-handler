@@ -1,6 +1,5 @@
 package com.taveeshsharma.httprequesthandler.manager;
 
-import com.bugbusters.orchastrator.Measurement;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.taveeshsharma.httprequesthandler.Constants;
@@ -11,7 +10,6 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
