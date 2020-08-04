@@ -1,8 +1,11 @@
-package com.taveeshsharma.httprequesthandler;
+package com.taveeshsharma.httprequesthandler.utils;
 
 import com.bugbusters.orchastrator.Utils;
-import com.taveeshsharma.httprequesthandler.dto.ScheduleRequest;
+import com.taveeshsharma.httprequesthandler.dto.documents.ScheduleRequest;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.Optional;
 
@@ -47,5 +50,24 @@ public class ApiUtils {
             ));
         }
         return Optional.empty();
+    }
+
+    public static String hashUserName(String userName) {
+        if (userName.equals("Anonymous")) {
+            return userName;
+        }
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] hashInBytes = md.digest(userName.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder sb = new StringBuilder();
+        for (byte b : hashInBytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
     }
 }

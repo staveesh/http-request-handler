@@ -13,6 +13,7 @@ public class MeasurementDescription {
     private Long priority;
     private Parameters parameters;
 
+    @JsonProperty("type")
     public String getType() {
         return type;
     }
@@ -20,6 +21,8 @@ public class MeasurementDescription {
     public void setType(String type) {
         this.type = type;
     }
+
+    @JsonProperty("key")
     public String getKey() {
         return key;
     }
@@ -27,6 +30,8 @@ public class MeasurementDescription {
     public void setKey(String key) {
         this.key = key;
     }
+
+    @JsonProperty("start_time")
     public String getStartTime() {
         return startTime;
     }
@@ -34,6 +39,8 @@ public class MeasurementDescription {
     public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
+
+    @JsonProperty("end_time")
     public String getEndTime() {
         return endTime;
     }
@@ -41,6 +48,8 @@ public class MeasurementDescription {
     public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
+
+    @JsonProperty("interval_sec")
     public Integer getIntervalSec() {
         return intervalSec;
     }
@@ -49,6 +58,7 @@ public class MeasurementDescription {
         this.intervalSec = intervalSec;
     }
 
+    @JsonProperty("count")
     public Long getCount() {
         return count;
     }
@@ -57,6 +67,7 @@ public class MeasurementDescription {
         this.count = count;
     }
 
+    @JsonProperty("priority")
     public Long getPriority() {
         return priority;
     }
@@ -65,6 +76,7 @@ public class MeasurementDescription {
         this.priority = priority;
     }
 
+    @JsonProperty("parameters")
     public Parameters getParameters() {
         return parameters;
     }

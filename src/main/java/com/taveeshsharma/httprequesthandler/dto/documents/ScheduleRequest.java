@@ -1,6 +1,7 @@
-package com.taveeshsharma.httprequesthandler.dto;
+package com.taveeshsharma.httprequesthandler.dto.documents;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.taveeshsharma.httprequesthandler.dto.JobDescription;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(value = "job_data")
@@ -9,6 +10,7 @@ public class ScheduleRequest {
     private JobDescription jobDescription;
     private String userId;
 
+    @JsonProperty("request_type")
     public String getRequestType() {
         return requestType;
     }
@@ -17,6 +19,7 @@ public class ScheduleRequest {
         this.requestType = requestType;
     }
 
+    @JsonProperty("job_description")
     public JobDescription getJobDescription() {
         return jobDescription;
     }
@@ -25,6 +28,7 @@ public class ScheduleRequest {
         this.jobDescription = jobDescription;
     }
 
+    @JsonProperty("user_id")
     public String getUserId() {
         return userId;
     }

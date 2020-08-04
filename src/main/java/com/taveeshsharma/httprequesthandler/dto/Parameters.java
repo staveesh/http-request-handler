@@ -7,6 +7,7 @@ public class Parameters {
     private String server;
     private Boolean dirUp;
 
+    @JsonProperty("target")
     public String getTarget() {
         return target;
     }
@@ -15,6 +16,7 @@ public class Parameters {
         this.target = target;
     }
 
+    @JsonProperty("server")
     public String getServer() {
         return server;
     }
@@ -23,6 +25,7 @@ public class Parameters {
         this.server = server;
     }
 
+    @JsonProperty("dir_up")
     public Boolean getDirUp() {
         return dirUp;
     }

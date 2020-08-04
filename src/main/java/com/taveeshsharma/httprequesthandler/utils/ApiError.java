@@ -1,4 +1,4 @@
-package com.taveeshsharma.httprequesthandler;
+package com.taveeshsharma.httprequesthandler.utils;
 
 public class ApiError {
     private String error;

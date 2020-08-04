@@ -1,4 +1,4 @@
-package com.taveeshsharma.httprequesthandler;
+package com.taveeshsharma.httprequesthandler.utils;
 
 public class Constants {
     public static final String BAD_REQUEST = "Bad request";

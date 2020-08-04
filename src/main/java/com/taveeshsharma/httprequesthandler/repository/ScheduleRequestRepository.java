@@ -1,6 +1,6 @@
 package com.taveeshsharma.httprequesthandler.repository;
 
-import com.taveeshsharma.httprequesthandler.dto.ScheduleRequest;
+import com.taveeshsharma.httprequesthandler.dto.documents.ScheduleRequest;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

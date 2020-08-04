@@ -1,7 +1,7 @@
 package com.taveeshsharma.httprequesthandler.measurements;
 
 
-import com.taveeshsharma.httprequesthandler.Constants;
+import com.taveeshsharma.httprequesthandler.utils.Constants;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 

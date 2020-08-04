@@ -1,4 +1,4 @@
-package com.taveeshsharma.httprequesthandler;
+package com.taveeshsharma.httprequesthandler.utils;
 
 public enum ApiErrorCode {
 

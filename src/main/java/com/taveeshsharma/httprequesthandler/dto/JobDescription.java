@@ -7,6 +7,7 @@ public class JobDescription {
     private Integer nodeCount;
     private Integer jobInterval;
 
+    @JsonProperty("measurement_description")
     public MeasurementDescription getMeasurementDescription() {
         return measurementDescription;
     }
@@ -14,7 +15,7 @@ public class JobDescription {
     public void setMeasurementDescription(MeasurementDescription measurementDescription) {
         this.measurementDescription = measurementDescription;
     }
-
+    @JsonProperty("node_count")
     public Integer getNodeCount() {
         return nodeCount;
     }
@@ -22,7 +23,7 @@ public class JobDescription {
     public void setNodeCount(Integer nodeCount) {
         this.nodeCount = nodeCount;
     }
-
+    @JsonProperty("job_interval")
     public Integer getJobInterval() {
         return jobInterval;
     }
