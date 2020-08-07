@@ -18,4 +18,6 @@ public interface DatabaseManager {
     public void writeValues(JSONObject jsonObject);
 
     public void writePersonalData(PersonalData data);
+
+    public List<PersonalData> readPersonalData(String email);
 }

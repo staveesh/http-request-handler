@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 @Measurement(name= Constants.TRACERT_TYPE, timeUnit = TimeUnit.MILLISECONDS)
 public class TracerouteMeasurement extends Measurements {
+
     @Column(name="num_hops")
     private Integer numberOfHops;
 

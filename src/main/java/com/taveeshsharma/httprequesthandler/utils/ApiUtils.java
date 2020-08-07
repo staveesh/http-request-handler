@@ -13,7 +13,7 @@ public class ApiUtils {
     public static Optional<ApiError> isValidScheduleRequest(ScheduleRequest request){
         boolean isValidRequestType = false;
         for(Constants.RequestType requestType: Constants.RequestType.values()){
-            if(requestType.name().equals(request.getRequestType())) {
+            if(requestType.name().equalsIgnoreCase(request.getRequestType())) {
                 isValidRequestType = true;
                 break;
             }
@@ -27,7 +27,7 @@ public class ApiUtils {
         boolean isValidMeasurementType = false;
         for(Constants.MeasurementType measurementType: Constants.MeasurementType.values()){
             String type = request.getJobDescription().getMeasurementDescription().getType();
-            if(measurementType.name().equals(type)) {
+            if(measurementType.name().equalsIgnoreCase(type)) {
                 isValidMeasurementType = true;
                 break;
             }

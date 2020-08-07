@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -108,10 +109,11 @@ public class DatabaseManagerImpl implements DatabaseManager{
             case Constants.TRACERT_TYPE:
                 try {
                     logger.info("Traceroute : "+jsonObject);
+                    p = createTraceRTPoint(jsonObject);
+                    break;
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                return;
             default:
                 p = null;
                 break;
@@ -188,6 +190,19 @@ public class DatabaseManagerImpl implements DatabaseManager{
                 .build();
     }
 
+    private Point createTraceRTPoint(JSONObject jsonObject) {
+        // TODO: Parse the values and alter the jsonObject according to measurement format
+        JSONObject measurementValues = jsonObject.getJSONObject("values");
+        long time = jsonObject.getLong("timestamp");
+
+        TracerouteMeasurement tracerouteMeasurement = (TracerouteMeasurement) buildMeasurements(jsonObject, TracerouteMeasurement.class);
+
+        return Point.measurementByPOJO(TracerouteMeasurement.class)
+                .time(time, TimeUnit.MICROSECONDS)
+                .addFieldsFromPOJO(tracerouteMeasurement)
+                .build();
+    }
+
     private Measurements buildMeasurements(JSONObject object, Class<? extends Measurements> T){
         try {
             Measurements measurements = T.newInstance();
@@ -229,5 +244,13 @@ public class DatabaseManagerImpl implements DatabaseManager{
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public List<PersonalData> readPersonalData(String email) {
+        String userName = ApiUtils.hashUserName(email);
+        logger.info("Acquiring usage stats for userName : "+userName);
+        List<PersonalData> networkUsage = personalDataRepository.getNetworkUsage(userName, new Date(0), new Date());
+        return networkUsage;
     }
 }

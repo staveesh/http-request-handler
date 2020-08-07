@@ -3,6 +3,9 @@ package com.taveeshsharma.httprequesthandler.controllers;
 import com.bugbusters.orchastrator.Measurement;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.taveeshsharma.httprequesthandler.dto.AppNetworkUsage;
+import com.taveeshsharma.httprequesthandler.dto.TotalAppUsage;
+import com.taveeshsharma.httprequesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.httprequesthandler.utils.ApiError;
 import com.taveeshsharma.httprequesthandler.utils.ApiUtils;
 import com.taveeshsharma.httprequesthandler.dto.documents.ScheduleRequest;
@@ -15,10 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RequestHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -62,6 +67,29 @@ public class RequestHandler {
     public ResponseEntity<?> getAppUsage(@RequestParam("email") String email){
         logger.info(String.format(
                 "Received GET request for retrieving app usage with email = %s", email));
-        return ResponseEntity.ok().build();
+        List<PersonalData> appUsage = dbManager.readPersonalData(email);
+        // Aggregate to return overall usage in MB
+        Map<String, TotalAppUsage> aggregated = new HashMap<>();
+        for(PersonalData data : appUsage){
+            List<AppNetworkUsage> allAppsSummary = data.getUserSummary();
+            for(AppNetworkUsage appSummary : allAppsSummary){
+                if(!aggregated.containsKey(appSummary.getName())){
+                    TotalAppUsage totalAppUsage = new TotalAppUsage();
+                    totalAppUsage.setName(appSummary.getName());
+                    totalAppUsage.setRx(BigDecimal.ZERO);
+                    totalAppUsage.setTx(BigDecimal.ZERO);
+                    aggregated.put(appSummary.getName(), totalAppUsage);
+                }
+                else{
+                    TotalAppUsage totalAppUsage = aggregated.get(appSummary.getName());
+                    totalAppUsage.setRx(totalAppUsage.getRx()
+                            .add(BigDecimal.valueOf((double) appSummary.getRx() / (1024 * 1024))));
+                    totalAppUsage.setTx(totalAppUsage.getTx()
+                            .add(BigDecimal.valueOf((double) appSummary.getTx() / (1024 * 1024))));
+                }
+            }
+        }
+        List<TotalAppUsage> result = new ArrayList<>(aggregated.values());
+        return ResponseEntity.ok().body(result);
     }
 }
