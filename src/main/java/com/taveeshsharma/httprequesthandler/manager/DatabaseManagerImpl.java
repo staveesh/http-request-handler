@@ -14,6 +14,7 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.influxdb.impl.InfluxDBResultMapper;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
     }
 
     @Override
-    public JSONObject getMeasurement(String id, String type) {
+    public List<? extends Measurements> getMeasurement(String id, String type) {
         QueryResult queryResult;
         if(id == null || id.isEmpty())
             queryResult = influxDBTemplate.query(new Query(
@@ -66,17 +67,17 @@ public class DatabaseManagerImpl implements DatabaseManager{
                     ));
         Gson gson = new GsonBuilder().create();
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
-        switch (type.toUpperCase()) {
+        switch (type.toLowerCase()) {
             case Constants.TCP_TYPE:
-                return new JSONObject(gson.toJson(resultMapper.toPOJO(queryResult, TCPMeasurement.class)));
+                return resultMapper.toPOJO(queryResult, TCPMeasurement.class);
             case Constants.PING_TYPE:
-                return new JSONObject(gson.toJson(resultMapper.toPOJO(queryResult, PingMeasurement.class)));
+                return resultMapper.toPOJO(queryResult, PingMeasurement.class);
             case Constants.DNS_TYPE:
-                return new JSONObject(gson.toJson(resultMapper.toPOJO(queryResult, DNSLookupMeasurement.class)));
+                return resultMapper.toPOJO(queryResult, DNSLookupMeasurement.class);
             case Constants.HTTP_TYPE:
-                return new JSONObject(gson.toJson(resultMapper.toPOJO(queryResult, HTTPMeasurement.class)));
+                return resultMapper.toPOJO(queryResult, HTTPMeasurement.class);
             case Constants.TRACERT_TYPE:
-                return new JSONObject(gson.toJson(resultMapper.toPOJO(queryResult, TracerouteMeasurement.class)));
+                return resultMapper.toPOJO(queryResult, TracerouteMeasurement.class);
             default:
                 return null;
         }

@@ -10,6 +10,7 @@ import com.taveeshsharma.httprequesthandler.utils.ApiError;
 import com.taveeshsharma.httprequesthandler.utils.ApiUtils;
 import com.taveeshsharma.httprequesthandler.dto.documents.ScheduleRequest;
 import com.taveeshsharma.httprequesthandler.manager.DatabaseManager;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,15 +52,14 @@ public class RequestHandler {
         logger.info(String.format(
                 "Received GET request for retrieving jobs with id = %s and type = %s",
                 id, type));
-        JSONObject results = dbManager.getMeasurement(id, type);
-        return ResponseEntity.ok().body(results);
+        return ResponseEntity.ok().body(dbManager.getMeasurement(id, type));
     }
 
     @RequestMapping(value = "/results/jobs",method = RequestMethod.GET)
     public ResponseEntity<?> getJobDescription(@RequestParam("type") String type){
         logger.info(String.format(
                 "Received GET request for retrieving job description with type = %s", type));
-        List<ScheduleRequest> jobs = dbManager.getScheduledJobs(type.toUpperCase());
+        List<ScheduleRequest> jobs = dbManager.getScheduledJobs(type);
         return ResponseEntity.ok().body(jobs);
     }
 
