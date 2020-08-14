@@ -1,6 +1,6 @@
 package com.taveeshsharma.httprequesthandler.utils;
 
-import com.bugbusters.orchastrator.Utils;
+import com.taveeshsharma.orchestrator.Utils;
 import com.taveeshsharma.httprequesthandler.dto.documents.ScheduleRequest;
 
 import java.nio.charset.StandardCharsets;

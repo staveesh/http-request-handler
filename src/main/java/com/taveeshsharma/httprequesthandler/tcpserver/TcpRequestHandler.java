@@ -1,7 +1,7 @@
 package com.taveeshsharma.httprequesthandler.tcpserver;
 
-import com.bugbusters.orchastrator.Measurement;
-import com.bugbusters.orchastrator.OrchAPI;
+import com.taveeshsharma.orchestrator.Measurement;
+import com.taveeshsharma.orchestrator.OrchAPI;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
