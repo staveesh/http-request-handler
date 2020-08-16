@@ -1,13 +1,15 @@
 package com.taveeshsharma.httprequesthandler.controllers;
 
+import com.taveeshsharma.httprequesthandler.dto.AuthenticationResponse;
+import com.taveeshsharma.httprequesthandler.dto.documents.User;
+import com.taveeshsharma.httprequesthandler.manager.UserManager;
+import com.taveeshsharma.httprequesthandler.utils.*;
 import com.taveeshsharma.orchestrator.Measurement;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.taveeshsharma.httprequesthandler.dto.AppNetworkUsage;
 import com.taveeshsharma.httprequesthandler.dto.TotalAppUsage;
 import com.taveeshsharma.httprequesthandler.dto.documents.PersonalData;
-import com.taveeshsharma.httprequesthandler.utils.ApiError;
-import com.taveeshsharma.httprequesthandler.utils.ApiUtils;
 import com.taveeshsharma.httprequesthandler.dto.documents.ScheduleRequest;
 import com.taveeshsharma.httprequesthandler.manager.DatabaseManager;
 import org.json.JSONObject;
@@ -16,6 +18,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -29,6 +36,53 @@ public class RequestHandler {
 
     @Autowired
     private DatabaseManager dbManager;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserManager userManager;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    public ResponseEntity<?> addNewUser(@RequestBody User user){
+        user.setUserName(ApiUtils.hashUserName(user.getUsername()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Optional<User> savedUser = userManager.findExistingUser(user);
+        if(savedUser.isPresent()){
+            ApiError error = new ApiError(
+                    Constants.BAD_REQUEST,
+                    ApiErrorCode.API004.getErrorCode(),
+                    ApiErrorCode.API004.getErrorMessage()
+            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        }
+        else{
+            userManager.save(user);
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody User user) throws Exception{
+        user.setUserName(ApiUtils.hashUserName(user.getUsername()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+            );
+        } catch (BadCredentialsException e){
+            throw new Exception("Incorrect username and password", e);
+        }
+        final UserDetails userDetails = userManager.loadUserByUsername(user.getUsername());
+        final String jwt = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
     public ResponseEntity<?> scheduleMeasurement(@RequestBody ScheduleRequest request){
