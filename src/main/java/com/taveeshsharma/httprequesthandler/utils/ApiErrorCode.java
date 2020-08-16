@@ -5,7 +5,9 @@ public enum ApiErrorCode {
     API001("API001", "Invalid request type"),
     API002("API002", "Invalid measurement type"),
     API003("API003", "Invalid start/end date"),
-    API004("API004", "User with the same role already exists. Please login.");
+    API004("API004", "User with the same role already exists."),
+    API005("API005", "Invalid roles supplied"),
+    API006("API006", "Incorrect credentials provided. Please login again");
 
     private String errorCode;
     private String errorMessage;

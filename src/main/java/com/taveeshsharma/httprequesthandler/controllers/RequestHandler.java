@@ -2,6 +2,7 @@ package com.taveeshsharma.httprequesthandler.controllers;
 
 import com.taveeshsharma.httprequesthandler.dto.AuthenticationResponse;
 import com.taveeshsharma.httprequesthandler.dto.documents.User;
+import com.taveeshsharma.httprequesthandler.dto.documents.UserRole;
 import com.taveeshsharma.httprequesthandler.manager.UserManager;
 import com.taveeshsharma.httprequesthandler.utils.*;
 import com.taveeshsharma.orchestrator.Measurement;
@@ -21,12 +22,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -51,18 +55,18 @@ public class RequestHandler {
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ResponseEntity<?> addNewUser(@RequestBody User user){
-        user.setUserName(ApiUtils.hashUserName(user.getUsername()));
+        user.setUserName(ApiUtils.hashUserName(user.getUserName()));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Optional<User> savedUser = userManager.findExistingUser(user);
-        if(savedUser.isPresent()){
+        try{
+            UserDetails userDetails = userManager.loadUserByUsername(user.getUserName());
+            // If user is found, it already exists with the provided username
             ApiError error = new ApiError(
                     Constants.BAD_REQUEST,
                     ApiErrorCode.API004.getErrorCode(),
                     ApiErrorCode.API004.getErrorMessage()
             );
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
-        }
-        else{
+        } catch (UsernameNotFoundException e){
             userManager.save(user);
         }
         return ResponseEntity.ok().build();
@@ -70,17 +74,36 @@ public class RequestHandler {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody User user) throws Exception{
-        user.setUserName(ApiUtils.hashUserName(user.getUsername()));
+        user.setUserName(ApiUtils.hashUserName(user.getUserName()));
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword())
+                    new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword())
             );
         } catch (BadCredentialsException e){
-            throw new Exception("Incorrect username and password", e);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    new ApiError(
+                            Constants.UNAUTHORIZED,
+                            ApiErrorCode.API006.getErrorCode(),
+                            ApiErrorCode.API006.getErrorMessage()
+                    )
+            );
         }
-        final UserDetails userDetails = userManager.loadUserByUsername(user.getUsername());
+        final UserDetails userDetails = userManager.loadUserByUsername(user.getUserName());
+        // Check if supplied roles match stored roles
+        Set<String> storedRoles = userDetails.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+        Set<String> suppliedRoles = user.getRoles()
+                .stream().map(UserRole::getRole).collect(Collectors.toSet());
+        if(!storedRoles.equals(suppliedRoles)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    new ApiError(
+                            Constants.BAD_REQUEST,
+                            ApiErrorCode.API005.getErrorCode(),
+                            ApiErrorCode.API005.getErrorMessage()
+                    )
+            );
+        }
         final String jwt = jwtUtil.generateToken(userDetails);
-
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
