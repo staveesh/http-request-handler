@@ -1,0 +1,47 @@
+version: '3'
+networks:
+  backend:
+    driver: bridge
+volumes:
+  storage:
+services:
+  app:
+    build: .
+    container_name: app
+    image: qosmon
+    ports:
+      - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
+      - "${TCP_SERVER_PORT}:${TCP_SERVER_PORT}"
+    networks:
+      - backend
+    depends_on:
+      - influxdb
+      - mongodb
+    env_file:
+      - .env
+  influxdb:
+    container_name: influxdb
+    image: influxdb:latest
+    ports:
+      - "${INFLUXDB_PORT}:${INFLUXDB_PORT}"
+    environment:
+      INFLUXDB_DB: "${INFLUXDB_NAME}"
+      INFLUXDB_USER: "${INFLUXDB_USERNAME}"
+      INFLUXDB_USER_PASSWORD: "${INFLUXDB_PASSWORD}"
+    volumes:
+      - storage:/var/lib/influxdb
+    networks:
+      - backend
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - "${MONGODB_PORT}:${MONGODB_PORT}"
+    environment:
+      MONGO_INITDB_DATABASE: "${MONGODB_NAME}"
+      MONGO_INITDB_ROOT_USERNAME: "${MONGODB_USERNAME}"
+      MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_PASSWORD}"
+    volumes:
+      - storage:/var/lib/mongodb
+    networks:
+      - backend

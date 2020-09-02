@@ -1,10 +1,11 @@
+.env
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+### STS ###-Dspring.profiles.active=test
 .apt_generated
 .classpath
 .factorypath
