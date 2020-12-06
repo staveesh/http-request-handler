@@ -1,18 +1,23 @@
 # Build stage
-FROM maven:3.6.3-jdk-8 AS build
+FROM maven:3.6.3-jdk-8 AS builder
 
 MAINTAINER Taveesh Sharma <shrtav001@myuct.ac.za>
 
-COPY pom.xml /app/
-COPY src /app/src
-RUN mvn -f /app/pom.xml clean package
+RUN mkdir -p /build
+WORKDIR /build
+COPY pom.xml /build
+# Download all required dependencies into one layer
+RUN mvn -B dependency:resolve dependency:resolve-plugins
+# Copy source code
+COPY src /build/src
+RUN mvn package -DskipTests
 
 # Run stage
 
 FROM openjdk:8-jdk-alpine
 
-COPY --from=build /app/target/*.jar /app/app.jar
+COPY --from=builder /build/target/*.jar app.jar
 
 EXPOSE 7800 7000
 
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]

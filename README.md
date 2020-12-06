@@ -46,7 +46,7 @@ Make sure that `docker` and `docker-compose` are installed on your host machine.
       NUM_RETRY_CONNECT=
    ```
 
-5. Run the following command from the current directory to launch the server:
+6. Run the following command from the current directory to launch the server:
    ```
    docker-compose up
    ```

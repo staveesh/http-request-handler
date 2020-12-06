@@ -42,9 +42,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Autowired
     private InfluxDBTemplate<Point> influxDBpointTemplate;
 
-    @Autowired
-    private InfluxDBTemplate<BatchPoints> influxDBbatchPointTemplate;
-
     @Value("${spring.influxdb.database}")
     private String DB_NAME;
 
@@ -275,6 +272,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
                     .time(p.getTime().toEpochMilli(), TimeUnit.MICROSECONDS)
                     .build());
         }
-        influxDBbatchPointTemplate.write(batchPoints);
+        influxDBpointTemplate.write(batchPoints.getPoints());
     }
 }
