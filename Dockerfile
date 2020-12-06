@@ -1,6 +1,7 @@
-MAINTAINER Taveesh Sharma <shrtav001@myuct.ac.za>
 # Build stage
 FROM maven:3.6.3-jdk-8 AS build
+
+MAINTAINER Taveesh Sharma <shrtav001@myuct.ac.za>
 
 COPY pom.xml /app/
 COPY src /app/src
