@@ -10,6 +10,8 @@ import com.taveeshsharma.requesthandler.measurements.*;
 import com.taveeshsharma.requesthandler.repository.PersonalDataRepository;
 import com.taveeshsharma.requesthandler.repository.ScheduleRequestRepository;
 import org.apache.commons.math3.util.Precision;
+import org.influxdb.InfluxDB;
+import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
@@ -38,10 +40,16 @@ public class DatabaseManagerImpl implements DatabaseManager{
     private PersonalDataRepository personalDataRepository;
 
     @Autowired
-    private InfluxDBTemplate<Point> influxDBTemplate;
+    private InfluxDBTemplate<Point> influxDBpointTemplate;
+
+    @Autowired
+    private InfluxDBTemplate<BatchPoints> influxDBbatchPointTemplate;
 
     @Value("${spring.influxdb.database}")
     private String DB_NAME;
+
+    @Value("${spring.influxdb.retention-policy}")
+    private String RP_NAME;
 
     @Override
     public void insertScheduledJob(ScheduleRequest request) {
@@ -54,12 +62,12 @@ public class DatabaseManagerImpl implements DatabaseManager{
     public List<? extends Measurements> getMeasurement(String id, String type) {
         QueryResult queryResult;
         if(id == null || id.isEmpty())
-            queryResult = influxDBTemplate.query(new Query(
+            queryResult = influxDBpointTemplate.query(new Query(
                     String.format("SELECT * FROM %s", type),
                     DB_NAME
             ));
         else
-            queryResult = influxDBTemplate.query(
+            queryResult = influxDBpointTemplate.query(
                     new Query(
                             String.format("SELECT * FROM %s WHERE taskKey = \'%s\'", type, id),
                             DB_NAME
@@ -118,7 +126,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
                 p = null;
                 break;
         }
-        influxDBTemplate.write(p);
+        influxDBpointTemplate.write(p);
     }
 
     private Point createTCPPoint(JSONObject jsonObject){
@@ -252,5 +260,21 @@ public class DatabaseManagerImpl implements DatabaseManager{
         logger.info("Acquiring usage stats for userName : "+userName);
         List<PersonalData> networkUsage = personalDataRepository.getNetworkUsage(userName, new Date(0), new Date());
         return networkUsage;
+    }
+
+    @Override
+    public void writePcapData(List<PcapMeasurements> pcapData) {
+        BatchPoints batchPoints = BatchPoints
+                .database(DB_NAME)
+                .tag("async", "true")
+                .retentionPolicy(RP_NAME)
+                .consistency(InfluxDB.ConsistencyLevel.ALL)
+                .build();
+        for (PcapMeasurements p : pcapData) {
+            batchPoints.point(Point.measurementByPOJO(PcapMeasurements.class)
+                    .time(p.getTime().toEpochMilli(), TimeUnit.MICROSECONDS)
+                    .build());
+        }
+        influxDBbatchPointTemplate.write(batchPoints);
     }
 }

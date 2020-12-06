@@ -1,11 +1,17 @@
+MAINTAINER Taveesh Sharma <shrtav001@myuct.ac.za>
+# Build stage
+FROM maven:3.6.3-jdk-8 AS build
+
+COPY pom.xml /app/
+COPY src /app/src
+RUN mvn -f /app/pom.xml clean package
+
+# Run stage
+
 FROM openjdk:8-jdk-alpine
 
-MAINTAINER Taveesh Sharma <shrtav001@myuct.ac.za>
-
-ARG JAR_FILE=target/*.jar
-
-COPY ${JAR_FILE} app.jar
+COPY --from=build /app/target/*.jar /app/app.jar
 
 EXPOSE 7800 7000
 
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/app/app.jar"]

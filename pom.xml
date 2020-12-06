@@ -65,6 +65,23 @@
 			<version>20180130</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.pkts/pkts-core -->
+		<dependency>
+			<groupId>io.pkts</groupId>
+			<artifactId>pkts-core</artifactId>
+			<version>3.0.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.pkts/pkts-buffers -->
+		<dependency>
+			<groupId>io.pkts</groupId>
+			<artifactId>pkts-buffers</artifactId>
+			<version>3.0.5</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>

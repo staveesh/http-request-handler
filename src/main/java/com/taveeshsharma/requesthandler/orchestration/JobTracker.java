@@ -16,7 +16,7 @@ public class JobTracker {
     @Scheduled(fixedRate = 2*60*1000, initialDelay = 60*1000)
     public void track(){
         Measurement.acquireWriteLock();
-        logger.info("Job Tracking is being Perfomed");
+        logger.info("Job tracking is being perfomed");
         List<Job> activeJobs= Measurement.getJobs();
         //TODO synchronize appropriately as well as how often does the thread check
         //if end time is reached remove job
@@ -27,11 +27,11 @@ public class JobTracker {
             Job job=activeJobs.get(i);
             if(job.isRemovable()){
                 activeJobs.remove(i);
-                logger.info("Job is with "+job.getMeasurementDesc().get("key") +" Removed");
+                logger.info("Job is with "+job.getMeasurementDesc().get("key") +" removed");
             }
             else if(job.isResettable(currentTime)){
                 job.reset();
-                logger.info("Job is with "+job.getMeasurementDesc().get("key") +" is Reset");
+                logger.info("Job is with "+job.getMeasurementDesc().get("key") +" is reset");
             }
         }
         logger.info("Current Job Size is " + activeJobs.size());

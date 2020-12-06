@@ -1,5 +1,6 @@
 package com.taveeshsharma.requesthandler;
 
+import com.taveeshsharma.requesthandler.analyzer.Driver;
 import com.taveeshsharma.requesthandler.tcpserver.TcpServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -24,7 +25,11 @@ public class RequestHandlerApplication {
 
 	@PostConstruct
 	public void init(){
+		// Run TCP server
 		TcpServer tcpServer = applicationContext.getBean(TcpServer.class);
 		tcpServer.run();
+		// Initiate PCAP File analyzer
+		Driver pcapAnalyzerDriver = applicationContext.getBean(Driver.class);
+		pcapAnalyzerDriver.initiate();
 	}
 }
