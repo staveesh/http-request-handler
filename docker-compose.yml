@@ -8,7 +8,7 @@ services:
   app:
     build: .
     container_name: app
-    image: qosmon
+    image: staveesh/qosmon
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
       - "${TCP_SERVER_PORT}:${TCP_SERVER_PORT}"

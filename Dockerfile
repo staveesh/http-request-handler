@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.6.3-jdk-8 AS builder
+FROM maven:3.6.3-jdk-8-slim AS builder
 
 MAINTAINER Taveesh Sharma <shrtav001@myuct.ac.za>
 
