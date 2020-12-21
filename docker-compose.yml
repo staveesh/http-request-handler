@@ -2,8 +2,6 @@ version: '3'
 networks:
   backend:
     driver: bridge
-volumes:
-  storage:
 services:
   app:
     build: .
@@ -14,7 +12,7 @@ services:
       - "${TCP_SERVER_PORT}:${TCP_SERVER_PORT}"
     networks:
       - backend
-    depends_on:
+    links:
       - influxdb
       - mongodb
     env_file:
@@ -29,7 +27,7 @@ services:
       INFLUXDB_USER: "${INFLUXDB_USERNAME}"
       INFLUXDB_USER_PASSWORD: "${INFLUXDB_PASSWORD}"
     volumes:
-      - storage:/var/lib/influxdb
+      - /var/lib/qosmon/influxdb:/var/lib/influxdb
     networks:
       - backend
   mongodb:
@@ -42,6 +40,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: "${MONGODB_USERNAME}"
       MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_PASSWORD}"
     volumes:
-      - storage:/var/lib/mongodb
+      - /var/lib/qosmon/mongodb:/data/db
     networks:
       - backend
