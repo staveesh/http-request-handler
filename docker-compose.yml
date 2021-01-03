@@ -10,6 +10,9 @@ services:
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
       - "${TCP_SERVER_PORT}:${TCP_SERVER_PORT}"
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - backend
     links:
@@ -28,6 +31,8 @@ services:
       INFLUXDB_USER_PASSWORD: "${INFLUXDB_PASSWORD}"
     volumes:
       - /var/lib/qosmon/influxdb:/var/lib/influxdb
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - backend
   mongodb:
@@ -41,5 +46,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "${MONGODB_PASSWORD}"
     volumes:
       - /var/lib/qosmon/mongodb:/data/db
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     networks:
       - backend

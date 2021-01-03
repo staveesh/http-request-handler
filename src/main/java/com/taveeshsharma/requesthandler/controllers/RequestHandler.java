@@ -33,7 +33,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RequestHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -109,6 +108,8 @@ public class RequestHandler {
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
     public ResponseEntity<?> scheduleMeasurement(@RequestBody ScheduleRequest request){
+        // Hash email ID of the user
+        request.setUserId(ApiUtils.hashUserName(request.getUserId()));
         logger.info("Received POST request for scheduling measurement : "+request);
         Optional<ApiError> error = ApiUtils.isValidScheduleRequest(request);
         if(error.isPresent())

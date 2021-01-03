@@ -1,6 +1,9 @@
 package com.taveeshsharma.requesthandler.utils;
 
+import com.taveeshsharma.requesthandler.controllers.RequestHandler;
 import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -12,7 +15,7 @@ import java.util.Date;
 import java.util.Optional;
 
 public class ApiUtils {
-
+    private static final Logger logger = LoggerFactory.getLogger(ApiUtils.class);
     private final static DateFormat dateFormat =new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private final static long HOURS=3600*1000; //since the intervals are in hours
 
@@ -61,8 +64,22 @@ public class ApiUtils {
         String startTime = request.getJobDescription().getMeasurementDescription().getStartTime();
         String endTime = request.getJobDescription().getMeasurementDescription().getEndTime();
         try{
-            getDate(startTime);
-            getDate(endTime);
+            Date start = getDate(startTime);
+            Date end = getDate(endTime);
+            logger.info("Start time = "+start+" end time = "+end);
+            if(end.before(start)){
+                return Optional.of(new ApiError(Constants.BAD_REQUEST,
+                        ApiErrorCode.API007.getErrorCode(),
+                        ApiErrorCode.API007.getErrorMessage()
+                ));
+            }
+            // If start time is before current time, throw error
+            else if(start.before(new Date())){
+                return Optional.of(new ApiError(Constants.BAD_REQUEST,
+                        ApiErrorCode.API008.getErrorCode(),
+                        ApiErrorCode.API008.getErrorMessage()
+                ));
+            }
         } catch (ParseException e){
             return Optional.of(new ApiError(Constants.BAD_REQUEST,
                     ApiErrorCode.API003.getErrorCode(),

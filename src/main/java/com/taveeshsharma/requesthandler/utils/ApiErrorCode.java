@@ -7,7 +7,9 @@ public enum ApiErrorCode {
     API003("API003", "Invalid start/end date"),
     API004("API004", "User with the same role already exists."),
     API005("API005", "Invalid roles supplied"),
-    API006("API006", "Incorrect credentials provided. Please login again");
+    API006("API006", "Incorrect credentials provided. Please login again"),
+    API007("API007", "Start time cannot be after end time"),
+    API008("API008", "Start time cannot be before current time");
 
     private String errorCode;
     private String errorMessage;

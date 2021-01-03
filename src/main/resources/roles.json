@@ -1,0 +1,12 @@
+[
+  {
+    "_class": "com.taveeshsharma.requesthandler.dto.documents.UserRole",
+    "role": "RESEARCHER",
+    "id": 1
+  },
+  {
+    "_class": "com.taveeshsharma.requesthandler.dto.documents.UserRole",
+    "role": "NORMAL_USER",
+    "id": 2
+  }
+]
