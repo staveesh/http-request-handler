@@ -105,6 +105,11 @@ public class RequestHandler {
         final String jwt = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
+    // Dummy endpoint to check if the JWT token is still valid
+    @RequestMapping(value= "/logged_in", method = RequestMethod.GET)
+    public ResponseEntity<?> isUserLoggedIn(){
+        return ResponseEntity.ok().build();
+    }
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
     public ResponseEntity<?> scheduleMeasurement(@RequestBody ScheduleRequest request){

@@ -95,8 +95,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Override
     public void writeValues(JSONObject jsonObject) {
         String type = (String) jsonObject.get("type");
-        logger.info("Type : "+type);
-        logger.info("Writing to influxdb : "+jsonObject.toString());
         Point p;
         switch (type) {
             case Constants.TCP_TYPE:
@@ -123,7 +121,8 @@ public class DatabaseManagerImpl implements DatabaseManager{
                 p = null;
                 break;
         }
-        influxDBpointTemplate.write(p);
+        if(p != null)
+            influxDBpointTemplate.write(p);
     }
 
     private Point createTCPPoint(JSONObject jsonObject){
@@ -184,8 +183,10 @@ public class DatabaseManagerImpl implements DatabaseManager{
         long time = jsonObject.getLong("timestamp");
 
         HTTPMeasurement httpMeasurement = (HTTPMeasurement) buildMeasurements(jsonObject, HTTPMeasurement.class);
-
-        httpMeasurement.setHttpResultCode(Integer.parseInt(measurementValues.getString("code")));
+        int statusCode = Integer.parseInt(measurementValues.getString("code"));
+        if(statusCode >= 300)
+            return null;
+        httpMeasurement.setHttpResultCode(statusCode);
         double duration = Double.parseDouble(measurementValues.getString("time_ms"));
         httpMeasurement.setTimeTakenMs(Precision.round(duration, 2));
 
