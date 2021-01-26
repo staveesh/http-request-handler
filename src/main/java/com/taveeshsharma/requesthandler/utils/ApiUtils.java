@@ -61,29 +61,19 @@ public class ApiUtils {
                     ApiErrorCode.API002.getErrorMessage()
             ));
 
-        String startTime = request.getJobDescription().getMeasurementDescription().getStartTime();
-        String endTime = request.getJobDescription().getMeasurementDescription().getEndTime();
-        try{
-            Date start = getDate(startTime);
-            Date end = getDate(endTime);
-            logger.info("Start time = "+start+" end time = "+end);
-            if(end.before(start)){
-                return Optional.of(new ApiError(Constants.BAD_REQUEST,
-                        ApiErrorCode.API007.getErrorCode(),
-                        ApiErrorCode.API007.getErrorMessage()
-                ));
-            }
-            // If start time is before current time, throw error
-            else if(start.before(new Date())){
-                return Optional.of(new ApiError(Constants.BAD_REQUEST,
-                        ApiErrorCode.API008.getErrorCode(),
-                        ApiErrorCode.API008.getErrorMessage()
-                ));
-            }
-        } catch (ParseException e){
+        Date start = request.getJobDescription().getMeasurementDescription().getStartTime();
+        Date end = request.getJobDescription().getMeasurementDescription().getEndTime();
+        if(end.before(start)){
             return Optional.of(new ApiError(Constants.BAD_REQUEST,
-                    ApiErrorCode.API003.getErrorCode(),
-                    ApiErrorCode.API003.getErrorMessage()
+                    ApiErrorCode.API007.getErrorCode(),
+                    ApiErrorCode.API007.getErrorMessage()
+            ));
+        }
+        // If start time is before current time, throw error
+        else if(start.before(new Date())){
+            return Optional.of(new ApiError(Constants.BAD_REQUEST,
+                    ApiErrorCode.API008.getErrorCode(),
+                    ApiErrorCode.API008.getErrorMessage()
             ));
         }
         return Optional.empty();

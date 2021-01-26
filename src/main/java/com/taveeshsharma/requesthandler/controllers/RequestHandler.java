@@ -1,8 +1,7 @@
 package com.taveeshsharma.requesthandler.controllers;
 
 import com.taveeshsharma.requesthandler.dto.AuthenticationResponse;
-import com.taveeshsharma.requesthandler.dto.documents.User;
-import com.taveeshsharma.requesthandler.dto.documents.UserRole;
+import com.taveeshsharma.requesthandler.dto.documents.*;
 import com.taveeshsharma.requesthandler.manager.UserManager;
 import com.taveeshsharma.requesthandler.orchestration.Measurement;
 import com.taveeshsharma.requesthandler.utils.*;
@@ -10,8 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.taveeshsharma.requesthandler.dto.AppNetworkUsage;
 import com.taveeshsharma.requesthandler.dto.TotalAppUsage;
-import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
-import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -120,10 +117,9 @@ public class RequestHandler {
         if(error.isPresent())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.get());
         dbManager.insertScheduledJob(request);
-        Gson gson = new GsonBuilder().create();
-        String json = gson.toJson(request);
-        JSONObject reqObject = new JSONObject(json);
-        Measurement.addMeasurement(reqObject);
+        Job newJob = new Job(request.getJobDescription());
+        dbManager.upsertJob(newJob);
+        Measurement.addMeasurement(newJob);
         return ResponseEntity.ok().build();
     }
 

@@ -3,6 +3,7 @@ package com.taveeshsharma.requesthandler.tcpserver;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializer;
+import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.orchestration.Measurement;
@@ -59,7 +60,8 @@ public class TcpRequestHandler {
                         }
                     } else{
                         if(request.getBoolean("isExperiment")){
-                          	 Measurement.recordSuccessfulJob(request);
+                          	 Job job = Measurement.recordSuccessfulJob(request);
+                          	 databaseManager.upsertJob(job);
                         }
                         databaseManager.writeValues(request);
                     }

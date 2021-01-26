@@ -1,5 +1,7 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
+import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
+import com.taveeshsharma.requesthandler.dto.documents.Job;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -18,29 +20,27 @@ public class Measurement {
     private static List<Job> activeJobs = new ArrayList<>();
     private static ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    public static boolean addMeasurement(JSONObject jobRequest) {
+    public static boolean addMeasurement(Job job) {
         acquireWriteLock();
-        if (jobRequest == null) return false;
-        //TODO there is need for error checking for valid jobRequest structure before addition
-        logger.info(jobRequest.toString());
-        JSONObject jobDesc = jobRequest.getJSONObject("jobDescription");
-        Job jobTobeScheduled = new Job(jobDesc);
-        activeJobs.add(jobTobeScheduled);
+        if (job == null) return false;
+        activeJobs.add(job);
         releaseWriteLock();
-        logger.info("job added:" + jobTobeScheduled);
         return true;
     }
 
-    public static JSONArray getActiveJobs(){
+    public static List<MeasurementDescription> getActiveJobs() {
         acquireReadLock();
-        JSONArray sentJobs = new JSONArray();
+        List<MeasurementDescription> sentJobs = new ArrayList<>();
         Date currentTime = new Date();
         for (Job job : activeJobs) {
-            if (job.canStart(currentTime) && !job.isRemovable() && !job.isResettable(currentTime)) {
-                sentJobs.put(job.getMeasurementDesc());
+            if (currentTime.after(job.getStartTime())
+                    && !job.isRemovable() // Job is removable
+                    && !job.isResettable(currentTime)) // Job is resettable
+            {
+                sentJobs.add(job.getMeasurementDescription());
             }
         }
-        logger.info("Sent Jobs size is "+sentJobs.length());
+        logger.info("Sent Jobs size is "+sentJobs.size());
         releaseReadLock();
         return sentJobs;
     }
@@ -49,27 +49,27 @@ public class Measurement {
         acquireReadLock();
         JSONArray sentJobs= new JSONArray();
         for(Job job:activeJobs){
-            sentJobs.put(job.getMeasurementDesc());
+            sentJobs.put(job.getMeasurementDescription());
         }
         releaseReadLock();
         return sentJobs;
     }
 
-    public static boolean recordSuccessfulJob(JSONObject jobDesc) {
+    public static Job recordSuccessfulJob(JSONObject jobDesc) {
         //assuming the JsonObj has key field mapping which measurement failed
         String key = jobDesc.getString("taskKey");
         //int instance = jobDesc.getInt("instance");
         for (Job job : activeJobs) {
-            String currKey = (String) job.getMeasurementDesc().get("key");
+            String currKey = job.getKey();
             if (currKey.equals(key) && jobDesc.getBoolean("success")){
                 logger.info("Job with key : "+currKey+"has been incremented by one");
                 job.addNodeCount();
                 if(job.nodesReached()) logger.info("\nJobs with Key "+key+" has Reached its Req Node count\n");
-                return true;
+                return job;
             }
         }
         //false means the object is already removed since the count is reached
-        return false;
+        return null;
     }
 
     public static void acquireReadLock() {

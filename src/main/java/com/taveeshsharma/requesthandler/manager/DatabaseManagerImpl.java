@@ -2,6 +2,8 @@ package com.taveeshsharma.requesthandler.manager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.repository.JobRepository;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
@@ -38,6 +40,9 @@ public class DatabaseManagerImpl implements DatabaseManager{
 
     @Autowired
     private PersonalDataRepository personalDataRepository;
+
+    @Autowired
+    private JobRepository jobRepository;
 
     @Autowired
     private InfluxDBTemplate<Point> influxDBpointTemplate;
@@ -261,6 +266,11 @@ public class DatabaseManagerImpl implements DatabaseManager{
     }
 
     @Override
+    public List<Job> getCurrentlyActiveJobs(Date currentTime) {
+        return jobRepository.getCurrentlyActiveJobs(currentTime);
+    }
+
+    @Override
     public void writePcapData(List<PcapMeasurements> pcapData) {
         BatchPoints batchPoints = BatchPoints
                 .database(DB_NAME)
@@ -274,5 +284,10 @@ public class DatabaseManagerImpl implements DatabaseManager{
                     .build());
         }
         influxDBpointTemplate.write(batchPoints.getPoints());
+    }
+
+    @Override
+    public void upsertJob(Job job) {
+        jobRepository.save(job);
     }
 }

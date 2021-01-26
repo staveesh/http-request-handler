@@ -1,5 +1,7 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
+import com.taveeshsharma.requesthandler.dto.JobDescription;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class OrchAPI {
@@ -13,12 +15,8 @@ public class OrchAPI {
        Object response=null;
        if(requestType.equalsIgnoreCase(MEASUREMENT_CHECK_IN_TYPE)){
            //send the client a list of available jobs;
-           response= Measurement.getActiveJobs();
+           response= new JSONArray(Measurement.getActiveJobs());
            return response;
-       }
-       else if(requestType.equals(MEASUREMENT_SCHEDULE)){
-            //the request contains Measurement Description so should be added to the list of jobs
-            Measurement.addMeasurement(request);
        }
        else if(requestType.equals(MEASUREMENT_SUCCESSFUL)) {
            return Measurement.recordSuccessfulJob(request);
@@ -26,6 +24,5 @@ public class OrchAPI {
        else{
            throw new IllegalArgumentException();
        }
-       return response;
     }
 }

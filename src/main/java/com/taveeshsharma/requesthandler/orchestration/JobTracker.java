@@ -1,7 +1,10 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
+import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,9 @@ import java.util.List;
 public class JobTracker {
 
     private static final Logger logger = LoggerFactory.getLogger(JobTracker.class);
+
+    @Autowired
+    DatabaseManager dbManager;
 
     @Scheduled(fixedRate = 2*60*1000, initialDelay = 60*1000)
     public void track(){
@@ -27,11 +33,12 @@ public class JobTracker {
             Job job=activeJobs.get(i);
             if(job.isRemovable()){
                 activeJobs.remove(i);
-                logger.info("Job is with "+job.getMeasurementDesc().get("key") +" removed");
+                logger.info("Job is with "+job.getKey() +" removed");
             }
             else if(job.isResettable(currentTime)){
                 job.reset();
-                logger.info("Job is with "+job.getMeasurementDesc().get("key") +" is reset");
+                dbManager.upsertJob(job);
+                logger.info("Job is with "+job.getKey() +" is reset");
             }
         }
         logger.info("Current Job Size is " + activeJobs.size());

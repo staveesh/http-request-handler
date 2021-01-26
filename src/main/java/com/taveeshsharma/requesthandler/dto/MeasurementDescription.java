@@ -2,15 +2,28 @@ package com.taveeshsharma.requesthandler.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Date;
+
 public class MeasurementDescription {
+
     private String type;
     private String key;
-    private String startTime;
-    private String endTime;
+    private Date startTime;
+    private Date endTime;
     private Integer intervalSec;
     private Long count;
     private Long priority;
     private Parameters parameters;
+    public MeasurementDescription(String type, String key, Date startTime, Date endTime, Integer intervalSec, Long count, Long priority, Parameters parameters) {
+        this.type = type;
+        this.key = key;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.intervalSec = intervalSec;
+        this.count = count;
+        this.priority = priority;
+        this.parameters = parameters;
+    }
 
     @JsonProperty("type")
     public String getType() {
@@ -31,20 +44,20 @@ public class MeasurementDescription {
     }
 
     @JsonProperty("start_time")
-    public String getStartTime() {
+    public Date getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(Date startTime) {
         this.startTime = startTime;
     }
 
     @JsonProperty("end_time")
-    public String getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(String endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
