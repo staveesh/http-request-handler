@@ -45,9 +45,5 @@ Make sure that `docker` and `docker-compose` are installed on your host machine.
 
 6. Run the following command from the current directory to launch the server:
    ```
-   bash start.sh
-   ```
-7. To monitor server logs, run:
-   ```
-   docker-compose logs -f -t
+   docker-compose up --build
    ```
