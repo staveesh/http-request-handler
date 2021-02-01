@@ -1,5 +1,7 @@
 package com.taveeshsharma.requesthandler.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Date;
@@ -8,22 +10,16 @@ public class MeasurementDescription {
 
     private String type;
     private String key;
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private Date startTime;
+    @JsonFormat
+            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
     private Date endTime;
     private Integer intervalSec;
     private Long count;
     private Long priority;
     private Parameters parameters;
-    public MeasurementDescription(String type, String key, Date startTime, Date endTime, Integer intervalSec, Long count, Long priority, Parameters parameters) {
-        this.type = type;
-        this.key = key;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.intervalSec = intervalSec;
-        this.count = count;
-        this.priority = priority;
-        this.parameters = parameters;
-    }
 
     @JsonProperty("type")
     public String getType() {

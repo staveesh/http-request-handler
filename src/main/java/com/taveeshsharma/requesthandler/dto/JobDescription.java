@@ -9,12 +9,6 @@ public class JobDescription {
     private Integer nodeCount;
     private Integer jobInterval;
 
-    public JobDescription(MeasurementDescription measurementDescription, Integer nodeCount, Integer jobInterval) {
-        this.measurementDescription = measurementDescription;
-        this.nodeCount = nodeCount;
-        this.jobInterval = jobInterval;
-    }
-
     @JsonProperty("measurement_description")
     public MeasurementDescription getMeasurementDescription() {
         return measurementDescription;

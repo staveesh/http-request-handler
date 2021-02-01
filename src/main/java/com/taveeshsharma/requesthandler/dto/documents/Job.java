@@ -197,15 +197,15 @@ public class Job {
     }
 
     public MeasurementDescription getMeasurementDescription() {
-        return new MeasurementDescription(
-                type,
-                key,
-                startTime,
-                endTime,
-                intervalSec,
-                count,
-                priority,
-                parameters
-        );
+        MeasurementDescription description = new MeasurementDescription();
+        description.setType(type);
+        description.setKey(key);
+        description.setStartTime(startTime);
+        description.setEndTime(endTime);
+        description.setIntervalSec(intervalSec);
+        description.setCount(count);
+        description.setPriority(priority);
+        description.setParameters(parameters);
+        return description;
     }
 }

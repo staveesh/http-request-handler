@@ -38,13 +38,15 @@ public class Driver {
 
     @Async
     public void initiate(){
-        this.fileMonitor = new FileMonitor(
-                fileServerHostname,
-                numRetryConnect,
-                millisecondsTillRetryConnect,
-                fileMonitorDelay
-        );
-        this.connectionEstablished = fileMonitor.start();
+        if(!fileServerHostname.isEmpty()) {
+            this.fileMonitor = new FileMonitor(
+                    fileServerHostname,
+                    numRetryConnect,
+                    millisecondsTillRetryConnect,
+                    fileMonitorDelay
+            );
+            this.connectionEstablished = fileMonitor.start();
+        }
     }
 
     @Scheduled(fixedRateString = "${milliseconds.till.analyze.pcapfiles}",initialDelayString = "${milliseconds.init.delay}")

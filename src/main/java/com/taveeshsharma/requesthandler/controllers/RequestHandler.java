@@ -102,17 +102,10 @@ public class RequestHandler {
         final String jwt = jwtUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
-    // Dummy endpoint to check if the JWT token is still valid
-    @RequestMapping(value= "/logged_in", method = RequestMethod.GET)
-    public ResponseEntity<?> isUserLoggedIn(){
-        return ResponseEntity.ok().build();
-    }
 
     @RequestMapping(value = "/schedule", method = RequestMethod.POST)
     public ResponseEntity<?> scheduleMeasurement(@RequestBody ScheduleRequest request){
-        // Hash email ID of the user
         request.setUserId(ApiUtils.hashUserName(request.getUserId()));
-        logger.info("Received POST request for scheduling measurement : "+request);
         Optional<ApiError> error = ApiUtils.isValidScheduleRequest(request);
         if(error.isPresent())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.get());
