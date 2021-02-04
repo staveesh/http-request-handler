@@ -2,6 +2,7 @@ package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
+import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,9 @@ public class JobTracker {
     @Autowired
     DatabaseManager dbManager;
 
+    @Autowired
+    SchedulingAlgorithm roundRobinAlgorithm;
+
     @Scheduled(fixedRate = 2*60*1000, initialDelay = 60*1000)
     public void track(){
         Measurement.acquireWriteLock();
@@ -33,12 +37,12 @@ public class JobTracker {
             Job job=activeJobs.get(i);
             if(job.isRemovable()){
                 activeJobs.remove(i);
-                logger.info("Job is with "+job.getKey() +" removed");
+                logger.info("Job id with "+job.getKey() +" removed");
             }
             else if(job.isResettable(currentTime)){
                 job.reset();
                 dbManager.upsertJob(job);
-                logger.info("Job is with "+job.getKey() +" is reset");
+                logger.info("Job id with "+job.getKey() +" is reset");
             }
         }
         logger.info("Current Job Size is " + activeJobs.size());

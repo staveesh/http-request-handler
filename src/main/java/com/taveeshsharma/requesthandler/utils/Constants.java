@@ -1,5 +1,8 @@
 package com.taveeshsharma.requesthandler.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Constants {
     public static final String BAD_REQUEST = "Bad request";
     public static final String UNAUTHORIZED = "Unauthorized";
@@ -10,5 +13,17 @@ public class Constants {
                                DNS_TYPE = "dns_lookup",
                                HTTP_TYPE = "http",
                                TRACERT_TYPE = "traceroute";
+    public static final String DEVICE_CHECKIN_TYPE = "check_in";
 
+    // Contains assumed values of execution times (minutes) for each job type
+    public static final Map<String, Integer> JOB_EXECUTION_TIMES = new HashMap<String, Integer>() {{
+        put(PING_TYPE, 2);
+        put(DNS_TYPE, 2);
+        put(HTTP_TYPE, 2);
+        put(TRACERT_TYPE, 2);
+        put(TCP_TYPE, 2);
+    }};
+
+    // TODO: make it dynamic later
+    public static final int MAX_NODES_ACTIVE = 5;
 }
