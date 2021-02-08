@@ -6,6 +6,7 @@ import com.google.gson.JsonDeserializer;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
+import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
 import com.taveeshsharma.requesthandler.orchestration.Measurement;
 import com.taveeshsharma.requesthandler.orchestration.OrchAPI;
 import org.json.JSONArray;
@@ -35,6 +36,12 @@ public class TcpRequestHandler {
     @Autowired
     private DatabaseManager databaseManager;
 
+    private void recordCheckinRequest(JSONObject request){
+        JSONObject accessPoint = request.getJSONObject("accessPointInfo");
+        databaseManager.writeAccessPointInfo(accessPoint);
+        databaseManager.writeMobileDeviceInfo(request);
+    }
+
     @Async
     public void run() {
         try {
@@ -47,6 +54,7 @@ public class TcpRequestHandler {
                     if (request.has("requestType")) {
                         String type = request.getString("requestType");
                         if(type.equalsIgnoreCase("checkin")) {
+                            recordCheckinRequest(request);
                             JSONArray jobArray = (JSONArray) OrchAPI.returnResponse(request);
                             PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
                             out.println(jobArray.toString());

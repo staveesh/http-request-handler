@@ -13,7 +13,8 @@ public class Constants {
                                DNS_TYPE = "dns_lookup",
                                HTTP_TYPE = "http",
                                TRACERT_TYPE = "traceroute";
-    public static final String DEVICE_CHECKIN_TYPE = "check_in";
+    public static final String ACCESS_POINT_TYPE = "ap_info";
+    public static final String MOBILE_DEVICE_TYPE = "mobile_devices";
 
     // Contains assumed values of execution times (minutes) for each job type
     public static final Map<String, Integer> JOB_EXECUTION_TIMES = new HashMap<String, Integer>() {{

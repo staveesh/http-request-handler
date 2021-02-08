@@ -26,9 +26,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Component
 public class DatabaseManagerImpl implements DatabaseManager{
@@ -74,7 +77,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
                             String.format("SELECT * FROM %s WHERE taskKey = \'%s\'", type, id),
                             DB_NAME
                     ));
-        Gson gson = new GsonBuilder().create();
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         switch (type.toLowerCase()) {
             case Constants.TCP_TYPE:
@@ -289,5 +291,71 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Override
     public void upsertJob(Job job) {
         jobRepository.save(job);
+    }
+
+    @Override
+    public void writeAccessPointInfo(JSONObject accessPoint) {
+        long time = accessPoint.getLong("timestamp");
+        AccessPointMeasurement accessPointMeasurement = new AccessPointMeasurement();
+        accessPointMeasurement.setDeviceId(accessPoint.getString("deviceId"));
+        accessPointMeasurement.setBSSID(accessPoint.getString("BSSID"));
+        accessPointMeasurement.setSSID(accessPoint.getString("SSID"));
+        accessPointMeasurement.setFrequency(accessPoint.getInt("frequency"));
+        accessPointMeasurement.setIpAddress(accessPoint.getString("ipAddress"));
+        accessPointMeasurement.setLinkSpeed(accessPoint.getInt("linkSpeed"));
+        accessPointMeasurement.setMacAddress(accessPoint.getString("macAddress"));
+        accessPointMeasurement.setRssi(accessPoint.getInt("rssi"));
+        Point point = Point.measurementByPOJO(AccessPointMeasurement.class)
+                .time(time, TimeUnit.MICROSECONDS)
+                .addFieldsFromPOJO(accessPointMeasurement)
+                .build();
+        influxDBpointTemplate.write(point);
+    }
+
+    @Override
+    public void writeMobileDeviceInfo(JSONObject mobileDevice) {
+        long time = mobileDevice.getLong("timestamp");
+        MobileDeviceMeasurement mobile = new MobileDeviceMeasurement();
+        mobile.setDeviceId(mobileDevice.getString("deviceId"));
+        mobile.setLatitude(mobileDevice.getDouble("latitude"));
+        mobile.setLongitude(mobileDevice.getDouble("longitude"));
+        mobile.setLocationType(mobileDevice.getString("locationType"));
+        mobile.setNetworkType(mobileDevice.getString("networkType"));
+        mobile.setBattery(mobileDevice.getInt("battery"));
+        Point point = Point.measurementByPOJO(MobileDeviceMeasurement.class)
+                .time(time, TimeUnit.MICROSECONDS)
+                .addFieldsFromPOJO(mobile)
+                .build();
+        influxDBpointTemplate.write(point);
+    }
+
+    @Override
+    public List<MobileDeviceMeasurement> getAvailableDevices() {
+        // Gets a list of all devices that have checked-in during the last 10 minutes
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -10);
+        long tenMinutesBack = cal.getTime().getTime()*1000*1000;
+        QueryResult queryResult = influxDBpointTemplate.query(new Query(
+                String.format("SELECT * FROM %s WHERE time > %s",
+                        Constants.MOBILE_DEVICE_TYPE, tenMinutesBack),
+                DB_NAME
+        ));
+        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+        return resultMapper.toPOJO(queryResult, MobileDeviceMeasurement.class);
+    }
+
+    @Override
+    public List<AccessPointMeasurement> getAllAccessPoints(String deviceId) {
+        // Gets a list of all access points that the node was connected to during the past 1 hour
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.HOUR, -1);
+        long oneHourBack = cal.getTime().getTime()*1000*1000;
+        QueryResult queryResult = influxDBpointTemplate.query(new Query(
+                String.format("SELECT * FROM %s WHERE time > %s AND device_id = \'%s\'",
+                        Constants.ACCESS_POINT_TYPE, oneHourBack, deviceId),
+                DB_NAME
+        ));
+        InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
+        return resultMapper.toPOJO(queryResult, AccessPointMeasurement.class);
     }
 }

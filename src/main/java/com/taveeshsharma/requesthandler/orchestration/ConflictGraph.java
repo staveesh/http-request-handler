@@ -26,7 +26,8 @@ public class ConflictGraph {
     public void addNode(Job newJob){
         conflictMatrix.put(newJob.getKey(), new HashMap<>());
         for(Job existingJob : jobs){
-            if(newJob.conflictsWith(existingJob)){
+            if(newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
+                    .getParameters().getTarget())){
                 conflictMatrix.get(existingJob.getKey()).put(newJob.getKey(), true);
                 conflictMatrix.get(newJob.getKey()).put(existingJob.getKey(), true);
             } else{

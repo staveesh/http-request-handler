@@ -3,7 +3,9 @@ package com.taveeshsharma.requesthandler.manager;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
+import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
 import com.taveeshsharma.requesthandler.measurements.Measurements;
+import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
 import com.taveeshsharma.requesthandler.measurements.PcapMeasurements;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -30,4 +32,12 @@ public interface DatabaseManager {
     public List<Job> getCurrentlyActiveJobs(Date currentTime);
 
     public void upsertJob(Job job);
+
+    public void writeAccessPointInfo(JSONObject accessPointMeasurement);
+
+    public List<MobileDeviceMeasurement> getAvailableDevices();
+
+    public void writeMobileDeviceInfo(JSONObject mobileDevice);
+
+    public List<AccessPointMeasurement> getAllAccessPoints(String deviceId);
 }

@@ -1,8 +1,11 @@
 package com.taveeshsharma.requesthandler.controllers;
 
 import com.taveeshsharma.requesthandler.dto.AuthenticationResponse;
+import com.taveeshsharma.requesthandler.dto.NodesResponse;
 import com.taveeshsharma.requesthandler.dto.documents.*;
 import com.taveeshsharma.requesthandler.manager.UserManager;
+import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
+import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
 import com.taveeshsharma.requesthandler.orchestration.Measurement;
 import com.taveeshsharma.requesthandler.utils.*;
 import com.google.gson.Gson;
@@ -161,5 +164,27 @@ public class RequestHandler {
         }
         List<TotalAppUsage> result = new ArrayList<>(aggregated.values());
         return ResponseEntity.ok().body(result);
+    }
+
+    @RequestMapping(value = "/nodes",method = RequestMethod.GET)
+    public ResponseEntity<?> getActiveNodes() {
+        List<MobileDeviceMeasurement> data = dbManager.getAvailableDevices();
+        List<String> deviceIds = data.stream()
+                .map(MobileDeviceMeasurement::getDeviceId)
+                .distinct()
+                .collect(Collectors.toList());
+        NodesResponse<MobileDeviceMeasurement> response = new NodesResponse<>(data, deviceIds);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @RequestMapping(value = "/access-points", method = RequestMethod.GET)
+    public ResponseEntity<?> getAllAccessPointsForAnode(@RequestParam("id") String deviceId) {
+        List<AccessPointMeasurement> data = dbManager.getAllAccessPoints(deviceId);
+        List<String> bssids = data.stream()
+                .map(AccessPointMeasurement::getBSSID)
+                .distinct()
+                .collect(Collectors.toList());
+        NodesResponse<AccessPointMeasurement> response = new NodesResponse<>(data, bssids);
+        return ResponseEntity.ok().body(response);
     }
 }
