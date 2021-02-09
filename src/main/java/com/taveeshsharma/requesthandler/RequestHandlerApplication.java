@@ -4,7 +4,6 @@ import com.taveeshsharma.requesthandler.analyzer.Driver;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.orchestration.Measurement;
-import com.taveeshsharma.requesthandler.tcpserver.TcpServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,9 +32,6 @@ public class RequestHandlerApplication {
 
 	@PostConstruct
 	public void init(){
-		// Run TCP server
-		TcpServer tcpServer = applicationContext.getBean(TcpServer.class);
-		tcpServer.run();
 		// Initialize the job queue
 		List<Job> storedActiveJobs = dbManager.getCurrentlyActiveJobs(new Date());
 		for(Job job : storedActiveJobs)
