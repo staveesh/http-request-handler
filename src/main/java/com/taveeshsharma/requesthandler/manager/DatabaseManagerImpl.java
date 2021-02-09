@@ -322,6 +322,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
         mobile.setLocationType(mobileDevice.getString("locationType"));
         mobile.setNetworkType(mobileDevice.getString("networkType"));
         mobile.setBattery(mobileDevice.getInt("battery"));
+        mobile.setTemperature(mobileDevice.getInt("temperature"));
         Point point = Point.measurementByPOJO(MobileDeviceMeasurement.class)
                 .time(time, TimeUnit.MICROSECONDS)
                 .addFieldsFromPOJO(mobile)

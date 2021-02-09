@@ -23,6 +23,8 @@ public class MobileDeviceMeasurement {
     private String networkType;
     @Column(name = "battery_level")
     private Integer battery;
+    @Column(name = "temperature")
+    private Integer temperature;
 
     public Instant getTime() {
         return time;
@@ -78,5 +80,13 @@ public class MobileDeviceMeasurement {
 
     public void setBattery(Integer battery) {
         this.battery = battery;
+    }
+
+    public Integer getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(Integer temperature) {
+        this.temperature = temperature;
     }
 }
