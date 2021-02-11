@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class SchedulingAlgorithm {
 
@@ -38,29 +39,41 @@ public abstract class SchedulingAlgorithm {
             parallelJobs.removeIf(job -> ApiUtils.addMinutes(schedule.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
+                logger.info("Current job : "+currentJob.getKey());
+                logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
                 if (!schedule.containsKey(currentJob)) {
                     boolean hasConflicts = false;
                     for (Job alreadyScheduledJob : parallelJobs) {
                         // If current job doesn't conflict with already running parallel job, schedule it
-                        if (conflictMatrix.get(alreadyScheduledJob.getKey()).get(currentJob.getKey()) &&
-                                parallelJobs.size() < devices.size()) {
+                        if (conflictMatrix.get(alreadyScheduledJob.getKey()).get(currentJob.getKey())) {
                             hasConflicts = true;
                         }
                     }
-                    if(!hasConflicts) {
-                        String deviceId = devices.get(parallelJobs.size());
+                    if(!hasConflicts && parallelJobs.size() < devices.size()) {
+                        parallelJobs.add(currentJob);
+                        String deviceId = devices.get(parallelJobs.size()-1);
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(), currentJob.getStartTime(), currentJob.getEndTime(), currentSchedulingPoint,deviceId));
                         schedule.put(currentJob, new Assignment(currentSchedulingPoint,
                                 deviceId));
                         schedulingPoints.add(ApiUtils.addMinutes(currentSchedulingPoint,
                                 Constants.JOB_EXECUTION_TIMES.get(currentJob.getType())));
-                        parallelJobs.add(currentJob);
                     }
                 }
             }
         }
+        logger.info("Scheduling complete");
+        printSchedule(schedule);
         return schedule;
+    }
+
+    private void printSchedule(Map<Job, Assignment> schedule){
+        for(Map.Entry<Job, Assignment> jobAssignment : schedule.entrySet()){
+            logger.info(String.format("Job with key %s scheduled on device %s at time %s",
+                    jobAssignment.getKey().getKey(),
+                    jobAssignment.getValue().getDeviceKey(),
+                    jobAssignment.getValue().getDispatchTime()));
+        }
     }
 
 }

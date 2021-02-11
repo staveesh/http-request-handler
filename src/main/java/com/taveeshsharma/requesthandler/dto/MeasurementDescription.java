@@ -1,8 +1,8 @@
 package com.taveeshsharma.requesthandler.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.taveeshsharma.requesthandler.utils.Constants;
 
 import java.util.Date;
 
@@ -11,10 +11,10 @@ public class MeasurementDescription {
     private String type;
     private String key;
     @JsonFormat
-            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",timezone = Constants.DEFAULT_TIMEZONE)
     private Date startTime;
     @JsonFormat
-            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",timezone = Constants.DEFAULT_TIMEZONE)
     private Date endTime;
     private Integer intervalSec;
     private Long count;

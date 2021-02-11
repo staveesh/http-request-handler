@@ -6,8 +6,7 @@ import com.google.gson.JsonDeserializer;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
-import com.taveeshsharma.requesthandler.orchestration.Measurement;
-import com.taveeshsharma.requesthandler.orchestration.OrchAPI;
+import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -15,23 +14,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
-
-import java.io.PrintWriter;
 import java.util.Date;
 
 @Component
 public class ServerSocketHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(ServerSocketHandler.class);
+
     @Autowired
     private DatabaseManager databaseManager;
+
+    @Autowired
+    private SchedulerService schedulerService;
 
     private void recordCheckinRequest(JSONObject request){
         JSONObject accessPoint = request.getJSONObject("accessPointInfo");
         databaseManager.writeAccessPointInfo(accessPoint);
         databaseManager.writeMobileDeviceInfo(request);
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(ServerSocketHandler.class);
 
     public String handleMessage(byte[] message, MessageHeaders messageHeaders) {
         String jsonString = new String(message);
@@ -40,7 +40,7 @@ public class ServerSocketHandler {
             String type = request.getString("requestType");
             if(type.equalsIgnoreCase("checkin")) {
                 recordCheckinRequest(request);
-                JSONArray jobArray = (JSONArray) OrchAPI.returnResponse(request);
+                JSONArray jobArray = new JSONArray(schedulerService.getActiveJobs(request.getString("deviceId")));
                 logger.info("Active Jobs Sent To Phone");
                 return jobArray.toString();
             }else if(type.equalsIgnoreCase("summary")){
@@ -51,7 +51,7 @@ public class ServerSocketHandler {
             }
         } else{
             if(request.getBoolean("isExperiment")){
-                Job job = Measurement.recordSuccessfulJob(request);
+                Job job = schedulerService.recordSuccessfulJob(request);
                 databaseManager.upsertJob(job);
             }
             databaseManager.writeValues(request);

@@ -26,6 +26,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -334,7 +338,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
     public List<MobileDeviceMeasurement> getAvailableDevices() {
         // Gets a list of all devices that have checked-in during the last 10 minutes
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, -10);
+        cal.add(Calendar.MINUTE, -1*Constants.MINUTES_BEFORE_SCHEDULING_REQUEST);
         long tenMinutesBack = cal.getTime().getTime()*1000*1000;
         QueryResult queryResult = influxDBpointTemplate.query(new Query(
                 String.format("SELECT * FROM %s WHERE time > %s",

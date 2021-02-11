@@ -3,7 +3,9 @@ package com.taveeshsharma.requesthandler;
 import com.taveeshsharma.requesthandler.analyzer.Driver;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
-import com.taveeshsharma.requesthandler.orchestration.Measurement;
+import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,11 +22,16 @@ import java.util.List;
 @EnableScheduling
 public class RequestHandlerApplication {
 
+	private static final Logger logger = LoggerFactory.getLogger(RequestHandlerApplication.class);
+
 	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Autowired
 	private DatabaseManager dbManager;
+
+	@Autowired
+	private SchedulerService schedulerService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(RequestHandlerApplication.class, args);
@@ -34,8 +41,10 @@ public class RequestHandlerApplication {
 	public void init(){
 		// Initialize the job queue
 		List<Job> storedActiveJobs = dbManager.getCurrentlyActiveJobs(new Date());
-		for(Job job : storedActiveJobs)
-			Measurement.addMeasurement(job);
+		for(Job job : storedActiveJobs) {
+			logger.info(job.getKey()+" : "+job.getStartTime() + " : "+job.getStartTime());
+			schedulerService.addMeasurement(job);
+		}
 		// Initiate PCAP File analyzer
 		Driver pcapAnalyzerDriver = applicationContext.getBean(Driver.class);
 		pcapAnalyzerDriver.initiate();

@@ -25,6 +25,6 @@ public class Constants {
         put(TCP_TYPE, 2);
     }};
 
-    // TODO: make it dynamic later
-    public static final int MAX_NODES_ACTIVE = 5;
+    public static final int MINUTES_BEFORE_SCHEDULING_REQUEST = 10;
+    public static final String DEFAULT_TIMEZONE = "Africa/Johannesburg";
 }

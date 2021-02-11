@@ -6,14 +6,11 @@ import com.taveeshsharma.requesthandler.dto.documents.*;
 import com.taveeshsharma.requesthandler.manager.UserManager;
 import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
 import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
-import com.taveeshsharma.requesthandler.orchestration.Measurement;
+import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import com.taveeshsharma.requesthandler.utils.*;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.taveeshsharma.requesthandler.dto.AppNetworkUsage;
 import com.taveeshsharma.requesthandler.dto.TotalAppUsage;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +48,9 @@ public class RequestHandler {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private SchedulerService schedulerService;
 
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public ResponseEntity<?> addNewUser(@RequestBody User user){
@@ -112,10 +112,12 @@ public class RequestHandler {
         Optional<ApiError> error = ApiUtils.isValidScheduleRequest(request);
         if(error.isPresent())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.get());
+        logger.info("Start time : "+request.getJobDescription().getMeasurementDescription().getStartTime().toString());
         dbManager.insertScheduledJob(request);
         Job newJob = new Job(request.getJobDescription());
+        logger.info("Job start time : "+newJob.getStartTime());
         dbManager.upsertJob(newJob);
-        Measurement.addMeasurement(newJob);
+        schedulerService.addMeasurement(newJob);
         return ResponseEntity.ok().build();
     }
 
