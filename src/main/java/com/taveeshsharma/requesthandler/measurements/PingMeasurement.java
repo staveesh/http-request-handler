@@ -27,6 +27,12 @@ public class PingMeasurement extends Measurements{
     @Column(name = "stddev_rtt_ms")
     private Double stddevRttMs;
 
+    @Column(name = "time_ms")
+    private Long timeMs;
+
+    @Column(name = "packet_loss")
+    private Double packetLoss;
+
     public String getTargetIpAddress() {
         return targetIpAddress;
     }
@@ -65,5 +71,21 @@ public class PingMeasurement extends Measurements{
 
     public void setStddevRttMs(Double stddevRttMs) {
         this.stddevRttMs = stddevRttMs;
+    }
+
+    public Long getTimeMs() {
+        return timeMs;
+    }
+
+    public void setTimeMs(Long timeMs) {
+        this.timeMs = timeMs;
+    }
+
+    public Double getPacketLoss() {
+        return packetLoss;
+    }
+
+    public void setPacketLoss(Double packetLoss) {
+        this.packetLoss = packetLoss;
     }
 }

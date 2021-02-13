@@ -1,13 +1,14 @@
 package com.taveeshsharma.requesthandler.dto.documents;
 
 import com.taveeshsharma.requesthandler.dto.JobDescription;
+import com.taveeshsharma.requesthandler.dto.JobInterval;
 import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
 import com.taveeshsharma.requesthandler.dto.Parameters;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Document("job_tracker")
@@ -15,15 +16,15 @@ public class Job {
     @Id
     private String key;
     private String type;
-    private Date startTime;
-    private Date endTime;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
     private Integer intervalSec;
     private Long count;
     private Long priority;
     private Parameters parameters;
     private Integer nodeCount;
-    private Integer jobInterval;
-    private Date nextReset;
+    private JobInterval jobInterval;
+    private ZonedDateTime nextReset;
     private AtomicInteger currentNodeCount;
 
     public Job() {
@@ -40,9 +41,9 @@ public class Job {
         this.parameters = description.getMeasurementDescription().getParameters();
         this.nodeCount = description.getNodeCount();
         this.jobInterval = description.getJobInterval();
-        if (description.getJobInterval() != 0) {
+        if (isRecurring()) {
             this.nextReset = ApiUtils.
-                    addHours(description.getMeasurementDescription().getStartTime(),
+                    addInterval(description.getMeasurementDescription().getStartTime(),
                             description.getJobInterval());
         }
         this.currentNodeCount = new AtomicInteger(0);
@@ -65,19 +66,19 @@ public class Job {
         this.type = type;
     }
 
-    public Date getStartTime() {
+    public ZonedDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(ZonedDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public ZonedDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(ZonedDateTime endTime) {
         this.endTime = endTime;
     }
 
@@ -121,19 +122,19 @@ public class Job {
         this.nodeCount = nodeCount;
     }
 
-    public Integer getJobInterval() {
+    public JobInterval getJobInterval() {
         return jobInterval;
     }
 
-    public void setJobInterval(Integer jobInterval) {
+    public void setJobInterval(JobInterval jobInterval) {
         this.jobInterval = jobInterval;
     }
 
-    public Date getNextReset() {
+    public ZonedDateTime getNextReset() {
         return nextReset;
     }
 
-    public void setNextReset(Date nextReset) {
+    public void setNextReset(ZonedDateTime nextReset) {
         this.nextReset = nextReset;
     }
 
@@ -150,12 +151,15 @@ public class Job {
     }
 
     private boolean jobElapsed() {
-        Date presentTime = new Date(); //either create once or all the time when checking
-        return presentTime.after(endTime);
+        ZonedDateTime presentTime = ZonedDateTime.now(); //either create once or all the time when checking
+        return presentTime.isAfter(endTime);
     }
 
     public boolean isRecurring() {
-        return jobInterval != 0;
+        long totalSeconds = this.jobInterval.getHours()*60*60 +
+                this.jobInterval.getMinutes()*60 +
+                this.getJobInterval().getSeconds();
+        return totalSeconds != 0;
     }
 
     public void addNodeCount() {
@@ -173,16 +177,16 @@ public class Job {
         return false; //then is recurring and
     }
 
-    public boolean isResettable(Date currentTime) {
+    public boolean isResettable(ZonedDateTime currentTime) {
         if (!isRecurring()) return false;
-        return nodesReached() || currentTime.after(nextReset);
+        return nodesReached() || currentTime.isAfter(nextReset);
     }
 
     private void setNextResetTime() {
         //if not recurring creating a new next reset time is useless as wont use this field
         //otherwise
         if (isRecurring()) {
-            this.nextReset = ApiUtils.addHours(startTime, jobInterval);
+            this.nextReset = ApiUtils.addInterval(startTime, jobInterval);
         }
     }
 

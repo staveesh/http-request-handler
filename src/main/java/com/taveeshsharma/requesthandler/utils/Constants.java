@@ -26,5 +26,4 @@ public class Constants {
     }};
 
     public static final int MINUTES_BEFORE_SCHEDULING_REQUEST = 10;
-    public static final String DEFAULT_TIMEZONE = "Africa/Johannesburg";
 }

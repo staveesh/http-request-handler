@@ -22,6 +22,18 @@ public class TCPMeasurement extends Measurements{
     @Column(name = "duration")
     private Double measurementDuration;
 
+    @Column(name = "mean_speed")
+    private Double meanSpeed;
+
+    @Column(name = "median_speed")
+    private Double medianSpeed;
+
+    @Column(name = "std_dev_speed")
+    private Double stdDevSpeed;
+
+    @Column(name = "max_speed")
+    private Double maxSpeed;
+
     public String getSpeedValues() {
         return speedValues;
     }
@@ -44,5 +56,37 @@ public class TCPMeasurement extends Measurements{
 
     public void setMeasurementDuration(Double measurementDuration) {
         this.measurementDuration = measurementDuration;
+    }
+
+    public Double getMeanSpeed() {
+        return meanSpeed;
+    }
+
+    public void setMeanSpeed(Double meanSpeed) {
+        this.meanSpeed = meanSpeed;
+    }
+
+    public Double getMedianSpeed() {
+        return medianSpeed;
+    }
+
+    public void setMedianSpeed(Double medianSpeed) {
+        this.medianSpeed = medianSpeed;
+    }
+
+    public Double getStdDevSpeed() {
+        return stdDevSpeed;
+    }
+
+    public void setStdDevSpeed(Double stdDevSpeed) {
+        this.stdDevSpeed = stdDevSpeed;
+    }
+
+    public Double getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void setMaxSpeed(Double maxSpeed) {
+        this.maxSpeed = maxSpeed;
     }
 }

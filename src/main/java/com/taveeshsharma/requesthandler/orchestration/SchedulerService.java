@@ -2,6 +2,8 @@ package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.manager.DatabaseManager;
+import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,8 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 @Service
 public class SchedulerService {
@@ -19,6 +23,9 @@ public class SchedulerService {
 
     @Autowired
     private SchedulingAlgorithm roundRobinAlgorithm;
+
+    @Autowired
+    private DatabaseManager dbManager;
 
     private final List<Job> activeJobs = new ArrayList<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -28,29 +35,40 @@ public class SchedulerService {
         acquireWriteLock();
         if (job == null) return;
         activeJobs.add(job);
+        requestScheduling();
         releaseWriteLock();
     }
 
-    public void requestScheduling(List<Job> jobQueue, List<String> devices) {
-        ConflictGraph graph = new ConflictGraph(jobQueue);
-        List<Job> processedJobs = roundRobinAlgorithm.preprocessJobs(graph, devices);
-        jobSchedule = roundRobinAlgorithm.generateSchedule(processedJobs,
-                graph.getConflictMatrix(), devices);
+    public void requestScheduling() {
+        acquireReadLock();
+        List<String> devices = dbManager.getAvailableDevices()
+                .stream().map(MobileDeviceMeasurement::getDeviceId)
+                .collect(Collectors.toList());
+        if(devices.size() > 0){
+            ConflictGraph graph = new ConflictGraph(activeJobs);
+            List<Job> processedJobs = roundRobinAlgorithm.preprocessJobs(graph, devices);
+            jobSchedule = roundRobinAlgorithm.generateSchedule(processedJobs,
+                    graph.getConflictMatrix(), devices);
+        } else{
+            logger.error("Skipping scheduling as no devices have checked in recently");
+        }
+        releaseReadLock();
     }
 
     public List<MeasurementDescription> getActiveJobs(String deviceId) {
         acquireReadLock();
         List<MeasurementDescription> sentJobs = new ArrayList<>();
         if (jobSchedule.size() > 0) {
-            Date currentTime = new Date();
-            for (Map.Entry<Job, Assignment> schedule : jobSchedule.entrySet()) {
-                if (currentTime.after(schedule.getValue().getDispatchTime()) &&
+            ZonedDateTime currentTime = ZonedDateTime.now();
+            for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<Job, Assignment> schedule = it.next();
+                if (currentTime.isAfter(schedule.getValue().getDispatchTime()) &&
                         !schedule.getKey().isRemovable() &&
                         !schedule.getKey().isResettable(currentTime) &&
                         deviceId.equalsIgnoreCase(schedule.getValue().getDeviceKey())
                 )
                     sentJobs.add(schedule.getKey().getMeasurementDescription());
-                    jobSchedule.remove(schedule.getKey());
+                    it.remove();
             }
         }
         logger.info("Sent Jobs size is " + sentJobs.size());

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,37 +39,21 @@ public class JobTracker {
         //if end time is reached remove job
         //if its a recurring job once
         //loop backwards so as to avoid skipping an index if I remove an element
-        Date currentTime = new Date();
-        Date minutesAfter = ApiUtils.addMinutes(currentTime, Constants.MINUTES_BEFORE_SCHEDULING_REQUEST);
-        logger.info("minutesAfter = "+minutesAfter);
-        List<Job> jobQueue = new ArrayList<>();
+        ZonedDateTime currentTime = ZonedDateTime.now();
         for(int i=activeJobs.size()-1;i>=0;i--){
             Job job=activeJobs.get(i);
-            logger.info("Tracking "+job.getKey()+", start time = "+job.getStartTime());
+            logger.info("Tracking "+job.getKey()+", start time = "+job.getStartTime().withZoneSameInstant(ZoneId.systemDefault()));
             if(job.isRemovable()){
                 activeJobs.remove(i);
                 logger.info("Job id with "+job.getKey() +" removed");
+                schedulerService.requestScheduling();
             }
             else if(job.isResettable(currentTime)) {
                 job.reset();
                 dbManager.upsertJob(job);
                 logger.info("Job id with " + job.getKey() + " is reset");
+                schedulerService.requestScheduling();
             }
-            else if(minutesAfter.after(job.getStartTime())){
-                jobQueue.add(job);
-            }
-        }
-        if(jobQueue.size() > 0){
-            List<MobileDeviceMeasurement> data = dbManager.getAvailableDevices();
-            List<String> deviceIds = data.stream()
-                    .map(MobileDeviceMeasurement::getDeviceId)
-                    .distinct()
-                    .collect(Collectors.toList());
-            logger.info("Devices that have checked-in recently : "+deviceIds);
-            if(deviceIds.size() > 0)
-                schedulerService.requestScheduling(jobQueue, deviceIds);
-            else
-                logger.info("Skipping scheduling as no devices are available");
         }
         logger.info("Current Job Size is " + activeJobs.size());
         schedulerService.releaseWriteLock();

@@ -1,21 +1,15 @@
 package com.taveeshsharma.requesthandler.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.taveeshsharma.requesthandler.utils.Constants;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class MeasurementDescription {
 
     private String type;
     private String key;
-    @JsonFormat
-            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",timezone = Constants.DEFAULT_TIMEZONE)
-    private Date startTime;
-    @JsonFormat
-            (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",timezone = Constants.DEFAULT_TIMEZONE)
-    private Date endTime;
+    private ZonedDateTime startTime;
+    private ZonedDateTime endTime;
     private Integer intervalSec;
     private Long count;
     private Long priority;
@@ -40,20 +34,20 @@ public class MeasurementDescription {
     }
 
     @JsonProperty("start_time")
-    public Date getStartTime() {
+    public ZonedDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public void setStartTime(ZonedDateTime startTime) {
         this.startTime = startTime;
     }
 
     @JsonProperty("end_time")
-    public Date getEndTime() {
+    public ZonedDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(ZonedDateTime endTime) {
         this.endTime = endTime;
     }
 

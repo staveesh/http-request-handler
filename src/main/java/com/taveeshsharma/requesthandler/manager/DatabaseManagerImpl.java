@@ -27,13 +27,10 @@ import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -136,6 +133,14 @@ public class DatabaseManagerImpl implements DatabaseManager{
             influxDBpointTemplate.write(p);
     }
 
+    // Parses a string of form "[val1, val2, val3, ...]" and returns the values in a list
+    private List<Double> parseTcpResults(String resultList){
+        String replaced = resultList.replaceAll("^\\[|]$", "");
+        return Arrays.stream(replaced.split(","))
+                .map(Double::parseDouble)
+                .collect(Collectors.toList());
+    }
+
     private Point createTCPPoint(JSONObject jsonObject){
         JSONObject measurementValues = jsonObject.getJSONObject("values");
         long time = jsonObject.getLong("timestamp");
@@ -145,6 +150,12 @@ public class DatabaseManagerImpl implements DatabaseManager{
         tcpMeasurement.setDataLimitExceeded(Boolean.parseBoolean(measurementValues.getString("data_limit_exceeded")));
         double duration = Double.parseDouble(measurementValues.getString("duration"));
         tcpMeasurement.setMeasurementDuration(Precision.round(duration, 2));
+        List<Double> values = parseTcpResults(tcpMeasurement.getSpeedValues());
+        double mean = ApiUtils.mean(values);
+        tcpMeasurement.setMeanSpeed(mean);
+        tcpMeasurement.setMedianSpeed(ApiUtils.median(values));
+        tcpMeasurement.setStdDevSpeed(ApiUtils.stddev(values, mean));
+        tcpMeasurement.setMaxSpeed(ApiUtils.max(values));
         return Point.measurementByPOJO(TCPMeasurement.class)
                 .time(time, TimeUnit.MICROSECONDS)
                 .addFieldsFromPOJO(tcpMeasurement)
@@ -156,17 +167,20 @@ public class DatabaseManagerImpl implements DatabaseManager{
         long time = jsonObject.getLong("timestamp");
 
         PingMeasurement pingMeasurement = (PingMeasurement) buildMeasurements(jsonObject, PingMeasurement.class);
-        double mean, max, std;
+        double mean, max, std, packetLoss;
 
         mean = Double.parseDouble(measurementValues.getString("mean_rtt_ms"));
         max = Double.parseDouble(measurementValues.getString("max_rtt_ms"));
         std = Double.parseDouble(measurementValues.getString("stddev_rtt_ms"));
+        packetLoss = Double.parseDouble(measurementValues.getString("packet_loss"));
 
         pingMeasurement.setTargetIpAddress(measurementValues.getString("target_ip"));
         pingMeasurement.setPingMethod(measurementValues.getString("ping_method"));
         pingMeasurement.setMeanRttMS(Precision.round(mean, 2));
         pingMeasurement.setMaxRttMs(Precision.round(max, 2));
         pingMeasurement.setStddevRttMs(Precision.round(std, 2));
+        pingMeasurement.setPacketLoss(Precision.round(packetLoss, 2));
+        pingMeasurement.setTimeMs(Long.parseLong(measurementValues.getString("time_ms")));
         return Point.measurementByPOJO(PingMeasurement.class)
                 .time(time, TimeUnit.MICROSECONDS)
                 .addFieldsFromPOJO(pingMeasurement)
@@ -208,12 +222,27 @@ public class DatabaseManagerImpl implements DatabaseManager{
     }
 
     private Point createTraceRTPoint(JSONObject jsonObject) {
-        // TODO: Parse the values and alter the jsonObject according to measurement format
-        JSONObject measurementValues = jsonObject.getJSONObject("values");
-        long time = jsonObject.getLong("timestamp");
-
         TracerouteMeasurement tracerouteMeasurement = (TracerouteMeasurement) buildMeasurements(jsonObject, TracerouteMeasurement.class);
-
+        JSONObject measurementValues = jsonObject.getJSONObject("values");
+        Iterator<String> keys = measurementValues.keys();
+        List<String> listOfHopsIPAddress = new ArrayList<>();
+        List<String> listOfRTTs = new ArrayList<>();
+        while(keys.hasNext()){
+            String key = keys.next();;
+            if(key.equalsIgnoreCase("num_hops"))
+                tracerouteMeasurement.setNumberOfHops(Integer.parseInt(measurementValues.getString(key)));
+            else if(key.equalsIgnoreCase("time_ms"))
+                tracerouteMeasurement.setTimeMs(Long.parseLong(measurementValues.getString(key)));
+            else{
+                if(key.endsWith("rtt_ms"))
+                    listOfRTTs.add(measurementValues.getString(key));
+                else if(key.endsWith("addr_1"))
+                    listOfHopsIPAddress.add(measurementValues.getString(key));
+            }
+        }
+        tracerouteMeasurement.setListOfHopsIPAddress(String.join(",", listOfHopsIPAddress));
+        tracerouteMeasurement.setListOfRTTs(String.join(",", listOfRTTs));
+        long time = jsonObject.getLong("timestamp");
         return Point.measurementByPOJO(TracerouteMeasurement.class)
                 .time(time, TimeUnit.MICROSECONDS)
                 .addFieldsFromPOJO(tracerouteMeasurement)

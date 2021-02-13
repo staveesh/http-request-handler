@@ -1,13 +1,12 @@
 package com.taveeshsharma.requesthandler.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 public class JobDescription {
 
     private MeasurementDescription measurementDescription;
     private Integer nodeCount;
-    private Integer jobInterval;
+    private JobInterval jobInterval;
 
     @JsonProperty("measurement_description")
     public MeasurementDescription getMeasurementDescription() {
@@ -26,11 +25,11 @@ public class JobDescription {
         this.nodeCount = nodeCount;
     }
     @JsonProperty("job_interval")
-    public Integer getJobInterval() {
+    public JobInterval getJobInterval() {
         return jobInterval;
     }
 
-    public void setJobInterval(Integer jobInterval) {
+    public void setJobInterval(JobInterval jobInterval) {
         this.jobInterval = jobInterval;
     }
 

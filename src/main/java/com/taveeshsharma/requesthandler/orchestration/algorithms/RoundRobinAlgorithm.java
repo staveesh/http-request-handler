@@ -25,7 +25,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
         logger.info("Preprocessing jobs using Round Robin scheme");
         List<Job> jobs = graph.getJobs();
         jobs.sort((j1, j2) -> {
-            if (j1.getStartTime().before(j2.getStartTime()))
+            if (j1.getStartTime().isBefore(j2.getStartTime()))
                 return -1;
             else if (j1.getStartTime().equals(j2.getStartTime()))
                 return 0;

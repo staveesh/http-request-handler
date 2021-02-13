@@ -29,6 +29,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+// TODO: Proper error handling in login/signup endpoints
+
 @RestController
 public class RequestHandler {
 
@@ -112,10 +114,8 @@ public class RequestHandler {
         Optional<ApiError> error = ApiUtils.isValidScheduleRequest(request);
         if(error.isPresent())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error.get());
-        logger.info("Start time : "+request.getJobDescription().getMeasurementDescription().getStartTime().toString());
         dbManager.insertScheduledJob(request);
         Job newJob = new Job(request.getJobDescription());
-        logger.info("Job start time : "+newJob.getStartTime());
         dbManager.upsertJob(newJob);
         schedulerService.addMeasurement(newJob);
         return ResponseEntity.ok().build();

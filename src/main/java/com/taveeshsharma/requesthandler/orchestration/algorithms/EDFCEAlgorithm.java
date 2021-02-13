@@ -29,7 +29,7 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
         logger.info("Preprocessing jobs using EDF-CE scheme");
         List<Job> jobs = graph.getJobs();
         jobs.sort((j1, j2) -> {
-            if (j1.getNextReset().before(j2.getNextReset()))
+            if (j1.getNextReset().isBefore(j2.getNextReset()))
                 return -1;
             else if (j1.getNextReset().equals(j2.getNextReset()))
                 return 0;

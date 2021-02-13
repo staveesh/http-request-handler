@@ -1,21 +1,22 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 public class Assignment {
-    private Date dispatchTime;
+    private ZonedDateTime dispatchTime;
     private String deviceKey;
 
-    public Assignment(Date dispatchTime, String deviceKey) {
+    public Assignment(ZonedDateTime dispatchTime, String deviceKey) {
         this.dispatchTime = dispatchTime;
         this.deviceKey = deviceKey;
     }
 
-    public Date getDispatchTime() {
+    public ZonedDateTime getDispatchTime() {
         return dispatchTime;
     }
 
-    public void setDispatchTime(Date dispatchTime) {
+    public void setDispatchTime(ZonedDateTime dispatchTime) {
         this.dispatchTime = dispatchTime;
     }
 

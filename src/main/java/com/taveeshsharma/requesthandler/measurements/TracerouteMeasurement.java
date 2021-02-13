@@ -13,11 +13,14 @@ public class TracerouteMeasurement extends Measurements {
     @Column(name="num_hops")
     private Integer numberOfHops;
 
-    @Column(name="hop_N_addr_i")
+    @Column(name="hop_N_addr_1")
     private String listOfHopsIPAddress;
 
     @Column(name="hop_N_rtt_ms")
     private String listOfRTTs;
+
+    @Column(name = "time_ms")
+    private Long timeMs;
 
     public Integer getNumberOfHops() {
         return numberOfHops;
@@ -41,5 +44,13 @@ public class TracerouteMeasurement extends Measurements {
 
     public void setListOfRTTs(String listOfRTTs) {
         this.listOfRTTs = listOfRTTs;
+    }
+
+    public Long getTimeMs() {
+        return timeMs;
+    }
+
+    public void setTimeMs(Long timeMs) {
+        this.timeMs = timeMs;
     }
 }
