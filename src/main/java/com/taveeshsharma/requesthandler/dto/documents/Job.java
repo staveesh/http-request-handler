@@ -1,5 +1,6 @@
 package com.taveeshsharma.requesthandler.dto.documents;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.taveeshsharma.requesthandler.dto.JobDescription;
 import com.taveeshsharma.requesthandler.dto.JobInterval;
 import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
@@ -16,7 +17,9 @@ public class Job {
     @Id
     private String key;
     private String type;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime endTime;
     private Integer intervalSec;
     private Long count;
@@ -24,6 +27,7 @@ public class Job {
     private Parameters parameters;
     private Integer nodeCount;
     private JobInterval jobInterval;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime nextReset;
     private AtomicInteger currentNodeCount;
 

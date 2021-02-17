@@ -7,7 +7,7 @@ public class JobInterval {
     private Long minutes;
     private Long seconds;
 
-    @JsonProperty("job_interval_hr")
+    @JsonProperty("jobIntervalHr")
     public Long getHours() {
         return hours;
     }
@@ -15,7 +15,7 @@ public class JobInterval {
     public void setHours(Long hours) {
         this.hours = hours;
     }
-    @JsonProperty("job_interval_min")
+    @JsonProperty("jobIntervalMin")
     public Long getMinutes() {
         return minutes;
     }
@@ -23,7 +23,7 @@ public class JobInterval {
     public void setMinutes(Long minutes) {
         this.minutes = minutes;
     }
-    @JsonProperty("job_interval_sec")
+    @JsonProperty("jobIntervalSec")
     public Long getSeconds() {
         return seconds;
     }

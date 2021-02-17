@@ -52,7 +52,6 @@ public class ServerSocketHandler {
                 List<MeasurementDescription> jobs = schedulerService.getActiveJobs(request.getString("deviceId"));
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                objectMapper.setDateFormat(ApiUtils.dateFormat);
                 logger.info("Active Jobs Sent To Phone");
                 try {
                     return objectMapper.writeValueAsString(jobs);

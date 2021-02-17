@@ -48,7 +48,8 @@ public class JobTracker {
             if(job.isRemovable()){
                 activeJobs.remove(i);
                 logger.info("Job id with "+job.getKey() +" removed");
-                schedulerService.requestScheduling();
+                if(activeJobs.size() > 0)
+                    schedulerService.requestScheduling();
             }
             else if(job.isResettable(currentTime)) {
                 job.reset();

@@ -1,5 +1,6 @@
 package com.taveeshsharma.requesthandler.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.ZonedDateTime;
@@ -8,7 +9,9 @@ public class MeasurementDescription {
 
     private String type;
     private String key;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime endTime;
     private Integer intervalSec;
     private Long count;
@@ -33,7 +36,7 @@ public class MeasurementDescription {
         this.key = key;
     }
 
-    @JsonProperty("start_time")
+    @JsonProperty("startTime")
     public ZonedDateTime getStartTime() {
         return startTime;
     }
@@ -42,7 +45,7 @@ public class MeasurementDescription {
         this.startTime = startTime;
     }
 
-    @JsonProperty("end_time")
+    @JsonProperty("endTime")
     public ZonedDateTime getEndTime() {
         return endTime;
     }
@@ -51,7 +54,7 @@ public class MeasurementDescription {
         this.endTime = endTime;
     }
 
-    @JsonProperty("interval_sec")
+    @JsonProperty("intervalSec")
     public Integer getIntervalSec() {
         return intervalSec;
     }

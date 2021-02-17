@@ -27,7 +27,7 @@ public class Parameters {
         this.server = server;
     }
 
-    @JsonProperty("dir_up")
+    @JsonProperty("dirUp")
     public Boolean getDirUp() {
         return dirUp;
     }
