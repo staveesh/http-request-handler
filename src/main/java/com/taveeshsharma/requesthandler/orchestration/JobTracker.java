@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,6 +44,7 @@ public class JobTracker {
         for(int i=activeJobs.size()-1;i>=0;i--){
             Job job=activeJobs.get(i);
             logger.info("Tracking "+job.getKey()+", start time = "+job.getStartTime().withZoneSameInstant(ZoneId.systemDefault()));
+            logger.info("Minutes to start : "+ChronoUnit.MINUTES.between(currentTime, job.getStartTime()));
             if(job.isRemovable()){
                 activeJobs.remove(i);
                 logger.info("Job id with "+job.getKey() +" removed");

@@ -20,8 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Component
 public class ServerSocketHandler {
@@ -50,7 +52,6 @@ public class ServerSocketHandler {
                 List<MeasurementDescription> jobs = schedulerService.getActiveJobs(request.getString("deviceId"));
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
                 objectMapper.setDateFormat(ApiUtils.dateFormat);
                 logger.info("Active Jobs Sent To Phone");
                 try {

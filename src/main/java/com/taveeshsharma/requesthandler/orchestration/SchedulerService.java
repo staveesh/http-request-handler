@@ -44,12 +44,12 @@ public class SchedulerService {
         List<String> devices = dbManager.getAvailableDevices()
                 .stream().map(MobileDeviceMeasurement::getDeviceId)
                 .collect(Collectors.toList());
-        if(devices.size() > 0){
+        if (devices.size() > 0) {
             ConflictGraph graph = new ConflictGraph(activeJobs);
             List<Job> processedJobs = roundRobinAlgorithm.preprocessJobs(graph, devices);
             jobSchedule = roundRobinAlgorithm.generateSchedule(processedJobs,
                     graph.getConflictMatrix(), devices);
-        } else{
+        } else {
             logger.error("Skipping scheduling as no devices have checked in recently");
         }
         releaseReadLock();
@@ -60,15 +60,19 @@ public class SchedulerService {
         List<MeasurementDescription> sentJobs = new ArrayList<>();
         if (jobSchedule.size() > 0) {
             ZonedDateTime currentTime = ZonedDateTime.now();
-            for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.entrySet().iterator(); it.hasNext();) {
+            for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Job, Assignment> schedule = it.next();
-                if (currentTime.isAfter(schedule.getValue().getDispatchTime()) &&
-                        !schedule.getKey().isRemovable() &&
-                        !schedule.getKey().isResettable(currentTime) &&
-                        deviceId.equalsIgnoreCase(schedule.getValue().getDeviceKey())
-                )
+                boolean dispatchTimeElapsed = currentTime.isAfter(schedule.getValue().getDispatchTime());
+                boolean isJobNotRemovable = !schedule.getKey().isRemovable();
+                boolean isJobNotResettable = !schedule.getKey().isResettable(currentTime);
+                boolean isAssignedDevice = deviceId.equalsIgnoreCase(schedule.getValue().getDeviceKey());
+                logger.info("Job key : "+schedule.getKey().getKey());
+                logger.info("dispatchTimeElapsed = "+dispatchTimeElapsed+", isJobNotRemovable = "+isJobNotRemovable+
+                " ,isJobNotResettable = "+isJobNotResettable+", isAssignedDevice = "+isAssignedDevice);
+                if (dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable && isAssignedDevice) {
                     sentJobs.add(schedule.getKey().getMeasurementDescription());
                     it.remove();
+                }
             }
         }
         logger.info("Sent Jobs size is " + sentJobs.size());
