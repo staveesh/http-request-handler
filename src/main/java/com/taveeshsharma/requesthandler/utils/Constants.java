@@ -26,4 +26,5 @@ public class Constants {
     }};
 
     public static final int MINUTES_BEFORE_SCHEDULING_REQUEST = 10;
+    public static final int MAX_TCP_MESSAGE_SIZE = 10000;
 }

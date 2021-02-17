@@ -28,6 +28,7 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
     public List<Job> preprocessJobs(ConflictGraph graph, List<String> devices) {
         logger.info("Preprocessing jobs using EDF-CE scheme");
         List<Job> jobs = graph.getJobs();
+        jobs.removeIf(Job::isRemovable);
         jobs.sort((j1, j2) -> {
             if (j1.getNextReset().isBefore(j2.getNextReset()))
                 return -1;

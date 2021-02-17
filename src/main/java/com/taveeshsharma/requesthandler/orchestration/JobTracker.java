@@ -41,6 +41,7 @@ public class JobTracker {
         //if its a recurring job once
         //loop backwards so as to avoid skipping an index if I remove an element
         ZonedDateTime currentTime = ZonedDateTime.now();
+        boolean schedulingRequired = false;
         for(int i=activeJobs.size()-1;i>=0;i--){
             Job job=activeJobs.get(i);
             logger.info("Tracking "+job.getKey()+", start time = "+job.getStartTime().withZoneSameInstant(ZoneId.systemDefault()));
@@ -48,16 +49,17 @@ public class JobTracker {
             if(job.isRemovable()){
                 activeJobs.remove(i);
                 logger.info("Job id with "+job.getKey() +" removed");
-                if(activeJobs.size() > 0)
-                    schedulerService.requestScheduling();
+                schedulingRequired = true;
             }
             else if(job.isResettable(currentTime)) {
                 job.reset();
                 dbManager.upsertJob(job);
                 logger.info("Job id with " + job.getKey() + " is reset");
-                schedulerService.requestScheduling();
+                schedulingRequired = true;
             }
         }
+        if(schedulingRequired && activeJobs.size() > 0)
+            schedulerService.requestScheduling();
         logger.info("Current Job Size is " + activeJobs.size());
         schedulerService.releaseWriteLock();
         logger.info("Job Tracker has Finished");

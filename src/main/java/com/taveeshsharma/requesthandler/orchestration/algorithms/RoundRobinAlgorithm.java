@@ -24,6 +24,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
     public List<Job> preprocessJobs(ConflictGraph graph, List<String> devices) {
         logger.info("Preprocessing jobs using Round Robin scheme");
         List<Job> jobs = graph.getJobs();
+        jobs.removeIf(Job::isRemovable);
         jobs.sort((j1, j2) -> {
             if (j1.getStartTime().isBefore(j2.getStartTime()))
                 return -1;

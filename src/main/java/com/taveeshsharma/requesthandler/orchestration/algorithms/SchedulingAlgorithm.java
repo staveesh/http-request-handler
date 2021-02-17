@@ -60,8 +60,7 @@ public abstract class SchedulingAlgorithm {
                         }
                     }
                     if(!hasConflicts && parallelJobs.size() < devices.size()) {
-                        parallelJobs.add(currentJob);
-                        String deviceId = devices.get(parallelJobs.size()-1);
+                        String deviceId = devices.get(parallelJobs.size());
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
@@ -71,6 +70,7 @@ public abstract class SchedulingAlgorithm {
                                 deviceId));
                         schedulingPoints.add(ApiUtils.addMinutes(currentSchedulingPoint,
                                 Constants.JOB_EXECUTION_TIMES.get(currentJob.getType())));
+                        parallelJobs.add(currentJob);
                     }
                 }
             }
