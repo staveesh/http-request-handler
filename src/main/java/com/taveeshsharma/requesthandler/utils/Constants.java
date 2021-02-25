@@ -25,6 +25,7 @@ public class Constants {
         put(TCP_TYPE, 2);
     }};
 
+    public static final int MAX_TCP_MESSAGE_SIZE = 10000;
     // TODO: make it dynamic later
     public static final int MAX_NODES_ACTIVE = 5;
 }
