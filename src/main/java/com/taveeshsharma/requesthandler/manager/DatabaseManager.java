@@ -27,8 +27,6 @@ public interface DatabaseManager {
 
     public void writePcapData(List<PcapMeasurements> pcapData);
 
-    public List<PersonalData> readPersonalData(String email);
-
     public List<Job> getCurrentlyActiveJobs(Date currentTime);
 
     public void upsertJob(Job job);
@@ -40,4 +38,6 @@ public interface DatabaseManager {
     public void writeMobileDeviceInfo(JSONObject mobileDevice);
 
     public List<AccessPointMeasurement> getAllAccessPoints(String deviceId);
+
+    public String findLastSummaryCheckinTime(String deviceId);
 }

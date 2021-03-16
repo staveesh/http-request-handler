@@ -136,36 +136,6 @@ public class RequestHandler {
         return ResponseEntity.ok().body(jobs);
     }
 
-    @RequestMapping(value = "/app-usage",method = RequestMethod.GET)
-    public ResponseEntity<?> getAppUsage(@RequestParam("email") String email){
-        logger.info(String.format(
-                "Received GET request for retrieving app usage with email = %s", email));
-        List<PersonalData> appUsage = dbManager.readPersonalData(email);
-        // Aggregate to return overall usage in MB
-        Map<String, TotalAppUsage> aggregated = new HashMap<>();
-        for(PersonalData data : appUsage){
-            List<AppNetworkUsage> allAppsSummary = data.getUserSummary();
-            for(AppNetworkUsage appSummary : allAppsSummary){
-                if(!aggregated.containsKey(appSummary.getName())){
-                    TotalAppUsage totalAppUsage = new TotalAppUsage();
-                    totalAppUsage.setName(appSummary.getName());
-                    totalAppUsage.setRx(BigDecimal.ZERO);
-                    totalAppUsage.setTx(BigDecimal.ZERO);
-                    aggregated.put(appSummary.getName(), totalAppUsage);
-                }
-                else{
-                    TotalAppUsage totalAppUsage = aggregated.get(appSummary.getName());
-                    totalAppUsage.setRx(totalAppUsage.getRx()
-                            .add(BigDecimal.valueOf((double) appSummary.getRx() / (1024 * 1024))));
-                    totalAppUsage.setTx(totalAppUsage.getTx()
-                            .add(BigDecimal.valueOf((double) appSummary.getTx() / (1024 * 1024))));
-                }
-            }
-        }
-        List<TotalAppUsage> result = new ArrayList<>(aggregated.values());
-        return ResponseEntity.ok().body(result);
-    }
-
     @RequestMapping(value = "/nodes",method = RequestMethod.GET)
     public ResponseEntity<?> getActiveNodes() {
         List<MobileDeviceMeasurement> data = dbManager.getAvailableDevices();

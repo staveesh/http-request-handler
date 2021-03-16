@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
-import java.io.PrintWriter;
 import java.util.Date;
 
 @Component
@@ -48,6 +47,9 @@ public class ServerSocketHandler {
                         .registerTypeAdapter(Date.class, (JsonDeserializer) (jsonElement, type1, context) -> new Date(jsonElement.getAsJsonPrimitive().getAsLong()))
                         .create();
                 databaseManager.writePersonalData(builder.fromJson(jsonString, PersonalData.class));
+            }
+            else if(type.equalsIgnoreCase("summary-checkin")){
+                return databaseManager.findLastSummaryCheckinTime(request.getString("deviceId"));
             }
         } else{
             if(request.getBoolean("isExperiment")){
