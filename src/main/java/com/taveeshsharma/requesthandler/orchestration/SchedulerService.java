@@ -41,9 +41,14 @@ public class SchedulerService {
 
     public void requestScheduling() {
         acquireReadLock();
-        List<String> devices = dbManager.getAvailableDevices()
-                .stream().map(MobileDeviceMeasurement::getDeviceId)
-                .collect(Collectors.toList());
+//        List<String> devices = dbManager.getAvailableDevices()
+//                .stream().map(MobileDeviceMeasurement::getDeviceId)
+//                .collect(Collectors.toList());
+        List<String> devices = new ArrayList<String>(){{
+            for(int i = 1; i <= 6; i++){
+                add("D"+i);
+            }
+        }};
         if (devices.size() > 0) {
             ConflictGraph graph = new ConflictGraph(activeJobs);
             List<Job> processedJobs = roundRobinAlgorithm.preprocessJobs(graph, devices);
@@ -115,5 +120,9 @@ public class SchedulerService {
 
     public List<Job> getJobs() {
         return activeJobs;
+    }
+
+    public Map<Job, Assignment> getJobSchedule() {
+        return jobSchedule;
     }
 }
