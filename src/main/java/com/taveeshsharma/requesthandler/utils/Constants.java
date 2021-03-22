@@ -18,11 +18,11 @@ public class Constants {
 
     // Contains assumed values of execution times (minutes) for each job type
     public static final Map<String, Integer> JOB_EXECUTION_TIMES = new HashMap<String, Integer>() {{
-        put(PING_TYPE, 2);
+        put(PING_TYPE, 1);
         put(DNS_TYPE, 2);
-        put(HTTP_TYPE, 2);
-        put(TRACERT_TYPE, 2);
-        put(TCP_TYPE, 2);
+        put(HTTP_TYPE, 3);
+        put(TRACERT_TYPE, 5);
+        put(TCP_TYPE, 4);
     }};
 
     public static final int MINUTES_BEFORE_SCHEDULING_REQUEST = 10;

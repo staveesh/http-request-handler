@@ -13,11 +13,23 @@ public class ConflictGraph {
     private static final Logger logger = LoggerFactory.getLogger(ConflictGraph.class);
 
     private List<Job> jobs;
-    Map<String, Map<String, Boolean>> conflictMatrix;
+    Map<Job, List<Job>> adjacencyMatrix;
 
     public ConflictGraph(List<Job> jobs) {
         this.jobs = jobs;
-        build();
+        adjacencyMatrix = new HashMap<>();
+    }
+
+    public void addEdge(Job j1, Job j2){
+        if(!adjacencyMatrix.containsKey(j1)){
+            adjacencyMatrix.put(j1, new ArrayList<>());
+        }
+        adjacencyMatrix.get(j1).add(j2);
+
+        if(!adjacencyMatrix.containsKey(j2)){
+            adjacencyMatrix.put(j2, new ArrayList<>());
+        }
+        adjacencyMatrix.get(j2).add(j1);
     }
 
     public List<Job> getJobs() {
@@ -29,40 +41,28 @@ public class ConflictGraph {
     }
 
     public void addNode(Job newJob){
-        conflictMatrix.put(newJob.getKey(), new HashMap<>());
+        adjacencyMatrix.put(newJob, new ArrayList<>());
         for(Job existingJob : jobs){
             if(!newJob.equals(existingJob)) {
                 // TODO: Need to advance the criteria for determining conflicts
                 if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
                         .getParameters().getTarget())) {
-                    conflictMatrix.get(newJob.getKey()).put(existingJob.getKey(), true);
-                } else {
-                    conflictMatrix.get(newJob.getKey()).put(existingJob.getKey(), false);
+                    adjacencyMatrix.get(newJob).add(existingJob);
                 }
             }
         }
         logger.info(String.format("Added job with key %s to conflict graph", newJob.getKey()));
     }
 
-    public void removeNode(Job toRemove){
-        jobs.remove(toRemove);
-        conflictMatrix.remove(toRemove.getKey());
-        for(Job existingJob : jobs){
-            conflictMatrix.get(existingJob.getKey()).remove(toRemove.getKey());
-        }
-        logger.info(String.format("Removed job with key %s from conflict graph", toRemove.getKey()));
+    public Map<Job, List<Job>> getAdjacencyMatrix() {
+        return adjacencyMatrix;
     }
 
-    public Map<String, Map<String, Boolean>> getConflictMatrix() {
-        return conflictMatrix;
+    public void setAdjacencyMatrix(Map<Job, List<Job>> adjacencyMatrix) {
+        this.adjacencyMatrix = adjacencyMatrix;
     }
 
-    public void setConflictMatrix(Map<String, Map<String, Boolean>> conflictMatrix) {
-        this.conflictMatrix = conflictMatrix;
-    }
-
-    private void build(){
-        conflictMatrix = new HashMap<>();
+    public void buildDefault(){
         for(Job job : this.jobs) {
             addNode(job);
         }

@@ -5,7 +5,6 @@ import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,7 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Autowired
-    private SchedulingAlgorithm roundRobinAlgorithm;
+    private SchedulingAlgorithm AOSDAlgorithm;
 
     @Autowired
     private DatabaseManager dbManager;
@@ -35,25 +34,24 @@ public class SchedulerService {
         acquireWriteLock();
         if (job == null) return;
         activeJobs.add(job);
-        requestScheduling();
         releaseWriteLock();
     }
 
-    public void requestScheduling() {
+    public void requestScheduling(ConflictGraph graph, List<String> devices) {
         acquireReadLock();
-//        List<String> devices = dbManager.getAvailableDevices()
-//                .stream().map(MobileDeviceMeasurement::getDeviceId)
-//                .collect(Collectors.toList());
-        List<String> devices = new ArrayList<String>(){{
-            for(int i = 1; i <= 6; i++){
-                add("D"+i);
-            }
-        }};
+        if(devices == null){
+            devices = dbManager.getAvailableDevices()
+                    .stream().map(MobileDeviceMeasurement::getDeviceId)
+                    .collect(Collectors.toList());
+        }
+        if(graph == null){
+            graph = new ConflictGraph(activeJobs);
+            graph.buildDefault();
+        }
         if (devices.size() > 0) {
-            ConflictGraph graph = new ConflictGraph(activeJobs);
-            List<Job> processedJobs = roundRobinAlgorithm.preprocessJobs(graph, devices);
-            jobSchedule = roundRobinAlgorithm.generateSchedule(processedJobs,
-                    graph.getConflictMatrix(), devices);
+            List<Job> processedJobs = AOSDAlgorithm.preprocessJobs(graph, devices);
+            jobSchedule = AOSDAlgorithm.generateSchedule(processedJobs,
+                    graph.getAdjacencyMatrix(), devices);
         } else {
             logger.error("Skipping scheduling as no devices have checked in recently");
         }

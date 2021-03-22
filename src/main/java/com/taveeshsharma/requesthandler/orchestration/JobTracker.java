@@ -59,7 +59,7 @@ public class JobTracker {
             }
         }
         if(schedulingRequired && activeJobs.size() > 0)
-            schedulerService.requestScheduling();
+            schedulerService.requestScheduling(null, null);
         logger.info("Current Job Size is " + activeJobs.size());
         schedulerService.releaseWriteLock();
         logger.info("Job Tracker has Finished");
