@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -21,7 +22,8 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Autowired
-    private SchedulingAlgorithm AOSDAlgorithm;
+    @Qualifier("dosdAlgorithm")
+    private SchedulingAlgorithm schedulingAlgorithm;
 
     @Autowired
     private DatabaseManager dbManager;
@@ -49,8 +51,8 @@ public class SchedulerService {
             graph.buildDefault();
         }
         if (devices.size() > 0) {
-            List<Job> processedJobs = AOSDAlgorithm.preprocessJobs(graph, devices);
-            jobSchedule = AOSDAlgorithm.generateSchedule(processedJobs,
+            List<Job> processedJobs = schedulingAlgorithm.preprocessJobs(graph, devices);
+            jobSchedule = schedulingAlgorithm.generateSchedule(processedJobs,
                     graph.getAdjacencyMatrix(), devices);
         } else {
             logger.error("Skipping scheduling as no devices have checked in recently");

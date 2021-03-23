@@ -125,18 +125,18 @@ class JobSchedulingTests {
 		}
 	}
 
-	@Test
-	void producesValidScheduleForRandomJobs() {
-		for (int i = 1; i <= 10; i++) {
-			schedulerService.addMeasurement(buildRandomJob(i));
-		}
-		List<String> devices = new ArrayList<>();
-		for(int i = 1; i <= 6; i++)
-			devices.add("D"+i);
-		schedulerService.requestScheduling(null, devices);
-		Map<Job, Assignment> schedule = schedulerService.getJobSchedule();
-		checkValidity(schedule);
-	}
+//	@Test
+//	void producesValidScheduleForRandomJobs() {
+//		for (int i = 1; i <= 10; i++) {
+//			schedulerService.addMeasurement(buildRandomJob(i));
+//		}
+//		List<String> devices = new ArrayList<>();
+//		for(int i = 1; i <= 6; i++)
+//			devices.add("D"+i);
+//		schedulerService.requestScheduling(null, devices);
+//		Map<Job, Assignment> schedule = schedulerService.getJobSchedule();
+//		checkValidity(schedule);
+//	}
 
 	@Test
 	void producesValidScheduleForFixedJobs(){

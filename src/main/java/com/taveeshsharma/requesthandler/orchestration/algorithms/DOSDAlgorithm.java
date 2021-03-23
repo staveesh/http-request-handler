@@ -147,6 +147,8 @@ public class DOSDAlgorithm extends SchedulingAlgorithm {
                 }
             }
         }
+        logger.info("Scheduling complete");
+        super.printSchedule(schedule);
         return schedule;
     }
 }

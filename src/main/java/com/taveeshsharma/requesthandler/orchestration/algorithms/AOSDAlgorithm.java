@@ -134,7 +134,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                         int start = availableColors.get(startIndex);
                         int end = availableColors.get(startIndex + numberOfSlots - 1);
                         logger.info("Start of consecutive sequence : " + startIndex);
-                        if ((parallelJobs.size() == 0 || start == slotStart) && parallelJobs.size() < devices.size()) {
+                        if (start == slotStart && parallelJobs.size() < devices.size()) {
                             ColorAssignment assignedRange = new ColorAssignment(start, end);
                             colorLookup.put(currentJob, assignedRange);
                             logger.info("Assigned color range : " + assignedRange);
@@ -147,6 +147,8 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                 }
             }
         }
+        logger.info("Scheduling complete");
+        super.printSchedule(schedule);
         return schedule;
     }
 }
