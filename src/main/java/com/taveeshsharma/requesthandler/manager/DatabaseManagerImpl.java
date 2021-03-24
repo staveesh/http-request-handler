@@ -3,6 +3,8 @@ package com.taveeshsharma.requesthandler.manager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
+import com.taveeshsharma.requesthandler.repository.JobMetricsRepository;
 import com.taveeshsharma.requesthandler.repository.JobRepository;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
@@ -47,6 +49,9 @@ public class DatabaseManagerImpl implements DatabaseManager{
 
     @Autowired
     private JobRepository jobRepository;
+
+    @Autowired
+    private JobMetricsRepository jobMetricsRepository;
 
     @Autowired
     private InfluxDBTemplate<Point> influxDBpointTemplate;
@@ -391,5 +396,15 @@ public class DatabaseManagerImpl implements DatabaseManager{
         ));
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         return resultMapper.toPOJO(queryResult, AccessPointMeasurement.class);
+    }
+
+    @Override
+    public JobMetrics findMetricsByJobKeyAndInstanceNumber(String key, int instanceNumber) {
+        return jobMetricsRepository.findByKeyAndInstanceNumber(key, instanceNumber);
+    }
+
+    @Override
+    public void upsertJobMetrics(JobMetrics metrics) {
+        jobMetricsRepository.save(metrics);
     }
 }

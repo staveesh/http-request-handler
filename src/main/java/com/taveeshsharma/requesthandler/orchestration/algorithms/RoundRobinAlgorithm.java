@@ -3,6 +3,7 @@ package com.taveeshsharma.requesthandler.orchestration.algorithms;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
+import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
@@ -44,9 +45,9 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
     }
 
     @Override
-    public Map<Job, Assignment> generateSchedule(List<Job> jobs,
+    public Schedule  generateSchedule(List<Job> jobs,
                                                  Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
-        Map<Job, Assignment> schedule = new HashMap<>();
+        Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
                 return -1;
@@ -62,12 +63,12 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
             // Reset parallel jobs list by removing the jobs that have finished execution
-            parallelJobs.removeIf(job -> ApiUtils.addMinutes(schedule.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addMinutes(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
                 logger.info("Current job : "+currentJob.getKey());
                 logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
-                if (!schedule.containsKey(currentJob)) {
+                if (!jobAssignments.containsKey(currentJob)) {
                     boolean hasConflicts = false;
                     for (Job alreadyScheduledJob : parallelJobs) {
                         // If current job doesn't conflict with already running parallel job, schedule it
@@ -82,7 +83,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentJob.getEndTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()),deviceId));
-                        schedule.put(currentJob, new Assignment(currentSchedulingPoint,
+                        jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint,
                                 deviceId));
                         schedulingPoints.add(ApiUtils.addMinutes(currentSchedulingPoint,
                                 Constants.JOB_EXECUTION_TIMES.get(currentJob.getType())));
@@ -91,8 +92,11 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                 }
             }
         }
+        Schedule schedule = new Schedule();
+        schedule.setGeneratedAt(ZonedDateTime.now());
+        schedule.setJobAssignments(jobAssignments);
         logger.info("Scheduling complete");
-        super.printSchedule(schedule);
+        super.printSchedule(jobAssignments);
         return schedule;
     }
 

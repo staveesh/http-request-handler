@@ -4,6 +4,7 @@ import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ColorAssignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
+import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
@@ -82,9 +83,9 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
     }
 
     @Override
-    public Map<Job, Assignment> generateSchedule(List<Job> jobs,
-                                                 Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
-        Map<Job, Assignment> schedule = new HashMap<>();
+    public Schedule generateSchedule(List<Job> jobs,
+                                     Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
+        Map<Job, Assignment> jobAssignments = new HashMap<>();
         Map<Job, ColorAssignment> colorLookup = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
@@ -111,10 +112,10 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             slotStart = 1 + (int) ChronoUnit.MINUTES.between(firstSchedulingPoint, currentSchedulingPoint);
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
-            parallelJobs.removeIf(job -> ApiUtils.addMinutes(schedule.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addMinutes(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
-                if (!schedule.containsKey(currentJob)) {
+                if (!jobAssignments.containsKey(currentJob)) {
                     logger.info("Current Job : " + currentJob.getKey());
                     logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
                     List<Integer> availableColors = new ArrayList<>(allColors);
@@ -139,7 +140,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                             colorLookup.put(currentJob, assignedRange);
                             logger.info("Assigned color range : " + assignedRange);
                             schedulingPoints.add(currentSchedulingPoint.plusMinutes(numberOfSlots));
-                            schedule.put(currentJob, new Assignment(currentSchedulingPoint, devices.get(parallelJobs.size())));
+                            jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, devices.get(parallelJobs.size())));
                             parallelJobs.add(currentJob);
                             schedulingPoints.add(ApiUtils.addMinutes(currentSchedulingPoint, numberOfSlots));
                         }
@@ -147,8 +148,11 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                 }
             }
         }
+        Schedule schedule = new Schedule();
+        schedule.setGeneratedAt(ZonedDateTime.now());
+        schedule.setJobAssignments(jobAssignments);
         logger.info("Scheduling complete");
-        super.printSchedule(schedule);
+        super.printSchedule(jobAssignments);
         return schedule;
     }
 }

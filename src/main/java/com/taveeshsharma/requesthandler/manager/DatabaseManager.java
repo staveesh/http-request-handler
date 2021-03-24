@@ -1,6 +1,7 @@
 package com.taveeshsharma.requesthandler.manager;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
 import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
@@ -40,4 +41,8 @@ public interface DatabaseManager {
     public void writeMobileDeviceInfo(JSONObject mobileDevice);
 
     public List<AccessPointMeasurement> getAllAccessPoints(String deviceId);
+
+    public JobMetrics findMetricsByJobKeyAndInstanceNumber(String key, int instanceNumber);
+
+    public void upsertJobMetrics(JobMetrics metrics);
 }

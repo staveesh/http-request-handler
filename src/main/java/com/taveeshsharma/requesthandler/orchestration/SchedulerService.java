@@ -2,6 +2,7 @@ package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
@@ -30,12 +31,17 @@ public class SchedulerService {
 
     private final List<Job> activeJobs = new ArrayList<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private Map<Job, Assignment> jobSchedule = new HashMap<>();
+    private Schedule jobSchedule = new Schedule();
 
     public void addMeasurement(Job job) {
         acquireWriteLock();
         if (job == null) return;
         activeJobs.add(job);
+        JobMetrics metrics = new JobMetrics();
+        metrics.setInstanceNumber(job.getInstanceNumber().get());
+        metrics.setJobKey(job.getKey());
+        metrics.setAddedToQueueAt(ZonedDateTime.now());
+        dbManager.upsertJobMetrics(metrics);
         releaseWriteLock();
     }
 
@@ -63,9 +69,9 @@ public class SchedulerService {
     public List<MeasurementDescription> getActiveJobs(String deviceId) {
         acquireReadLock();
         List<MeasurementDescription> sentJobs = new ArrayList<>();
-        if (jobSchedule.size() > 0) {
+        if (jobSchedule.getJobAssignments().size() > 0) {
             ZonedDateTime currentTime = ZonedDateTime.now();
-            for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.getJobAssignments().entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Job, Assignment> schedule = it.next();
                 boolean dispatchTimeElapsed = currentTime.isAfter(schedule.getValue().getDispatchTime());
                 boolean isJobNotRemovable = !schedule.getKey().isRemovable();
@@ -75,7 +81,13 @@ public class SchedulerService {
                 logger.info("dispatchTimeElapsed = "+dispatchTimeElapsed+", isJobNotRemovable = "+isJobNotRemovable+
                 " ,isJobNotResettable = "+isJobNotResettable+", isAssignedDevice = "+isAssignedDevice);
                 if (dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable && isAssignedDevice) {
-                    sentJobs.add(schedule.getKey().getMeasurementDescription());
+                    Job job = schedule.getKey();
+                    JobMetrics metrics = dbManager.findMetricsByJobKeyAndInstanceNumber(job.getKey(), job.getInstanceNumber().get());
+                    metrics.setScheduleGeneratedAt(jobSchedule.getGeneratedAt());
+                    metrics.setExpectedDispatchTime(schedule.getValue().getDispatchTime());
+                    metrics.setActualDispatchTime(ZonedDateTime.now());
+                    dbManager.upsertJobMetrics(metrics);
+                    sentJobs.add(job.getMeasurementDescription());
                     it.remove();
                 }
             }
@@ -85,21 +97,25 @@ public class SchedulerService {
         return sentJobs;
     }
 
-    public Job recordSuccessfulJob(JSONObject jobDesc) {
+    public void recordSuccessfulJob(JSONObject jobDesc, ZonedDateTime completionTime) {
         //assuming the JsonObj has key field mapping which measurement failed
         String key = jobDesc.getString("taskKey");
-        //int instance = jobDesc.getInt("instance");
         for (Job job : activeJobs) {
             String currKey = job.getKey();
             if (currKey.equals(key) && jobDesc.getBoolean("success")) {
-                logger.info("Job with key : " + currKey + "has been incremented by one");
                 job.addNodeCount();
+                job.updateInstanceNumber();
+                int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
+                String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
+                JobMetrics metrics = dbManager.findMetricsByJobKeyAndInstanceNumber(key, instanceNumber);
+                metrics.setCompletionTime(completionTime);
+                metrics.setNodeId(nodeId);
+                metrics.setExecutionTime(jobDesc.getLong("executionTime"));
+                logger.info("Job with key : " + currKey + "has been incremented by one");
                 if (job.nodesReached()) logger.info("\nJobs with Key " + key + " has Reached its Req Node count\n");
-                return job;
+                dbManager.upsertJob(job);
             }
         }
-        //false means the object is already removed since the count is reached
-        return null;
     }
 
     public void acquireReadLock() {
@@ -122,7 +138,7 @@ public class SchedulerService {
         return activeJobs;
     }
 
-    public Map<Job, Assignment> getJobSchedule() {
+    public Schedule getJobSchedule() {
         return jobSchedule;
     }
 }

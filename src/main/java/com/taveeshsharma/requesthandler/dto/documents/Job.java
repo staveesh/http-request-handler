@@ -7,9 +7,12 @@ import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
 import com.taveeshsharma.requesthandler.dto.Parameters;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Document("job_tracker")
@@ -30,6 +33,7 @@ public class Job {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime nextReset;
     private AtomicInteger currentNodeCount;
+    private AtomicInteger instanceNumber;
 
     public Job() {
     }
@@ -51,6 +55,7 @@ public class Job {
                             description.getJobInterval());
         }
         this.currentNodeCount = new AtomicInteger(0);
+        this.instanceNumber = new AtomicInteger(1);
     }
 
 
@@ -171,6 +176,10 @@ public class Job {
         currentNodeCount.getAndIncrement();
     }
 
+    public void updateInstanceNumber(){
+        instanceNumber.getAndIncrement();
+    }
+
     public boolean isRemovable() {
         if (jobElapsed()) {
             return true;
@@ -194,6 +203,14 @@ public class Job {
         }
     }
 
+    public AtomicInteger getInstanceNumber() {
+        return instanceNumber;
+    }
+
+    public void setInstanceNumber(AtomicInteger instanceNumber) {
+        this.instanceNumber = instanceNumber;
+    }
+
     public void reset() {
         if (isRecurring()) {
             currentNodeCount.set(0);
@@ -214,6 +231,7 @@ public class Job {
         description.setCount(count);
         description.setPriority(priority);
         description.setParameters(parameters);
+        description.setInstanceNumber(instanceNumber.get());
         return description;
     }
 }

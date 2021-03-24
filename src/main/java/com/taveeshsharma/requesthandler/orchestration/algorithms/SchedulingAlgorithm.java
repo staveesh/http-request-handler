@@ -3,6 +3,7 @@ package com.taveeshsharma.requesthandler.orchestration.algorithms;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
+import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import org.slf4j.Logger;
@@ -19,8 +20,8 @@ public abstract class SchedulingAlgorithm {
 
     public abstract List<Job> preprocessJobs(ConflictGraph graph, List<String> devices);
 
-    public abstract Map<Job, Assignment> generateSchedule(List<Job> jobs,
-                                                          Map<Job, List<Job>> adjacencyMatrix, List<String> devices);
+    public abstract Schedule generateSchedule(List<Job> jobs,
+                                              Map<Job, List<Job>> adjacencyMatrix, List<String> devices);
 
     public ZonedDateTime getFirstSchedulingPoint(List<Job> jobs) {
         ZonedDateTime result = jobs.get(0).getStartTime();

@@ -21,6 +21,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -43,6 +44,7 @@ public class ServerSocketHandler {
     }
 
     public String handleMessage(byte[] message, MessageHeaders messageHeaders) {
+        ZonedDateTime completionTime = ZonedDateTime.now();
         String jsonString = new String(message);
         JSONObject request = encodeJSON(jsonString);
         if (request.has("requestType")) {
@@ -68,8 +70,7 @@ public class ServerSocketHandler {
             }
         } else {
             if (request.getBoolean("isExperiment")) {
-                Job job = schedulerService.recordSuccessfulJob(request);
-                databaseManager.upsertJob(job);
+                schedulerService.recordSuccessfulJob(request, completionTime);
             }
             databaseManager.writeValues(request);
         }

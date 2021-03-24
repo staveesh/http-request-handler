@@ -17,6 +17,7 @@ public class MeasurementDescription {
     private Long count;
     private Long priority;
     private Parameters parameters;
+    private Integer instanceNumber;
 
     @JsonProperty("type")
     public String getType() {
@@ -89,6 +90,16 @@ public class MeasurementDescription {
     public void setParameters(Parameters parameters) {
         this.parameters = parameters;
     }
+
+    @JsonProperty("instanceNumber")
+    public Integer getInstanceNumber() {
+        return instanceNumber;
+    }
+
+    public void setInstanceNumber(Integer instanceNumber) {
+        this.instanceNumber = instanceNumber;
+    }
+
 
     @Override
     public String toString() {

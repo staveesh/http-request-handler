@@ -7,6 +7,7 @@ import com.taveeshsharma.requesthandler.dto.Parameters;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
+import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,7 @@ class JobSchedulingTests {
 		md.setIntervalSec(1);
 		md.setCount(1L);
 		md.setPriority(10L);
+		md.setInstanceNumber(1);
 		Parameters params = new Parameters();
 		params.setTarget(TARGET_SERVERS.get(serverIndex));
 		params.setServer(null);
@@ -97,6 +99,7 @@ class JobSchedulingTests {
 		params.setDirUp(false);
 		params.setExperiment(true);
 		md.setParameters(params);
+		md.setInstanceNumber(1);
 		JobDescription jd = new JobDescription();
 		jd.setMeasurementDescription(md);
 		jd.setNodeCount(1);
@@ -108,16 +111,17 @@ class JobSchedulingTests {
 		return new Job(jd);
 	}
 
-	void checkValidity(Map<Job, Assignment> schedule){
+	void checkValidity(Schedule schedule){
+		Map<Job, Assignment> jobAssignments = schedule.getJobAssignments();
 		// Conflicting jobs shouldn't be scheduled together
-		List<Job> allJobs = new ArrayList<>(schedule.keySet());
+		List<Job> allJobs = new ArrayList<>(jobAssignments.keySet());
 		for (Job j1 : allJobs) {
 			for (Job j2 : allJobs) {
 				if (!j1.getKey().equals(j2.getKey())) {
 					if (j1.getParameters().getTarget().equalsIgnoreCase(j2.getParameters().getTarget())) {
 						Assertions.assertFalse(
-								schedule.get(j1).getDeviceKey().equals(schedule.get(j2).getDeviceKey()) &&
-										schedule.get(j1).getDispatchTime().equals(schedule.get(j2).getDispatchTime())
+								jobAssignments.get(j1).getDeviceKey().equals(jobAssignments.get(j2).getDeviceKey()) &&
+										jobAssignments.get(j1).getDispatchTime().equals(jobAssignments.get(j2).getDispatchTime())
 						);
 					}
 				}
@@ -157,7 +161,7 @@ class JobSchedulingTests {
 			schedulerService.addMeasurement(job);
 		}
 		schedulerService.requestScheduling(graph, devices);
-		Map<Job, Assignment> schedule = schedulerService.getJobSchedule();
+		Schedule schedule = schedulerService.getJobSchedule();
 		checkValidity(schedule);
 	}
 }
