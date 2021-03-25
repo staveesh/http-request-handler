@@ -28,8 +28,6 @@ public interface DatabaseManager {
 
     public void writePcapData(List<PcapMeasurements> pcapData);
 
-    public List<PersonalData> readPersonalData(String email);
-
     public List<Job> getCurrentlyActiveJobs(Date currentTime);
 
     public void upsertJob(Job job);
@@ -45,4 +43,6 @@ public interface DatabaseManager {
     public JobMetrics findMetricsByJobKeyAndInstanceNumber(String key, int instanceNumber);
 
     public void upsertJobMetrics(JobMetrics metrics);
+
+    public String findLastSummaryCheckinTime(String deviceId);
 }

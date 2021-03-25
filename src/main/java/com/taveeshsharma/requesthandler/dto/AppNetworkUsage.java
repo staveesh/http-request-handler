@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AppNetworkUsage {
     private String name;
-    private Long Rx;
-    private Long Tx;
+    private Long rx;
+    private Long tx;
 
     @JsonProperty("name")
     public String getName() {
@@ -18,28 +18,28 @@ public class AppNetworkUsage {
 
     @JsonProperty("Rx")
     public Long getRx() {
-        return Rx;
+        return rx;
     }
 
     public void setRx(Long rx) {
-        Rx = rx;
+        this.rx = rx;
     }
 
     @JsonProperty("Tx")
     public Long getTx() {
-        return Tx;
+        return tx;
     }
 
     public void setTx(Long tx) {
-        Tx = tx;
+        this.tx = tx;
     }
 
     @Override
     public String toString() {
         return "AppNetworkUsage{" +
                 "name='" + name + '\'' +
-                ", Rx=" + Rx +
-                ", Tx=" + Tx +
+                ", rx=" + rx +
+                ", tx=" + tx +
                 '}';
     }
 }

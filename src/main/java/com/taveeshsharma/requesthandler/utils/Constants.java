@@ -25,6 +25,7 @@ public class Constants {
         put(TCP_TYPE, 4);
     }};
 
-    public static final int MINUTES_BEFORE_SCHEDULING_REQUEST = 10;
-    public static final int MAX_TCP_MESSAGE_SIZE = 10000;
+    public static final int MAX_TCP_MESSAGE_SIZE = 100000;
+    // TODO: make it dynamic later
+    public static final int MAX_NODES_ACTIVE = 5;
 }

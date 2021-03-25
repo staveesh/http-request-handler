@@ -9,9 +9,12 @@ import java.util.List;
 @Document("personal")
 public class PersonalData {
     private String requestType;
-    private String userName;
-    private Date Date;
-    private List<AppNetworkUsage> userSummary;
+    private String institution;
+    private String deviceId;
+    private Date startTime;
+    private Date endTime;
+    private List<AppNetworkUsage> wifiSummary;
+    private List<AppNetworkUsage> mobileSummary;
 
     public String getRequestType() {
         return requestType;
@@ -21,37 +24,51 @@ public class PersonalData {
         this.requestType = requestType;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getInstitution() {
+        return institution;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setInstitution(String institution) {
+        this.institution = institution;
     }
 
-    public java.util.Date getDate() {
-        return Date;
+    public String getDeviceId() {
+        return deviceId;
     }
 
-    public void setDate(java.util.Date date) {
-        Date = date;
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
-    public List<AppNetworkUsage> getUserSummary() {
-        return userSummary;
+    public Date getStartTime() {
+        return startTime;
     }
 
-    public void setUserSummary(List<AppNetworkUsage> userSummary) {
-        this.userSummary = userSummary;
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
     }
 
-    @Override
-    public String toString() {
-        return "PersonalData{" +
-                "requestType='" + requestType + '\'' +
-                ", userName='" + userName + '\'' +
-                ", Date=" + Date +
-                ", userSummary=" + userSummary +
-                '}';
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public List<AppNetworkUsage> getWifiSummary() {
+        return wifiSummary;
+    }
+
+    public void setWifiSummary(List<AppNetworkUsage> wifiSummary) {
+        this.wifiSummary = wifiSummary;
+    }
+
+    public List<AppNetworkUsage> getMobileSummary() {
+        return mobileSummary;
+    }
+
+    public void setMobileSummary(List<AppNetworkUsage> mobileSummary) {
+        this.mobileSummary = mobileSummary;
     }
 }

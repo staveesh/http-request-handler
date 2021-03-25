@@ -68,6 +68,9 @@ public class ServerSocketHandler {
                         .create();
                 databaseManager.writePersonalData(builder.fromJson(jsonString, PersonalData.class));
             }
+            else if(type.equalsIgnoreCase("summary-checkin")){
+                return databaseManager.findLastSummaryCheckinTime(request.getString("deviceId"));
+            }
         } else {
             if (request.getBoolean("isExperiment")) {
                 schedulerService.recordSuccessfulJob(request, completionTime);

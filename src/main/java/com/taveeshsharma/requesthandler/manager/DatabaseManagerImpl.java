@@ -1,14 +1,12 @@
 package com.taveeshsharma.requesthandler.manager;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.repository.JobMetricsRepository;
+import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.repository.JobRepository;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
-import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
 import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
 import com.taveeshsharma.requesthandler.measurements.*;
 import com.taveeshsharma.requesthandler.repository.PersonalDataRepository;
@@ -28,6 +26,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.influxdb.InfluxDBTemplate;
 import org.springframework.stereotype.Component;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneId;
@@ -289,7 +289,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Override
     public void writePersonalData(PersonalData data) {
         try {
-            data.setUserName(ApiUtils.hashUserName(data.getUserName()));
             logger.info("Writing personal data : "+data);
             personalDataRepository.save(data);
         } catch (Exception ex) {
@@ -297,13 +296,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
         }
     }
 
-    @Override
-    public List<PersonalData> readPersonalData(String email) {
-        String userName = ApiUtils.hashUserName(email);
-        logger.info("Acquiring usage stats for userName : "+userName);
-        List<PersonalData> networkUsage = personalDataRepository.getNetworkUsage(userName, new Date(0), new Date());
-        return networkUsage;
-    }
 
     @Override
     public List<Job> getCurrentlyActiveJobs(Date currentTime) {
@@ -372,7 +364,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
     public List<MobileDeviceMeasurement> getAvailableDevices() {
         // Gets a list of all devices that have checked-in during the last 10 minutes
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, -1*Constants.MINUTES_BEFORE_SCHEDULING_REQUEST);
+        cal.add(Calendar.MINUTE, -10);
         long tenMinutesBack = cal.getTime().getTime()*1000*1000;
         QueryResult queryResult = influxDBpointTemplate.query(new Query(
                 String.format("SELECT * FROM %s WHERE time > %s",
@@ -396,6 +388,17 @@ public class DatabaseManagerImpl implements DatabaseManager{
         ));
         InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         return resultMapper.toPOJO(queryResult, AccessPointMeasurement.class);
+    }
+
+    @Override
+    public String findLastSummaryCheckinTime(String deviceId) {
+        Date lastCheckin = personalDataRepository.findLastSummaryCheckIn(deviceId);
+        if (lastCheckin == null)
+            return "";
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        df.setTimeZone(tz);
+        return df.format(lastCheckin);
     }
 
     @Override
