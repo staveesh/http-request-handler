@@ -40,7 +40,7 @@ public interface DatabaseManager {
 
     public List<AccessPointMeasurement> getAllAccessPoints(String deviceId);
 
-    public JobMetrics findMetricsByJobKeyAndInstanceNumber(String key, int instanceNumber);
+    public JobMetrics findMetricsById(String id);
 
     public void upsertJobMetrics(JobMetrics metrics);
 

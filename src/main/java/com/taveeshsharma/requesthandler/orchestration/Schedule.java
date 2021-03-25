@@ -9,6 +9,11 @@ public class Schedule {
     private ZonedDateTime generatedAt;
     private Map<Job, Assignment> jobAssignments;
 
+    public Schedule(ZonedDateTime generatedAt, Map<Job, Assignment> jobAssignments) {
+        this.generatedAt = generatedAt;
+        this.jobAssignments = jobAssignments;
+    }
+
     public ZonedDateTime getGeneratedAt() {
         return generatedAt;
     }

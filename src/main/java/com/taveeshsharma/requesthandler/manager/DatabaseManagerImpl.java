@@ -402,8 +402,9 @@ public class DatabaseManagerImpl implements DatabaseManager{
     }
 
     @Override
-    public JobMetrics findMetricsByJobKeyAndInstanceNumber(String key, int instanceNumber) {
-        return jobMetricsRepository.findByKeyAndInstanceNumber(key, instanceNumber);
+    public JobMetrics findMetricsById(String id) {
+        Optional<JobMetrics> metrics = jobMetricsRepository.findById(id);
+        return metrics.orElse(null);
     }
 
     @Override

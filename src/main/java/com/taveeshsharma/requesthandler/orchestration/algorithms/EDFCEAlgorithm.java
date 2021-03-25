@@ -91,9 +91,7 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
                 }
             }
         }
-        Schedule schedule = new Schedule();
-        schedule.setGeneratedAt(ZonedDateTime.now());
-        schedule.setJobAssignments(jobAssignments);
+        Schedule schedule = new Schedule(ZonedDateTime.now(), jobAssignments);
         logger.info("Scheduling complete");
         super.printSchedule(jobAssignments);
         return schedule;

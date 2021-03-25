@@ -45,7 +45,10 @@ public class JobTracker {
         for(int i=activeJobs.size()-1;i>=0;i--){
             Job job=activeJobs.get(i);
             logger.info("Tracking "+job.getKey()+", start time = "+job.getStartTime().withZoneSameInstant(ZoneId.systemDefault()));
-            logger.info("Minutes to start : "+ChronoUnit.MINUTES.between(currentTime, job.getStartTime()));
+            long minutesToStart = ChronoUnit.MINUTES.between(currentTime, job.getStartTime());
+            logger.info("Minutes to start : "+minutesToStart);
+            if(minutesToStart <= 1L)
+                schedulingRequired = true;
             if(job.isRemovable()){
                 activeJobs.remove(i);
                 logger.info("Job id with "+job.getKey() +" removed");
@@ -55,7 +58,6 @@ public class JobTracker {
                 job.reset();
                 dbManager.upsertJob(job);
                 logger.info("Job id with " + job.getKey() + " is reset");
-                schedulingRequired = true;
             }
         }
         if(schedulingRequired && activeJobs.size() > 0)

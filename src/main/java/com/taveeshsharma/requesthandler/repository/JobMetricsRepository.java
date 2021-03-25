@@ -6,6 +6,4 @@ import org.springframework.data.mongodb.repository.Query;
 
 public interface JobMetricsRepository extends MongoRepository<JobMetrics, String> {
 
-    @Query("{ 'jobKey' : ?0, 'instanceNumber' : ?1 }")
-    JobMetrics findByKeyAndInstanceNumber(String key, int instanceNumber);
 }

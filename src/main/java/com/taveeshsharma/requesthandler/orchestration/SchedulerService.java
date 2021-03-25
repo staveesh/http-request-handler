@@ -31,15 +31,18 @@ public class SchedulerService {
 
     private final List<Job> activeJobs = new ArrayList<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private Schedule jobSchedule = new Schedule();
+    private Schedule jobSchedule = new Schedule(ZonedDateTime.now(), new HashMap<>());
 
     public void addMeasurement(Job job) {
         acquireWriteLock();
         if (job == null) return;
         activeJobs.add(job);
         JobMetrics metrics = new JobMetrics();
-        metrics.setInstanceNumber(job.getInstanceNumber().get());
-        metrics.setJobKey(job.getKey());
+        int instanceNumber = job.getInstanceNumber().get();
+        String key = job.getKey();
+        metrics.setId(key+"-"+instanceNumber);
+        metrics.setInstanceNumber(instanceNumber);
+        metrics.setJobKey(key);
         metrics.setAddedToQueueAt(ZonedDateTime.now());
         dbManager.upsertJobMetrics(metrics);
         releaseWriteLock();
@@ -82,7 +85,16 @@ public class SchedulerService {
                 " ,isJobNotResettable = "+isJobNotResettable+", isAssignedDevice = "+isAssignedDevice);
                 if (dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable && isAssignedDevice) {
                     Job job = schedule.getKey();
-                    JobMetrics metrics = dbManager.findMetricsByJobKeyAndInstanceNumber(job.getKey(), job.getInstanceNumber().get());
+                    String jobKey = job.getKey();;
+                    int instanceNumber = job.getInstanceNumber().get();
+                    JobMetrics metrics = dbManager.findMetricsById(jobKey+"-"+instanceNumber);
+                    if(metrics == null){
+                        metrics = new JobMetrics();
+                        metrics.setId(jobKey+"-"+instanceNumber);
+                        metrics.setInstanceNumber(instanceNumber);
+                        metrics.setJobKey(jobKey);
+                        metrics.setAddedToQueueAt(ZonedDateTime.now());
+                    }
                     metrics.setScheduleGeneratedAt(jobSchedule.getGeneratedAt());
                     metrics.setExpectedDispatchTime(schedule.getValue().getDispatchTime());
                     metrics.setActualDispatchTime(ZonedDateTime.now());
@@ -107,12 +119,13 @@ public class SchedulerService {
                 job.updateInstanceNumber();
                 int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
                 String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
-                JobMetrics metrics = dbManager.findMetricsByJobKeyAndInstanceNumber(key, instanceNumber);
+                JobMetrics metrics = dbManager.findMetricsById(key+"-"+instanceNumber);
                 metrics.setCompletionTime(completionTime);
                 metrics.setNodeId(nodeId);
                 metrics.setExecutionTime(jobDesc.getLong("executionTime"));
                 logger.info("Job with key : " + currKey + "has been incremented by one");
                 if (job.nodesReached()) logger.info("\nJobs with Key " + key + " has Reached its Req Node count\n");
+                dbManager.upsertJobMetrics(metrics);
                 dbManager.upsertJob(job);
             }
         }

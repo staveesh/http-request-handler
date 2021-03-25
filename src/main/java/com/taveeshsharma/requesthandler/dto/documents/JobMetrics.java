@@ -1,6 +1,7 @@
 package com.taveeshsharma.requesthandler.dto.documents;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,6 +11,8 @@ import java.time.ZonedDateTime;
 @Document("job_metrics")
 @CompoundIndexes(value = { @CompoundIndex(name = "key_instance_no_idx", def = "{'instanceNumber':1, 'jobKey':1}", unique = true) })
 public class JobMetrics {
+    @Id
+    private String id;
     private Integer instanceNumber;
     private String jobKey;
     private String nodeId;
@@ -24,6 +27,14 @@ public class JobMetrics {
     private ZonedDateTime expectedDispatchTime;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime actualDispatchTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getJobKey() {
         return jobKey;
