@@ -85,7 +85,7 @@ public class SchedulerService {
                 " ,isJobNotResettable = "+isJobNotResettable+", isAssignedDevice = "+isAssignedDevice);
                 if (dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable && isAssignedDevice) {
                     Job job = schedule.getKey();
-                    String jobKey = job.getKey();;
+                    String jobKey = job.getKey();
                     int instanceNumber = job.getInstanceNumber().get();
                     JobMetrics metrics = dbManager.findMetricsById(jobKey+"-"+instanceNumber);
                     if(metrics == null){
