@@ -9,7 +9,6 @@ services:
     image: staveesh/qosmon
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
-      - "${TCP_SERVER_PORT}:${TCP_SERVER_PORT}"
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

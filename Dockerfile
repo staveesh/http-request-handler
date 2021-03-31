@@ -18,6 +18,6 @@ FROM openjdk:8-jdk-alpine
 
 COPY --from=builder /build/target/*.jar app.jar
 
-EXPOSE 7800 7000
+EXPOSE 7800
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar", "app.jar"]

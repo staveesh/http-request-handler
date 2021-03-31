@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -29,9 +30,11 @@ public class SchedulerService {
     @Autowired
     private DatabaseManager dbManager;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     private final List<Job> activeJobs = new ArrayList<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private Schedule jobSchedule = new Schedule(ZonedDateTime.now(), new HashMap<>());
 
     public void addMeasurement(Job job) {
         acquireWriteLock();
@@ -61,29 +64,32 @@ public class SchedulerService {
         }
         if (devices.size() > 0) {
             List<Job> processedJobs = schedulingAlgorithm.preprocessJobs(graph, devices);
-            jobSchedule = schedulingAlgorithm.generateSchedule(processedJobs,
+            Schedule schedule = schedulingAlgorithm.generateSchedule(processedJobs,
                     graph.getAdjacencyMatrix(), devices);
+            sendActiveJobs(schedule);
         } else {
             logger.error("Skipping scheduling as no devices have checked in recently");
         }
         releaseReadLock();
     }
 
-    public List<MeasurementDescription> getActiveJobs(String deviceId) {
-        acquireReadLock();
-        List<MeasurementDescription> sentJobs = new ArrayList<>();
+    private void sendActiveJobs(Schedule jobSchedule) {
+        Map<String, List<MeasurementDescription>> jobsToBeSent = new HashMap<>();
         if (jobSchedule.getJobAssignments().size() > 0) {
             ZonedDateTime currentTime = ZonedDateTime.now();
             for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.getJobAssignments().entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Job, Assignment> schedule = it.next();
+                String deviceId = schedule.getValue().getDeviceKey();
+                if(!jobsToBeSent.containsKey(deviceId))
+                    jobsToBeSent.put(deviceId, new ArrayList<>());
+                jobsToBeSent.get(deviceId).add(schedule.getKey().getMeasurementDescription());
                 boolean dispatchTimeElapsed = currentTime.isAfter(schedule.getValue().getDispatchTime());
                 boolean isJobNotRemovable = !schedule.getKey().isRemovable();
                 boolean isJobNotResettable = !schedule.getKey().isResettable(currentTime);
-                boolean isAssignedDevice = deviceId.equalsIgnoreCase(schedule.getValue().getDeviceKey());
                 logger.info("Job key : "+schedule.getKey().getKey());
                 logger.info("dispatchTimeElapsed = "+dispatchTimeElapsed+", isJobNotRemovable = "+isJobNotRemovable+
-                " ,isJobNotResettable = "+isJobNotResettable+", isAssignedDevice = "+isAssignedDevice);
-                if (dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable && isAssignedDevice) {
+                " ,isJobNotResettable = "+isJobNotResettable);
+                if (dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable) {
                     Job job = schedule.getKey();
                     String jobKey = job.getKey();
                     int instanceNumber = job.getInstanceNumber().get();
@@ -99,14 +105,13 @@ public class SchedulerService {
                     metrics.setExpectedDispatchTime(schedule.getValue().getDispatchTime());
                     metrics.setActualDispatchTime(ZonedDateTime.now());
                     dbManager.upsertJobMetrics(metrics);
-                    sentJobs.add(job.getMeasurementDescription());
                     it.remove();
                 }
             }
         }
-        logger.info("Sent Jobs size is " + sentJobs.size());
-        releaseReadLock();
-        return sentJobs;
+        for(Map.Entry<String, List<MeasurementDescription> > deviceJobs : jobsToBeSent.entrySet()){
+            messagingTemplate.convertAndSendToUser(deviceJobs.getKey(), "/checkin/jobs", deviceJobs.getValue());
+        }
     }
 
     public void recordSuccessfulJob(JSONObject jobDesc, ZonedDateTime completionTime) {
@@ -149,9 +154,5 @@ public class SchedulerService {
 
     public List<Job> getJobs() {
         return activeJobs;
-    }
-
-    public Schedule getJobSchedule() {
-        return jobSchedule;
     }
 }
