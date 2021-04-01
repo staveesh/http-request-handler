@@ -1,5 +1,9 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.taveeshsharma.requesthandler.config.WebSocketConfig;
 import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
@@ -54,9 +58,7 @@ public class SchedulerService {
     public void requestScheduling(ConflictGraph graph, List<String> devices) {
         acquireReadLock();
         if(devices == null){
-            devices = dbManager.getAvailableDevices()
-                    .stream().map(MobileDeviceMeasurement::getDeviceId)
-                    .collect(Collectors.toList());
+            devices = new ArrayList<>(WebSocketConfig.connections.values());
         }
         if(graph == null){
             graph = new ConflictGraph(activeJobs);
@@ -110,8 +112,19 @@ public class SchedulerService {
             }
         }
         for(Map.Entry<String, List<MeasurementDescription> > deviceJobs : jobsToBeSent.entrySet()){
-            messagingTemplate.convertAndSendToUser(deviceJobs.getKey(), "/checkin/jobs", deviceJobs.getValue());
+            List<MeasurementDescription> jobs = deviceJobs.getValue();
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
+            try {
+                messagingTemplate.convertAndSendToUser(
+                        deviceJobs.getKey(),
+                        "/checkin/jobs",
+                        objectMapper.writeValueAsString(jobs));
+            } catch (JsonProcessingException e) {
+                logger.error("Error converting jobs to valid JSON");
+            }
         }
+        logger.info("Active Jobs Sent To Phones");
     }
 
     public void recordSuccessfulJob(JSONObject jobDesc, ZonedDateTime completionTime) {
