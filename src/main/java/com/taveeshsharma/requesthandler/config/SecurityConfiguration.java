@@ -38,29 +38,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors()
-                .and()
-                .csrf().disable()
-                .authorizeRequests().antMatchers("/login").permitAll()
-                                    .antMatchers("/signup").permitAll()
-                                    .antMatchers("/schedule").permitAll()
-                                    .antMatchers("/mobiperf/**").permitAll()
-                .anyRequest().authenticated()
-                .and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-    }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(Collections.singletonList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Collections.singletonList("*"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
+            http
+                .exceptionHandling().and()
+                .anonymous().and()
+                .servletApi().and()
+                .headers().cacheControl().and().and()
+                // Relax CSRF on the WebSocket due to needing direct access from apps
+                .csrf().ignoringAntMatchers("/mobiperf/**").and()
+                .authorizeRequests()
+                // Allow anonymous access to websocket
+                .antMatchers("/mobiperf/**").permitAll()
+                .antMatchers("/login", "/signup", "/schedule").permitAll()
+                .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

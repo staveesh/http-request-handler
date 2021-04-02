@@ -6,6 +6,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.security.config.annotation.web.socket.AbstractSecurityWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
     public static final Map<String, String> connections = new ConcurrentHashMap<>();
 
@@ -47,6 +48,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @EventListener
     private void onSessionDisconnectEvent(SessionDisconnectEvent event) {
         connections.remove(event.getSessionId());
+    }
+
+    @Override
+    protected boolean sameOriginDisabled() {
+        return true;
     }
 
 }
