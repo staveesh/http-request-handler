@@ -20,4 +20,4 @@ COPY --from=builder /build/target/*.jar app.jar
 
 EXPOSE 7800
 
-ENTRYPOINT ["java","-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","-Dlogging.level.org.springframework=TRACE","app.jar"]
