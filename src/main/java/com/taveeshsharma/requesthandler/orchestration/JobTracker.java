@@ -2,10 +2,6 @@ package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
-import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
-import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
-import com.taveeshsharma.requesthandler.utils.ApiUtils;
-import com.taveeshsharma.requesthandler.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +11,7 @@ import org.springframework.stereotype.Component;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class JobTracker {

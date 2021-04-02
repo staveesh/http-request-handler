@@ -118,7 +118,7 @@ public class SchedulerService {
             try {
                 messagingTemplate.convertAndSendToUser(
                         deviceJobs.getKey(),
-                        "/checkin/jobs",
+                        "/queue/jobs",
                         objectMapper.writeValueAsString(jobs));
             } catch (JsonProcessingException e) {
                 logger.error("Error converting jobs to valid JSON");
@@ -127,7 +127,9 @@ public class SchedulerService {
         logger.info("Active Jobs Sent To Phones");
     }
 
-    public void recordSuccessfulJob(JSONObject jobDesc, ZonedDateTime completionTime) {
+    public void recordSuccessfulJob(JSONObject jobDesc) {
+        acquireReadLock();
+        ZonedDateTime completionTime = ZonedDateTime.now();
         //assuming the JsonObj has key field mapping which measurement failed
         String key = jobDesc.getString("taskKey");
         for (Job job : activeJobs) {
@@ -147,6 +149,8 @@ public class SchedulerService {
                 dbManager.upsertJob(job);
             }
         }
+        releaseReadLock();
+        dbManager.writeValues(jobDesc);
     }
 
     public void acquireReadLock() {
