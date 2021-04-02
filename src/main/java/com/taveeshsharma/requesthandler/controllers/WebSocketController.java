@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import java.util.Date;
 
 @Controller
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class WebSocketController {
 
     @Autowired
