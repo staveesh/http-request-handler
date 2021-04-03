@@ -140,6 +140,8 @@ public class SchedulerService {
                 int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
                 String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
                 JobMetrics metrics = dbManager.findMetricsById(key+"-"+instanceNumber);
+                if(metrics == null)
+                    continue;
                 metrics.setCompletionTime(completionTime);
                 metrics.setNodeId(nodeId);
                 metrics.setExecutionTime(jobDesc.getLong("executionTime"));
