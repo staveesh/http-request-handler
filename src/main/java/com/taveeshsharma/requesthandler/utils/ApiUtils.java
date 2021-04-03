@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +23,8 @@ public class ApiUtils {
         return oldDate.plusHours(interval.getHours()).plusMinutes(interval.getMinutes()).plusSeconds(interval.getSeconds());
     }
 
-    public static ZonedDateTime addMinutes(ZonedDateTime oldDate, long minutes) {
-        return oldDate.plusMinutes(minutes);
+    public static ZonedDateTime addMilliSeconds(ZonedDateTime oldDate, long milliseconds) {
+        return oldDate.plus(milliseconds, ChronoUnit.MILLIS);
     }
 
     public static Optional<ApiError> isValidScheduleRequest(ScheduleRequest request) {

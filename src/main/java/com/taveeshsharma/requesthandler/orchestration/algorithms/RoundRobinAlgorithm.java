@@ -63,7 +63,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
             // Reset parallel jobs list by removing the jobs that have finished execution
-            parallelJobs.removeIf(job -> ApiUtils.addMinutes(jobAssignments.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addMilliSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
                 logger.info("Current job : "+currentJob.getKey());
@@ -85,7 +85,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                                 currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()),deviceId));
                         jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint,
                                 deviceId));
-                        schedulingPoints.add(ApiUtils.addMinutes(currentSchedulingPoint,
+                        schedulingPoints.add(ApiUtils.addMilliSeconds(currentSchedulingPoint,
                                 Constants.JOB_EXECUTION_TIMES.get(currentJob.getType())));
                         parallelJobs.add(currentJob);
                     }

@@ -30,7 +30,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
         Map<Job, List<Job>> adjacencyMatrix = graph.getAdjacencyMatrix();
         List<Job> jobs = graph.getJobs();
         jobs.removeIf(Job::isRemovable);
-        jobs.sort(Comparator.comparingInt(j -> Constants.JOB_EXECUTION_TIMES.get(j.getType()) +
+        jobs.sort(Comparator.comparingLong(j -> Constants.JOB_EXECUTION_TIMES.get(j.getType()) +
                 adjacencyMatrix.get(j).size()));
         return jobs;
     }
@@ -112,7 +112,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             slotStart = 1 + (int) ChronoUnit.MINUTES.between(firstSchedulingPoint, currentSchedulingPoint);
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
-            parallelJobs.removeIf(job -> ApiUtils.addMinutes(jobAssignments.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addMilliSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
                 if (!jobAssignments.containsKey(currentJob)) {
@@ -129,7 +129,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                     logger.info("Ranges to remove : " + rangesToRemove);
                     removeColorRanges(availableColors, rangesToRemove);
                     logger.info("Available colors : " + availableColors);
-                    int numberOfSlots = Constants.JOB_EXECUTION_TIMES.get(currentJob.getType());
+                    int numberOfSlots = Constants.JOB_EXECUTION_TIMES.get(currentJob.getType()).intValue();
                     int startIndex = findFirstConsecutiveSequence(availableColors, numberOfSlots);
                     if(startIndex + numberOfSlots <= availableColors.size()) {
                         int start = availableColors.get(startIndex);
@@ -142,7 +142,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                             schedulingPoints.add(currentSchedulingPoint.plusMinutes(numberOfSlots));
                             jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, devices.get(parallelJobs.size())));
                             parallelJobs.add(currentJob);
-                            schedulingPoints.add(ApiUtils.addMinutes(currentSchedulingPoint, numberOfSlots));
+                            schedulingPoints.add(ApiUtils.addMilliSeconds(currentSchedulingPoint, numberOfSlots));
                         }
                     }
                 }

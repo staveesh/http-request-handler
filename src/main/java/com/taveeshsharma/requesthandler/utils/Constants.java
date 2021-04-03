@@ -17,12 +17,12 @@ public class Constants {
     public static final String MOBILE_DEVICE_TYPE = "mobile_devices";
 
     // Contains assumed values of execution times (minutes) for each job type
-    public static final Map<String, Integer> JOB_EXECUTION_TIMES = new HashMap<String, Integer>() {{
-        put(PING_TYPE, 1);
-        put(DNS_TYPE, 2);
-        put(HTTP_TYPE, 3);
-        put(TRACERT_TYPE, 5);
-        put(TCP_TYPE, 4);
+    public static final Map<String, Long> JOB_EXECUTION_TIMES = new HashMap<String, Long>() {{
+        put(PING_TYPE, 37269L);
+        put(DNS_TYPE, 441L);
+        put(HTTP_TYPE, 1000L);
+        put(TRACERT_TYPE, 20046L);
+        put(TCP_TYPE, 102335L);
     }};
 
     public static final int MAX_TCP_MESSAGE_SIZE = 100000;
