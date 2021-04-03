@@ -39,15 +39,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
-                .exceptionHandling().and()
-                .anonymous().and()
-                .servletApi().and()
-                .headers().cacheControl().and().and()
-                .csrf().ignoringAntMatchers("/**")
+        http.headers()
+                .frameOptions().disable()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll();
+                .antMatchers("/login").permitAll()
+                .antMatchers("/schedule").permitAll()
+                .antMatchers("/signup").permitAll()
+                .antMatchers("/mobiperf/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .cors()
+                .and()
+                .csrf().disable();
     }
 
     @Bean
