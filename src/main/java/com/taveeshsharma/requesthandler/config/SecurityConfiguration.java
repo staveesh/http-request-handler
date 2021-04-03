@@ -39,23 +39,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-            http
+        http
                 .exceptionHandling().and()
                 .anonymous().and()
                 .servletApi().and()
                 .headers().cacheControl().and().and()
-                // Relax CSRF on the WebSocket due to needing direct access from apps
-                .csrf().ignoringAntMatchers("/mobiperf/**").and()
-                .authorizeRequests()
-                // Allow anonymous access to websocket
-                .antMatchers("/mobiperf/**").permitAll()
-                .antMatchers("/login", "/signup", "/schedule").permitAll()
+                .csrf().ignoringAntMatchers("/**")
                 .and()
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeRequests()
+                .antMatchers("/**").permitAll();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
