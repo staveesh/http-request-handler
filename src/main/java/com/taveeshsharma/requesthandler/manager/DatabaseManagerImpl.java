@@ -214,12 +214,12 @@ public class DatabaseManagerImpl implements DatabaseManager{
 
         HTTPMeasurement httpMeasurement = (HTTPMeasurement) buildMeasurements(jsonObject, HTTPMeasurement.class);
         int statusCode = Integer.parseInt(measurementValues.getString("code"));
-        if(statusCode >= 300)
-            return null;
         httpMeasurement.setHttpResultCode(statusCode);
-        double duration = Double.parseDouble(measurementValues.getString("time_ms"));
-        httpMeasurement.setTimeTakenMs(Precision.round(duration, 2));
-
+        double duration;
+        if(statusCode < 300) {
+            duration = Double.parseDouble(measurementValues.getString("time_ms"));
+            httpMeasurement.setTimeTakenMs(Precision.round(duration, 2));
+        }
         return Point.measurementByPOJO(HTTPMeasurement.class)
                 .time(time, TimeUnit.MICROSECONDS)
                 .addFieldsFromPOJO(httpMeasurement)

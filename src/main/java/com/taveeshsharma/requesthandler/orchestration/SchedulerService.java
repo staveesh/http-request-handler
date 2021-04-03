@@ -134,18 +134,16 @@ public class SchedulerService {
         String key = jobDesc.getString("taskKey");
         for (Job job : activeJobs) {
             String currKey = job.getKey();
-            if (currKey.equals(key) && jobDesc.getBoolean("success")) {
+            if (currKey.equals(key)) {
                 job.addNodeCount();
                 job.updateInstanceNumber();
                 int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
                 String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
                 JobMetrics metrics = dbManager.findMetricsById(key+"-"+instanceNumber);
-                if(metrics == null)
-                    continue;
                 metrics.setCompletionTime(completionTime);
                 metrics.setNodeId(nodeId);
                 metrics.setExecutionTime(jobDesc.getLong("executionTime"));
-                logger.info("Job with key : " + currKey + "has been incremented by one");
+                logger.info("Job with key : " + currKey + " has been incremented by one");
                 if (job.nodesReached()) logger.info("\nJobs with Key " + key + " has Reached its Req Node count\n");
                 dbManager.upsertJobMetrics(metrics);
                 dbManager.upsertJob(job);
