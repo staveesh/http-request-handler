@@ -68,7 +68,6 @@ class JobSchedulingTests {
 		params.setTarget(TARGET_SERVERS.get(serverIndex));
 		params.setServer(null);
 		params.setDirUp(false);
-		params.setExperiment(true);
 		md.setParameters(params);
 		JobDescription jd = new JobDescription();
 		jd.setMeasurementDescription(md);
@@ -97,7 +96,6 @@ class JobSchedulingTests {
 		params.setTarget(TARGET_SERVERS.get(serverIndex));
 		params.setServer(null);
 		params.setDirUp(false);
-		params.setExperiment(true);
 		md.setParameters(params);
 		md.setInstanceNumber(1);
 		JobDescription jd = new JobDescription();

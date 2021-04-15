@@ -26,13 +26,11 @@ public class DOSDAlgorithm extends SchedulingAlgorithm {
     private static final Logger logger = LoggerFactory.getLogger(DOSDAlgorithm.class);
 
     @Override
-    public List<Job> preprocessJobs(ConflictGraph graph, List<String> devices) {
+    public void preprocessJobs(ConflictGraph graph, List<String> devices) {
         Map<Job, List<Job>> adjacencyMatrix = graph.getAdjacencyMatrix();
         List<Job> jobs = graph.getJobs();
-        jobs.removeIf(Job::isRemovable);
         jobs.sort((j1, j2) -> Long.compare(Constants.JOB_EXECUTION_TIMES.get(j2.getType()) +
                 adjacencyMatrix.get(j2).size(), Constants.JOB_EXECUTION_TIMES.get(j1.getType()) + adjacencyMatrix.get(j1).size()));
-        return jobs;
     }
 
     private List<ColorAssignment> mergeColorRanges(List<ColorAssignment> rangesToMerge) {
@@ -95,7 +93,7 @@ public class DOSDAlgorithm extends SchedulingAlgorithm {
             else
                 return 1;
         });
-        ZonedDateTime firstSchedulingPoint = getFirstSchedulingPoint(jobs);
+        ZonedDateTime firstSchedulingPoint = ZonedDateTime.now();
         schedulingPoints.add(firstSchedulingPoint);
         // Maximum number of colors to be used is same as sum of execution time units
         int colors = 0;
@@ -110,9 +108,9 @@ public class DOSDAlgorithm extends SchedulingAlgorithm {
         int slotStart = 1;
         while (!schedulingPoints.isEmpty()) {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
-            slotStart = 1 + (int) ChronoUnit.MINUTES.between(firstSchedulingPoint, currentSchedulingPoint);
+            slotStart = 1 + (int) ChronoUnit.SECONDS.between(firstSchedulingPoint, currentSchedulingPoint);
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
-            parallelJobs.removeIf(job -> ApiUtils.addMilliSeconds(jobAssignments.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
                 if (!jobAssignments.containsKey(currentJob)) {
@@ -139,10 +137,11 @@ public class DOSDAlgorithm extends SchedulingAlgorithm {
                             ColorAssignment assignedRange = new ColorAssignment(start, end);
                             colorLookup.put(currentJob, assignedRange);
                             logger.info("Assigned color range : " + assignedRange);
-                            schedulingPoints.add(currentSchedulingPoint.plusMinutes(numberOfSlots));
+                            schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
                             jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, devices.get(parallelJobs.size())));
+                            currentJob.setDispatchTime(currentSchedulingPoint);
                             parallelJobs.add(currentJob);
-                            schedulingPoints.add(ApiUtils.addMilliSeconds(currentSchedulingPoint, numberOfSlots));
+                            schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint, numberOfSlots));
                         }
                     }
                 }

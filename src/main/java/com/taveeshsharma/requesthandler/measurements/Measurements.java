@@ -9,13 +9,11 @@ import java.time.Instant;
  * This is the base measurement class and contains all the column fields that each measurement should have.
  * All the other network measurement extend from this class.
  */
+// TODO: Add boolean flag "success"
 @Measurement(name="SuperMeasurement")
 public class Measurements {
     @Column(name = "time")
     private Instant time;
-
-    @Column(name = "isExperiment")
-    private boolean isExperiment;
 
     @Column(name="taskKey", tag = true)
     private String taskKey;
@@ -25,11 +23,6 @@ public class Measurements {
 
     @Column(name="target")
     private String target;
-
-    //below are the getters and setters of the above fields.
-    public boolean isExperiment() {
-        return isExperiment;
-    }
 
     public String getTarget() {
         return target;
@@ -60,13 +53,5 @@ public class Measurements {
 
     public void setTime(Instant time) {
         this.time = time;
-    }
-
-    public void setExperiment(boolean experiment) {
-        isExperiment = experiment;
-    }
-
-    public boolean getIsExperiment() {
-        return isExperiment;
     }
 }

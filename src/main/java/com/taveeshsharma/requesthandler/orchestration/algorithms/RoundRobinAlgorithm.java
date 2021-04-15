@@ -29,10 +29,9 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
      * @return
      */
     @Override
-    public List<Job> preprocessJobs(ConflictGraph graph, List<String> devices) {
+    public void preprocessJobs(ConflictGraph graph, List<String> devices) {
         logger.info("Preprocessing jobs using Round Robin scheme");
         List<Job> jobs = graph.getJobs();
-        jobs.removeIf(Job::isRemovable);
         jobs.sort((j1, j2) -> {
             if (j1.getStartTime().isBefore(j2.getStartTime()))
                 return -1;
@@ -41,7 +40,6 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
             else
                 return 1;
         });
-        return jobs;
     }
 
     @Override
@@ -56,14 +54,14 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
             else
                 return 1;
         });
-        schedulingPoints.add(getFirstSchedulingPoint(jobs));
+        schedulingPoints.add(ZonedDateTime.now());
         List<Job> parallelJobs = new ArrayList<>();
         // Main logic
         while (!schedulingPoints.isEmpty()) {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
             // Reset parallel jobs list by removing the jobs that have finished execution
-            parallelJobs.removeIf(job -> ApiUtils.addMilliSeconds(jobAssignments.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
                 logger.info("Current job : "+currentJob.getKey());
@@ -83,9 +81,10 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentJob.getEndTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()),deviceId));
+                        currentJob.setDispatchTime(currentSchedulingPoint);
                         jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint,
                                 deviceId));
-                        schedulingPoints.add(ApiUtils.addMilliSeconds(currentSchedulingPoint,
+                        schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint,
                                 Constants.JOB_EXECUTION_TIMES.get(currentJob.getType())));
                         parallelJobs.add(currentJob);
                     }

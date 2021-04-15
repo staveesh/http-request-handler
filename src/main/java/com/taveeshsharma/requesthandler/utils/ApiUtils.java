@@ -23,8 +23,8 @@ public class ApiUtils {
         return oldDate.plusHours(interval.getHours()).plusMinutes(interval.getMinutes()).plusSeconds(interval.getSeconds());
     }
 
-    public static ZonedDateTime addMilliSeconds(ZonedDateTime oldDate, long milliseconds) {
-        return oldDate.plus(milliseconds, ChronoUnit.MILLIS);
+    public static ZonedDateTime addSeconds(ZonedDateTime oldDate, long seconds) {
+        return oldDate.plus(seconds, ChronoUnit.SECONDS);
     }
 
     public static Optional<ApiError> isValidScheduleRequest(ScheduleRequest request) {

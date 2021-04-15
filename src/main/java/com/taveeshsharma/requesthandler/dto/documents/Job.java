@@ -32,8 +32,9 @@ public class Job {
     private JobInterval jobInterval;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime nextReset;
-    private AtomicInteger currentNodeCount;
     private AtomicInteger instanceNumber;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
+    private ZonedDateTime dispatchTime;
 
     public Job() {
     }
@@ -54,8 +55,8 @@ public class Job {
                     addInterval(description.getMeasurementDescription().getStartTime(),
                             description.getJobInterval());
         }
-        this.currentNodeCount = new AtomicInteger(0);
         this.instanceNumber = new AtomicInteger(1);
+        this.dispatchTime = null;
     }
 
 
@@ -147,16 +148,12 @@ public class Job {
         this.nextReset = nextReset;
     }
 
-    public AtomicInteger getCurrentNodeCount() {
-        return currentNodeCount;
+    public ZonedDateTime getDispatchTime() {
+        return dispatchTime;
     }
 
-    public void setCurrentNodeCount(AtomicInteger currentNodeCount) {
-        this.currentNodeCount = currentNodeCount;
-    }
-
-    public boolean nodesReached() {
-        return currentNodeCount.get() >= nodeCount;
+    public void setDispatchTime(ZonedDateTime dispatchTime) {
+        this.dispatchTime = dispatchTime;
     }
 
     private boolean jobElapsed() {
@@ -171,28 +168,16 @@ public class Job {
         return totalSeconds != 0;
     }
 
-    public void addNodeCount() {
-        //ensures results of the same job instance
-        currentNodeCount.getAndIncrement();
-    }
-
     public void updateInstanceNumber(){
         instanceNumber.getAndIncrement();
     }
 
     public boolean isRemovable() {
-        if (jobElapsed()) {
-            return true;
-        }
-        if (!isRecurring()) { //means the job is not to be repeated and if the req nodes are reached then can be removed
-            return nodesReached();
-        }
-        return false; //then is recurring and
+        return jobElapsed();
     }
 
     public boolean isResettable(ZonedDateTime currentTime) {
-        if (!isRecurring()) return false;
-        return nodesReached() || currentTime.isAfter(nextReset);
+        return currentTime.isAfter(nextReset);
     }
 
     private void setNextResetTime() {
@@ -213,8 +198,9 @@ public class Job {
 
     public void reset() {
         if (isRecurring()) {
-            currentNodeCount.set(0);
+            updateInstanceNumber();
             setStartTime(nextReset);
+            setDispatchTime(null);
             //this will create a new Date obj thus start and next wont be pointing to the same object
             //will use new start time(obtained from the prev reset time) and interval to create the next Reset time
             setNextResetTime();

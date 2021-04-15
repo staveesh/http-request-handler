@@ -1,17 +1,21 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class JobTracker {
@@ -25,6 +29,11 @@ public class JobTracker {
     private SchedulerService schedulerService;
 
     @Scheduled(fixedRate = 2*60*1000, initialDelay = 60*1000)
+    public void trackingTask(){
+        track();
+    }
+
+    @Async(value = "applicationTaskExecutor")
     public void track(){
         schedulerService.acquireWriteLock();
         logger.info("Job tracking is being performed");
@@ -39,18 +48,27 @@ public class JobTracker {
             Job job=activeJobs.get(i);
             logger.info("Tracking "+job.getKey()+", start time = "+job.getStartTime().withZoneSameInstant(ZoneId.systemDefault()));
             if(job.isRemovable()){
+                String jobKey = job.getKey();
                 activeJobs.remove(i);
-                logger.info("Job id with "+job.getKey() +" removed");
-                schedulingRequired = true;
+                // Remove all instances of the job from tracker
+                Set<String> jobInstanceTracker = schedulerService.getJobInstanceTracker();
+                jobInstanceTracker.removeIf(instanceKey -> instanceKey.contains(jobKey + '-'));
+                logger.info("Job id with "+jobKey +" removed");
             }
             else if(job.isResettable(currentTime)) {
                 job.reset();
+                JobMetrics metrics = new JobMetrics();
+                String jobKey = job.getKey();
+                int instanceNumber = job.getInstanceNumber().get();
+                metrics.setId(jobKey+"-"+instanceNumber);
+                metrics.setInstanceNumber(instanceNumber);
+                metrics.setJobKey(jobKey);
+                metrics.setAddedToQueueAt(ZonedDateTime.now());
                 dbManager.upsertJob(job);
+                dbManager.upsertJobMetrics(metrics);
                 logger.info("Job id with " + job.getKey() + " is reset");
             }
-            long minutesToStart = ChronoUnit.MINUTES.between(currentTime, job.getStartTime());
-            logger.info("Minutes to start : "+minutesToStart);
-            if(minutesToStart <= 1L)
+            if(currentTime.isAfter(job.getStartTime()))
                 schedulingRequired = true;
         }
         if(schedulingRequired && activeJobs.size() > 0)

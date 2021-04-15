@@ -36,7 +36,7 @@ public class Driver {
 
     private boolean connectionEstablished = false;
 
-    @Async
+    @Async(value = "applicationTaskExecutor")
     public void initiate(){
         if(!fileServerHostname.isEmpty()) {
             this.fileMonitor = new FileMonitor(

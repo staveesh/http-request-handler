@@ -18,19 +18,10 @@ public abstract class SchedulingAlgorithm {
 
     private static final Logger logger = LoggerFactory.getLogger(SchedulingAlgorithm.class);
 
-    public abstract List<Job> preprocessJobs(ConflictGraph graph, List<String> devices);
+    public abstract void preprocessJobs(ConflictGraph graph, List<String> devices);
 
     public abstract Schedule generateSchedule(List<Job> jobs,
                                               Map<Job, List<Job>> adjacencyMatrix, List<String> devices);
-
-    public ZonedDateTime getFirstSchedulingPoint(List<Job> jobs) {
-        ZonedDateTime result = jobs.get(0).getStartTime();
-        for (Job job : jobs) {
-            if (job.getStartTime().isBefore(result))
-                result = job.getStartTime();
-        }
-        return result;
-    }
 
     void printSchedule(Map<Job, Assignment> schedule) {
         for (Map.Entry<Job, Assignment> jobAssignment : schedule.entrySet()) {

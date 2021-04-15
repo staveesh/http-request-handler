@@ -259,9 +259,8 @@ public class DatabaseManagerImpl implements DatabaseManager{
             Measurements measurements = T.newInstance();
             String user = object.getString("accountName");
             measurements.setUserName(ApiUtils.hashUserName(user));
-            measurements.setExperiment(object.getBoolean("isExperiment"));
             measurements.setTarget(getTargetKey(object.getJSONObject("parameters"), object.getString("type")));
-            if (measurements.getIsExperiment())
+            if(object.has("taskKey"))
                 measurements.setTaskKey(object.getString("taskKey"));
             else
                 measurements.setTaskKey("N.A");

@@ -18,11 +18,11 @@ public class Constants {
 
     // Contains assumed values of execution times (minutes) for each job type
     public static final Map<String, Long> JOB_EXECUTION_TIMES = new HashMap<String, Long>() {{
-        put(PING_TYPE, 37269L);
-        put(DNS_TYPE, 441L);
-        put(HTTP_TYPE, 1000L);
-        put(TRACERT_TYPE, 20046L);
-        put(TCP_TYPE, 102335L);
+        put(PING_TYPE, 38L);
+        put(DNS_TYPE, 15L);
+        put(HTTP_TYPE, 20L);
+        put(TRACERT_TYPE, 21L);
+        put(TCP_TYPE, 103L);
     }};
 
     public static final int MAX_TCP_MESSAGE_SIZE = 100000;

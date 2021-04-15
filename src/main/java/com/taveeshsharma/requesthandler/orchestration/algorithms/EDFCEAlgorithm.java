@@ -30,10 +30,9 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
      * @return
      */
     @Override
-    public List<Job> preprocessJobs(ConflictGraph graph, List<String> devices) {
+    public void preprocessJobs(ConflictGraph graph, List<String> devices) {
         logger.info("Preprocessing jobs using EDF-CE scheme");
         List<Job> jobs = graph.getJobs();
-        jobs.removeIf(Job::isRemovable);
         jobs.sort((j1, j2) -> {
             if (j1.getNextReset().isBefore(j2.getNextReset()))
                 return -1;
@@ -42,11 +41,11 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
             else
                 return 1;
         });
-        return jobs;
     }
 
     @Override
-    public Schedule generateSchedule(List<Job> jobs, Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
+    public Schedule  generateSchedule(List<Job> jobs,
+                                      Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
@@ -56,13 +55,14 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
             else
                 return 1;
         });
-        schedulingPoints.add(getFirstSchedulingPoint(jobs));
+        schedulingPoints.add(ZonedDateTime.now());
         List<Job> parallelJobs = new ArrayList<>();
+        // Main logic
         while (!schedulingPoints.isEmpty()) {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
             // Reset parallel jobs list by removing the jobs that have finished execution
-            parallelJobs.removeIf(job -> ApiUtils.addMilliSeconds(jobAssignments.get(job).getDispatchTime(),
+            parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
             for (Job currentJob : jobs) {
                 logger.info("Current job : "+currentJob.getKey());
@@ -71,7 +71,7 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
                     boolean hasConflicts = false;
                     for (Job alreadyScheduledJob : parallelJobs) {
                         // If current job doesn't conflict with already running parallel job, schedule it
-                        if (adjacencyMatrix.get(alreadyScheduledJob.getKey()).contains(currentJob.getKey())) {
+                        if (adjacencyMatrix.get(alreadyScheduledJob).contains(currentJob)) {
                             hasConflicts = true;
                         }
                     }
@@ -82,9 +82,10 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentJob.getEndTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()),deviceId));
+                        currentJob.setDispatchTime(currentSchedulingPoint);
                         jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint,
                                 deviceId));
-                        schedulingPoints.add(ApiUtils.addMilliSeconds(currentSchedulingPoint,
+                        schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint,
                                 Constants.JOB_EXECUTION_TIMES.get(currentJob.getType())));
                         parallelJobs.add(currentJob);
                     }
