@@ -22,7 +22,7 @@ services:
       - .env
   influxdb:
     container_name: influxdb
-    image: influxdb:latest
+    image: influxdb:1.8
     ports:
       - "${INFLUXDB_PORT}:${INFLUXDB_PORT}"
     environment:

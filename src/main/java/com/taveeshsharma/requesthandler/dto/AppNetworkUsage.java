@@ -3,9 +3,19 @@ package com.taveeshsharma.requesthandler.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AppNetworkUsage {
+    private String operatorName;
     private String name;
     private Long rx;
     private Long tx;
+
+    @JsonProperty("operatorName")
+    public String getOperatorName() {
+        return operatorName;
+    }
+
+    public void setOperatorName(String operatorName) {
+        this.operatorName = operatorName;
+    }
 
     @JsonProperty("name")
     public String getName() {
