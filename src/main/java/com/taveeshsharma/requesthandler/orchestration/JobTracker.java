@@ -33,7 +33,7 @@ public class JobTracker {
         track();
     }
 
-    @Async(value = "applicationTaskExecutor")
+    @Async
     public void track(){
         schedulerService.acquireWriteLock();
         logger.info("Job tracking is being performed");
