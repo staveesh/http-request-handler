@@ -43,6 +43,7 @@ public class ServerSocketHandler {
                 logger.info("Active Jobs Sent To Phone");
                 return jobArray.toString();
             }else if(type.equalsIgnoreCase("summary")){
+                logger.info(jsonString);
                 final Gson builder = new GsonBuilder()
                         .registerTypeAdapter(Date.class, (JsonDeserializer) (jsonElement, type1, context) -> new Date(jsonElement.getAsJsonPrimitive().getAsLong()))
                         .create();
