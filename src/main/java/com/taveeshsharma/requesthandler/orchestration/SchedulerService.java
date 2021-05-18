@@ -40,7 +40,6 @@ public class SchedulerService {
 
     private final List<Job> activeJobs = new ArrayList<>();
     private final Set<String> jobInstanceTracker = new HashSet<>();
-    private final Schedule jobSchedule = new Schedule(ZonedDateTime.now(), new HashMap<>());
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public void addMeasurement(Job job) {
@@ -91,22 +90,15 @@ public class SchedulerService {
         schedulingAlgorithm.preprocessJobs(graph, devices);
         Schedule newSchedule = schedulingAlgorithm.generateSchedule(graph.getJobs(),
                 graph.getAdjacencyMatrix(), devices);
-        addToGlobalSchedule(newSchedule);
-        sendActiveJobs();
+        sendActiveJobs(newSchedule);
         releaseReadLock();
     }
 
-    private void addToGlobalSchedule(Schedule newSchedule) {
-        jobSchedule.getJobAssignments().putAll(newSchedule.getJobAssignments());
-        jobSchedule.setGeneratedAt(ZonedDateTime.now());
-        logger.info(String.format("%s jobs added to global schedule", newSchedule.getJobAssignments().size()));
-    }
-
-    private void sendActiveJobs() {
+    private void sendActiveJobs(Schedule theSchedule) {
         Map<String, List<MeasurementDescription>> jobsToBeSent = new HashMap<>();
-        if (jobSchedule.getJobAssignments().size() > 0) {
+        if (theSchedule.getJobAssignments().size() > 0) {
             ZonedDateTime currentTime = ZonedDateTime.now();
-            for (Iterator<Map.Entry<Job, Assignment>> it = jobSchedule.getJobAssignments().entrySet().iterator(); it.hasNext(); ) {
+            for (Iterator<Map.Entry<Job, Assignment>> it = theSchedule.getJobAssignments().entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Job, Assignment> schedule = it.next();
                 String deviceId = schedule.getValue().getDeviceKey();
                 boolean dispatchTimeElapsed = currentTime.isAfter(schedule.getValue().getDispatchTime());
@@ -127,7 +119,7 @@ public class SchedulerService {
                     jobsToBeSent.get(deviceId).add(job.getMeasurementDescription());
                     int instanceNumber = job.getInstanceNumber().get();
                     JobMetrics metrics = dbManager.findMetricsById(jobKey + "-" + instanceNumber);
-                    metrics.setScheduleGeneratedAt(jobSchedule.getGeneratedAt());
+                    metrics.setScheduleGeneratedAt(theSchedule.getGeneratedAt());
                     metrics.setExpectedDispatchTime(schedule.getValue().getDispatchTime());
                     metrics.setActualDispatchTime(ZonedDateTime.now());
                     dbManager.upsertJobMetrics(metrics);
