@@ -28,7 +28,7 @@ public class JobTracker {
     @Autowired
     private SchedulerService schedulerService;
 
-    @Scheduled(fixedRate = 2*60*1000, initialDelay = 60*1000)
+    @Scheduled(fixedRate = 60*1000, initialDelay = 60*1000)
     public void trackingTask(){
         track();
     }
