@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Qualifier("aosdAlgorithm")
 public class AOSDAlgorithm extends SchedulingAlgorithm {
 
-    private static final Logger logger = LoggerFactory.getLogger(DOSDAlgorithm.class);
+    private static final Logger logger = LoggerFactory.getLogger(AOSDAlgorithm.class);
 
     @Override
     public void preprocessJobs(ConflictGraph graph, List<String> devices) {
