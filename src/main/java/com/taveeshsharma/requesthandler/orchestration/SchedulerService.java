@@ -1,16 +1,10 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.taveeshsharma.requesthandler.config.WebSocketConfig;
-import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
-import com.taveeshsharma.requesthandler.utils.Constants;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +23,11 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Autowired
-    @Qualifier("edfCeAlgorithm")
+    @Qualifier("roundRobinAlgorithm")
     private SchedulingAlgorithm schedulingAlgorithm;
+
+    @Autowired
+    private JobDispatcher dispatcher;
 
     @Autowired
     private DatabaseManager dbManager;
@@ -95,28 +92,26 @@ public class SchedulerService {
     }
 
     private void sendActiveJobs(Schedule theSchedule) {
-        Map<String, List<MeasurementDescription>> jobsToBeSent = new HashMap<>();
         if (theSchedule.getJobAssignments().size() > 0) {
             ZonedDateTime currentTime = ZonedDateTime.now();
             for (Iterator<Map.Entry<Job, Assignment>> it = theSchedule.getJobAssignments().entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Job, Assignment> schedule = it.next();
-                String deviceId = schedule.getValue().getDeviceKey();
-                boolean dispatchTimeElapsed = currentTime.isAfter(schedule.getValue().getDispatchTime());
                 boolean isJobNotRemovable = !schedule.getKey().isRemovable();
                 boolean isJobNotResettable = !schedule.getKey().isResettable(currentTime);
                 String instanceKey = schedule.getKey().getKey() + "-" + schedule.getKey().getInstanceNumber().get();
                 boolean instanceNotDispatchedBefore = !jobInstanceTracker.contains(instanceKey);
                 logger.info("instanceKey = " + instanceKey +
                         ", instanceNotDispatchedBefore = " + instanceNotDispatchedBefore +
-                        ", dispatchTimeElapsed = " + dispatchTimeElapsed +
                         ", isJobNotRemovable = " + isJobNotRemovable +
                         " ,isJobNotResettable = " + isJobNotResettable);
-                if (instanceNotDispatchedBefore && dispatchTimeElapsed && isJobNotRemovable && isJobNotResettable) {
+                if (instanceNotDispatchedBefore && isJobNotRemovable && isJobNotResettable) {
                     Job job = schedule.getKey();
+                    DynamicScheduledTask task = new DynamicScheduledTask();
+                    task.setJob(job);
+                    task.setDispatchTime(schedule.getValue().getDispatchTime());
+                    task.setDeviceId(schedule.getValue().getDeviceKey());
+                    dispatcher.addNewTask(task);
                     String jobKey = job.getKey();
-                    if (!jobsToBeSent.containsKey(deviceId))
-                        jobsToBeSent.put(deviceId, new ArrayList<>());
-                    jobsToBeSent.get(deviceId).add(job.getMeasurementDescription());
                     int instanceNumber = job.getInstanceNumber().get();
                     JobMetrics metrics = dbManager.findMetricsById(jobKey + "-" + instanceNumber);
                     metrics.setScheduleGeneratedAt(theSchedule.getGeneratedAt());
@@ -128,41 +123,6 @@ public class SchedulerService {
                 }
             }
         }
-        for (Map.Entry<String, List<MeasurementDescription>> deviceJobs : jobsToBeSent.entrySet()) {
-            List<MeasurementDescription> jobs = deviceJobs.getValue();
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            try {
-                JSONArray jobsArray = new JSONArray(objectMapper.writeValueAsString(jobs));
-                for (int i = 0; i < jobsArray.length(); i++) {
-                    JSONObject jobObject = jobsArray.getJSONObject(i);
-                    JSONObject parameters = new JSONObject();
-                    switch (jobObject.getString("type")) {
-                        case Constants.PING_TYPE:
-                        case Constants.HTTP_TYPE:
-                        case Constants.TRACERT_TYPE:
-                            parameters.put("target", jobs.get(i).getParameters().getTarget());
-                            break;
-                        case Constants.DNS_TYPE:
-                            parameters.put("target", jobs.get(i).getParameters().getTarget());
-                            parameters.put("server", "null");
-                            break;
-                        case Constants.TCP_TYPE:
-                            parameters.put("target", "custom");
-                            parameters.put("dir_up", jobs.get(i).getParameters().getDirUp() ? "true" : "false");
-                            break;
-                    }
-                    jobObject.put("parameters", parameters);
-                }
-                messagingTemplate.convertAndSendToUser(
-                        deviceJobs.getKey(),
-                        "/queue/jobs",
-                        jobsArray.toString());
-            } catch (JsonProcessingException e) {
-                logger.error("Error converting jobs to valid JSON");
-            }
-        }
-        logger.info("Active Jobs Sent To Phones");
     }
 
     public void recordSuccessfulJob(JSONObject jobDesc) {
