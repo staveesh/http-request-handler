@@ -23,12 +23,13 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @Configuration
-public class SchedulerConfig implements SchedulingConfigurer {
+public class DispatcherConfig implements SchedulingConfigurer {
 
-    private static final Logger logger = LoggerFactory.getLogger(SchedulerConfig.class);
+    private static final Logger logger = LoggerFactory.getLogger(DispatcherConfig.class);
 
     @Autowired
     private JobDispatcher jobDispatcher;
@@ -40,34 +41,36 @@ public class SchedulerConfig implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.setScheduler(poolScheduler());
+        taskRegistrar.setScheduler(jobDispatcherThread());
         taskRegistrar.addTriggerTask(() -> {
             logger.info("Dispatcher thread is running...");
+            jobDispatcher.acquireWriteLock();
             Set<DynamicScheduledTask> tasks = jobDispatcher.getTasks();
+            logger.info("Jobs in Dispatcher : "+tasks.stream().map(task ->
+                    task.getJob().getKey()+"-"+task.getJob().getInstanceNumber().get() + ":" + task.getDispatchTime())
+                    .collect(Collectors.toList()));
             Iterator<DynamicScheduledTask> iter = tasks.iterator();
             List<DynamicScheduledTask> tasksToRun = new ArrayList<>();
-            ZonedDateTime nextRun = ZonedDateTime.now().plusSeconds(30L);
-            int idx = 0;
-            DynamicScheduledTask prev = null;
-            while (iter.hasNext()) {
+            ZonedDateTime nextRun = ZonedDateTime.now().plusSeconds(Constants.JOB_DISPATCHER_PERIOD_SECONDS);
+            nextRunTimeStamp = Date.from(nextRun.toInstant());
+            while(iter.hasNext()){
                 DynamicScheduledTask task = iter.next();
-                if (prev == null || task.getDispatchTime().equals(prev.getDispatchTime())) {
+                Date taskDispatch = Date.from(task.getDispatchTime().toInstant());
+                if(ZonedDateTime.now().isAfter(task.getDispatchTime())){
                     tasksToRun.add(task);
                     iter.remove();
-                } else {
-                    if (iter.hasNext())
-                        nextRun = iter.next().getDispatchTime();
+                } else{
+                    nextRunTimeStamp = taskDispatch;
                     break;
                 }
-                idx++;
-                if (idx >= 1) {
-                    prev = tasksToRun.get(tasksToRun.size() - 1);
-                }
             }
-            nextRunTimeStamp = Date.from(nextRun.toInstant());
-            logger.info("Next run : " + nextRunTimeStamp);
+            jobDispatcher.releaseWriteLock();
+            logger.info("Jobs going out now : "+tasksToRun.stream().map(task ->
+                    task.getJob().getKey() + ":" + task.getDispatchTime())
+                    .collect(Collectors.toList()));
+            logger.info("Job dispatcher's next run : " + nextRunTimeStamp);
             Map<String, List<MeasurementDescription>> jobMap = new HashMap<>();
-            for (DynamicScheduledTask task : tasks) {
+            for (DynamicScheduledTask task : tasksToRun) {
                 if (!jobMap.containsKey(task.getDeviceId()))
                     jobMap.put(task.getDeviceId(), new ArrayList<>());
                 jobMap.get(task.getDeviceId()).add(task.getJob().getMeasurementDescription());
@@ -80,6 +83,7 @@ public class SchedulerConfig implements SchedulingConfigurer {
                     JSONArray jobsArray = new JSONArray(objectMapper.writeValueAsString(jobs));
                     for (int i = 0; i < jobsArray.length(); i++) {
                         JSONObject jobObject = jobsArray.getJSONObject(i);
+                        logger.info("Dispatching job : "+jobObject.getString("key")+" to device : "+deviceJobs.getKey());
                         JSONObject parameters = new JSONObject();
                         switch (jobObject.getString("type")) {
                             case Constants.PING_TYPE:
@@ -108,18 +112,16 @@ public class SchedulerConfig implements SchedulingConfigurer {
             }
             logger.info("Active Jobs Sent To Phones");
         }, triggerContext -> {
-            logger.info("Setting next run time");
-            logger.info("nextRun = " + nextRunTimeStamp);
             if (nextRunTimeStamp == null)
-                nextRunTimeStamp = new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(30));
+                nextRunTimeStamp = new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(Constants.JOB_DISPATCHER_PERIOD_SECONDS));
             return nextRunTimeStamp;
         });
     }
 
     @Bean
-    public TaskScheduler poolScheduler() {
+    public TaskScheduler jobDispatcherThread() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
+        scheduler.setThreadNamePrefix("JobDispatcher");
         scheduler.setPoolSize(100);
         scheduler.initialize();
         return scheduler;

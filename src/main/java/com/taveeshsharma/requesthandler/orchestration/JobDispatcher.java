@@ -12,7 +12,7 @@ public class JobDispatcher {
         if(t1.getDispatchTime().isBefore(t2.getDispatchTime()))
             return -1;
         else if (t1.getDispatchTime().equals(t2.getDispatchTime()))
-            return 0;
+            return (t1.getJob().getKey()).compareTo((t2.getJob().getKey()));
         else
             return 1;
     });

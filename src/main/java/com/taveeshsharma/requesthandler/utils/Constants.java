@@ -31,4 +31,7 @@ public class Constants {
         put(TRACERT_TYPE, 12L);
         put(TCP_TYPE, 16L);
     }};
+
+    public static final long JOB_DISPATCHER_PERIOD_SECONDS = 30L;
+    public static final long JOB_TRACKER_PERIOD_SECONDS = 20L;
 }

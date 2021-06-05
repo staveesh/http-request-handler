@@ -5,6 +5,7 @@ import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
+import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,11 +39,20 @@ public class SchedulerService {
     private final List<Job> activeJobs = new ArrayList<>();
     private final Set<String> jobInstanceTracker = new HashSet<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final PriorityQueue<ZonedDateTime> jobResetQueue = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
+        if (d1.isBefore(d2))
+            return -1;
+        else if (d1.equals(d2))
+            return 0;
+        else
+            return 1;
+    });
 
     public void addMeasurement(Job job) {
         acquireWriteLock();
         if (job == null) return;
         activeJobs.add(job);
+        jobResetQueue.add(job.getStartTime());
         insertNewJobMetrics(job);
         releaseWriteLock();
     }
@@ -58,7 +68,7 @@ public class SchedulerService {
         dbManager.upsertJobMetrics(metrics);
     }
 
-    public void requestScheduling(ConflictGraph graph, List<String> devices) {
+    public Schedule requestScheduling(ConflictGraph graph, List<String> devices) {
         acquireReadLock();
         if (devices == null) {
             devices = new ArrayList<>(WebSocketConfig.connections.values());
@@ -66,20 +76,22 @@ public class SchedulerService {
         if (devices.size() == 0) {
             logger.error("Skipping scheduling as no devices have checked in recently");
             releaseReadLock();
-            return;
+            return null;
         }
         if (graph == null) {
             ZonedDateTime currentTime = ZonedDateTime.now();
-            // Schedule only those jobs for which start time has passed and they have not been scheduled before
             List<Job> jobsToSchedule = activeJobs
-                    .stream().filter(job ->
-                            currentTime.isAfter(job.getStartTime()) && job.getDispatchTime() == null
-                    )
+                    .stream().filter(job -> {
+                        boolean startsNow = currentTime.isAfter(job.getStartTime());
+                        String instanceKey = job.getKey() + "-" + job.getInstanceNumber().get();
+                        boolean instanceNotDispatchedBefore = !jobInstanceTracker.contains(instanceKey);
+                        return startsNow && instanceNotDispatchedBefore;
+                    })
                     .collect(Collectors.toList());
             if (jobsToSchedule.size() == 0) {
                 logger.error("Skipping scheduling as no new jobs start after present time");
                 releaseReadLock();
-                return;
+                return null;
             }
             graph = new ConflictGraph(jobsToSchedule);
             graph.buildDefault();
@@ -87,12 +99,12 @@ public class SchedulerService {
         schedulingAlgorithm.preprocessJobs(graph, devices);
         Schedule newSchedule = schedulingAlgorithm.generateSchedule(graph.getJobs(),
                 graph.getAdjacencyMatrix(), devices);
-        sendActiveJobs(newSchedule);
         releaseReadLock();
+        return newSchedule;
     }
 
-    private void sendActiveJobs(Schedule theSchedule) {
-        if (theSchedule.getJobAssignments().size() > 0) {
+    public void sendActiveJobs(Schedule theSchedule) {
+        if (theSchedule != null && theSchedule.getJobAssignments().size() > 0) {
             ZonedDateTime currentTime = ZonedDateTime.now();
             for (Iterator<Map.Entry<Job, Assignment>> it = theSchedule.getJobAssignments().entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<Job, Assignment> schedule = it.next();
@@ -126,7 +138,7 @@ public class SchedulerService {
     }
 
     public void recordSuccessfulJob(JSONObject jobDesc) {
-        acquireReadLock();
+        acquireWriteLock();
         ZonedDateTime completionTime = ZonedDateTime.now();
         //assuming the JsonObj has key field mapping which measurement failed
         String key = jobDesc.getString("taskKey");
@@ -143,7 +155,7 @@ public class SchedulerService {
                 dbManager.upsertJobMetrics(metrics);
             }
         }
-        releaseReadLock();
+        releaseWriteLock();
         if (jobDesc.getBoolean("success"))
             dbManager.writeValues(jobDesc);
     }
@@ -170,5 +182,9 @@ public class SchedulerService {
 
     public Set<String> getJobInstanceTracker() {
         return jobInstanceTracker;
+    }
+
+    public PriorityQueue<ZonedDateTime> getJobResetQueue() {
+        return jobResetQueue;
     }
 }
