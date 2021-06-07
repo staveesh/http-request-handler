@@ -4,7 +4,7 @@ import com.taveeshsharma.requesthandler.dto.documents.Job;
 
 import java.time.ZonedDateTime;
 
-public class DynamicScheduledTask {
+public class DispatchTask {
     private Job job;
     private String deviceId;
     private ZonedDateTime dispatchTime;

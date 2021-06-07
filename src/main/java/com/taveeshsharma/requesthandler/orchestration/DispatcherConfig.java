@@ -1,11 +1,9 @@
-package com.taveeshsharma.requesthandler.config;
+package com.taveeshsharma.requesthandler.orchestration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.taveeshsharma.requesthandler.dto.MeasurementDescription;
-import com.taveeshsharma.requesthandler.orchestration.DynamicScheduledTask;
-import com.taveeshsharma.requesthandler.orchestration.JobDispatcher;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,16 +43,16 @@ public class DispatcherConfig implements SchedulingConfigurer {
         taskRegistrar.addTriggerTask(() -> {
             logger.info("Dispatcher thread is running...");
             jobDispatcher.acquireWriteLock();
-            Set<DynamicScheduledTask> tasks = jobDispatcher.getTasks();
+            Set<DispatchTask> tasks = jobDispatcher.getTasks();
             logger.info("Jobs in Dispatcher : "+tasks.stream().map(task ->
                     task.getJob().getKey()+"-"+task.getJob().getInstanceNumber().get() + ":" + task.getDispatchTime())
                     .collect(Collectors.toList()));
-            Iterator<DynamicScheduledTask> iter = tasks.iterator();
-            List<DynamicScheduledTask> tasksToRun = new ArrayList<>();
+            Iterator<DispatchTask> iter = tasks.iterator();
+            List<DispatchTask> tasksToRun = new ArrayList<>();
             ZonedDateTime nextRun = ZonedDateTime.now().plusSeconds(Constants.JOB_DISPATCHER_PERIOD_SECONDS);
             nextRunTimeStamp = Date.from(nextRun.toInstant());
             while(iter.hasNext()){
-                DynamicScheduledTask task = iter.next();
+                DispatchTask task = iter.next();
                 Date taskDispatch = Date.from(task.getDispatchTime().toInstant());
                 if(ZonedDateTime.now().isAfter(task.getDispatchTime())){
                     tasksToRun.add(task);
@@ -70,7 +68,7 @@ public class DispatcherConfig implements SchedulingConfigurer {
                     .collect(Collectors.toList()));
             logger.info("Job dispatcher's next run : " + nextRunTimeStamp);
             Map<String, List<MeasurementDescription>> jobMap = new HashMap<>();
-            for (DynamicScheduledTask task : tasksToRun) {
+            for (DispatchTask task : tasksToRun) {
                 if (!jobMap.containsKey(task.getDeviceId()))
                     jobMap.put(task.getDeviceId(), new ArrayList<>());
                 jobMap.get(task.getDeviceId()).add(task.getJob().getMeasurementDescription());

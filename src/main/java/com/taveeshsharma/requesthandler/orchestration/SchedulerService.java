@@ -24,7 +24,7 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Autowired
-    @Qualifier("roundRobinAlgorithm")
+    @Qualifier("dosdAlgorithm")
     private SchedulingAlgorithm schedulingAlgorithm;
 
     @Autowired
@@ -118,7 +118,7 @@ public class SchedulerService {
                         " ,isJobNotResettable = " + isJobNotResettable);
                 if (instanceNotDispatchedBefore && isJobNotRemovable && isJobNotResettable) {
                     Job job = schedule.getKey();
-                    DynamicScheduledTask task = new DynamicScheduledTask();
+                    DispatchTask task = new DispatchTask();
                     task.setJob(job);
                     task.setDispatchTime(schedule.getValue().getDispatchTime());
                     task.setDeviceId(schedule.getValue().getDeviceKey());

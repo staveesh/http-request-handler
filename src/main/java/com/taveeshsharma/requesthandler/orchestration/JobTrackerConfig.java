@@ -1,10 +1,8 @@
-package com.taveeshsharma.requesthandler.config;
+package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
-import com.taveeshsharma.requesthandler.orchestration.Schedule;
-import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
