@@ -5,12 +5,15 @@ public class NetworkNode {
     private String label;
     private String color;
     private boolean isGatewayRouter;
+    // Only applicable if isMeasurementNode = true
+    private Integer cost;
 
-    public NetworkNode(boolean isMeasurementNode, String label, String color, boolean isGatewayRouter) {
+    public NetworkNode(boolean isMeasurementNode, String label, String color, boolean isGatewayRouter, Integer cost) {
         this.isMeasurementNode = isMeasurementNode;
         this.label = label;
         this.color = color;
         this.isGatewayRouter = isGatewayRouter;
+        this.cost = cost;
     }
 
     public boolean isMeasurementNode() {
@@ -45,8 +48,16 @@ public class NetworkNode {
         isGatewayRouter = gatewayRouter;
     }
 
+    public Integer getCost() {
+        return cost;
+    }
+
+    public void setCost(Integer cost) {
+        this.cost = cost;
+    }
+
     @Override
     public String toString() {
-        return label;
+        return label+(isGatewayRouter ? "*" : "")+(isMeasurementNode ? "{"+cost+"}" : "");
     }
 }

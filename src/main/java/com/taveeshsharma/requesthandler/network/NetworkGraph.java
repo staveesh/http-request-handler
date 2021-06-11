@@ -42,23 +42,22 @@ public class NetworkGraph {
         List<NetworkNode> accessPoints = new ArrayList<>();
         List<NetworkNode> measurementNodes = new ArrayList<>();
         for (int idx = 1; idx <= numAccessPoints; idx++) {
-            NetworkNode accessPoint = new NetworkNode(false, "AP" + idx, "red", false);
+            NetworkNode accessPoint = new NetworkNode(false, "AP" + idx, "red", false, 0);
             accessPoints.add(accessPoint);
             topology.addVertex(accessPoint);
         }
-        accessPoints.get((int) (Math.random() * numAccessPoints)).setGatewayRouter(true);
         for (int idx = 1; idx <= numMeasurementNodes; idx++) {
-            NetworkNode mNode = new NetworkNode(true, "M" + idx,"blue", false);
+            NetworkNode mNode = new NetworkNode(true, "M" + idx,"blue", false, 0);
             measurementNodes.add(mNode);
             topology.addVertex(mNode);
         }
         // Access point to access point
-        for (NetworkNode ap1 : accessPoints) {
-            for (NetworkNode ap2 : accessPoints) {
-                if (!ap1.equals(ap2)) {
-                    if (Math.random() <= edgeProbability) {
-                        topology.addEdge(ap1, ap2);
-                    }
+        for (int idx1 = 0; idx1 < accessPoints.size()-1; idx1++) {
+            NetworkNode ap1 = accessPoints.get(idx1);
+            for (int idx2 = idx1+1; idx2 < accessPoints.size(); idx2++) {
+                NetworkNode ap2 = accessPoints.get(idx2);
+                if (Math.random() <= edgeProbability) {
+                    topology.addEdge(ap1, ap2);
                 }
             }
         }
@@ -128,7 +127,7 @@ public class NetworkGraph {
 
         @Override
         public NetworkNode get() {
-            return new NetworkNode(false, "dummy", "dummy", false);
+            return new NetworkNode(false, "dummy", "dummy", false, 0);
         }
 
     }

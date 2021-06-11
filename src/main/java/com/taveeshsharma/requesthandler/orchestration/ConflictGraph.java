@@ -44,7 +44,6 @@ public class ConflictGraph {
         adjacencyMatrix.put(newJob, new ArrayList<>());
         for(Job existingJob : jobs){
             if(!newJob.equals(existingJob)) {
-                // TODO: Need to advance the criteria for determining conflicts
                 if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
                         .getParameters().getTarget())) {
                     adjacencyMatrix.get(newJob).add(existingJob);

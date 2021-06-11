@@ -1,6 +1,7 @@
 package com.taveeshsharma.requesthandler.orchestration.algorithms;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.network.NetworkNode;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ColorAssignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
@@ -10,6 +11,7 @@ import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,9 @@ import java.util.stream.Collectors;
 public class AOSDAlgorithm extends SchedulingAlgorithm {
 
     private static final Logger logger = LoggerFactory.getLogger(AOSDAlgorithm.class);
+
+    @Autowired
+    private List<NetworkNode> networkCosts;
 
     @Override
     public void preprocessJobs(ConflictGraph graph, List<String> devices) {
@@ -134,7 +139,9 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                             ColorAssignment assignedRange = new ColorAssignment(start, end);
                             colorLookup.put(currentJob, assignedRange);
                             schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                            jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, devices.get(parallelJobs.size())));
+                            String deviceNumber = networkCosts.get(parallelJobs.size()).getLabel();
+                            String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
+                            jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
                             currentJob.setDispatchTime(currentSchedulingPoint);
                             parallelJobs.add(currentJob);
                             schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint, numberOfSlots));
