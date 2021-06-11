@@ -27,7 +27,7 @@ public class NetworkTopologyConfig {
     private static final Logger logger = LoggerFactory.getLogger(NetworkTopologyConfig.class);
 
     public NetworkGraph createOrImportGraph() throws IOException {
-        NetworkGraph graph = new NetworkGraph(10,4,0.1);
+        NetworkGraph graph = new NetworkGraph(8,4,1.0);
         // TODO: Move this path to properties file
         File topFile = new File("/var/lib/graphs/topology.dot");
         if(topFile.exists()) {
