@@ -110,11 +110,13 @@ public class NetworkTopologyConfig {
         assignGatewayRouters(graph);
         exportGraph(graph);
         computeCosts(graph);
-        return graph.getTopology().vertexSet()
+        List<NetworkNode> costs = graph.getTopology().vertexSet()
                 .stream()
                 .filter(NetworkNode::isMeasurementNode)
                 .sorted(Comparator.comparing(NetworkNode::getCost))
                 .collect(Collectors.toList());
+        logger.info(costs.stream().map(NetworkNode::getCost).collect(Collectors.toList()).toString());
+        return costs;
     }
 
     public void computeCosts(NetworkGraph graph){
