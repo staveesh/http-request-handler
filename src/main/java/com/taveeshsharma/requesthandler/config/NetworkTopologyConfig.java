@@ -115,7 +115,7 @@ public class NetworkTopologyConfig {
                 .filter(NetworkNode::isMeasurementNode)
                 .sorted(Comparator.comparing(NetworkNode::getCost))
                 .collect(Collectors.toList());
-        logger.info(costs.stream().map(NetworkNode::getCost).collect(Collectors.toList()).toString());
+        logger.info(costs.stream().map(node -> node.toString()+":"+node.getCost()).collect(Collectors.toList()).toString());
         return costs;
     }
 
