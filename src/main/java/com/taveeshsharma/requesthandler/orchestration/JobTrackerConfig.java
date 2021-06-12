@@ -49,6 +49,7 @@ public class JobTrackerConfig implements SchedulingConfigurer {
                 }
                 else if(job.isResettable(currentTime)) {
                     job.reset();
+                    logger.info("New start time : "+job.getStartTime());
                     JobMetrics metrics = new JobMetrics();
                     String jobKey = job.getKey();
                     int instanceNumber = job.getInstanceNumber().get();
