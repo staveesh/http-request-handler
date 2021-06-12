@@ -21,13 +21,13 @@ public class ConflictGraph {
         adjacencyMatrix = new HashMap<>();
     }
 
-    public void addEdge(Job j1, Job j2){
-        if(!adjacencyMatrix.containsKey(j1)){
+    public void addEdge(Job j1, Job j2) {
+        if (!adjacencyMatrix.containsKey(j1)) {
             adjacencyMatrix.put(j1, new ArrayList<>());
         }
         adjacencyMatrix.get(j1).add(j2);
 
-        if(!adjacencyMatrix.containsKey(j2)){
+        if (!adjacencyMatrix.containsKey(j2)) {
             adjacencyMatrix.put(j2, new ArrayList<>());
         }
         adjacencyMatrix.get(j2).add(j1);
@@ -41,17 +41,16 @@ public class ConflictGraph {
         this.jobs = jobs;
     }
 
-    public void addNode(Job newJob){
+    public void addNode(Job newJob) {
         adjacencyMatrix.put(newJob, new ArrayList<>());
-        for(Job existingJob : jobs){
-            if(!newJob.equals(existingJob)) {
+        for (Job existingJob : jobs) {
+            if (!newJob.equals(existingJob)) {
                 // All TCP jobs are destined to the same server
-                if(newJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
-                        existingJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)){
+                if (newJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
+                        existingJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)) {
                     adjacencyMatrix.get(newJob).add(existingJob);
                     adjacencyMatrix.get(existingJob).add(newJob);
-                }
-                else if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
+                } else if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
                         .getParameters().getTarget())) {
                     adjacencyMatrix.get(newJob).add(existingJob);
                     adjacencyMatrix.get(existingJob).add(newJob);
@@ -69,9 +68,21 @@ public class ConflictGraph {
         this.adjacencyMatrix = adjacencyMatrix;
     }
 
-    public void buildDefault(){
-        for(Job job : this.jobs) {
-            addNode(job);
+    public void buildDefault() {
+
+        for (Job job : jobs) adjacencyMatrix.put(job, new ArrayList<>());
+
+        for (int idx1 = 0; idx1 < jobs.size() - 1; idx1++) {
+            Job j1 = jobs.get(idx1);
+            for (int idx2 = idx1 + 1; idx2 < jobs.size(); idx2++) {
+                Job j2 = jobs.get(idx2);
+                if ((j1.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
+                        j2.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)) ||
+                        j1.getParameters().getTarget().equals(j2.getParameters().getTarget())) {
+                    adjacencyMatrix.get(j1).add(j2);
+                    adjacencyMatrix.get(j2).add(j1);
+                }
+            }
         }
     }
 }
