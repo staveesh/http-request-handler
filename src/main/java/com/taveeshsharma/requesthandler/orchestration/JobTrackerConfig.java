@@ -28,8 +28,6 @@ public class JobTrackerConfig implements SchedulingConfigurer {
     @Autowired
     private SchedulerService schedulerService;
 
-    private Date nextRun;
-
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         taskRegistrar.setScheduler(jobTrackerThread());
@@ -39,14 +37,8 @@ public class JobTrackerConfig implements SchedulingConfigurer {
             List<Job> activeJobs = schedulerService.getJobs();
             boolean schedulingRequired = false;
             ZonedDateTime currentTime = ZonedDateTime.now();
-            PriorityQueue<ZonedDateTime> resetQueue = schedulerService.getJobResetQueue();
-            boolean polled = false;
             for (Iterator<Job> iterator = activeJobs.iterator(); iterator.hasNext(); ) {
                 Job job = iterator.next();
-                if(!polled && Date.from(job.getStartTime().toInstant()).equals(nextRun)) {
-                    resetQueue.poll();
-                    polled = true;
-                }
                 if(job.isRemovable()){
                     String jobKey = job.getKey();
                     iterator.remove();
@@ -57,7 +49,6 @@ public class JobTrackerConfig implements SchedulingConfigurer {
                 }
                 else if(job.isResettable(currentTime)) {
                     job.reset();
-                    resetQueue.add(job.getStartTime());
                     JobMetrics metrics = new JobMetrics();
                     String jobKey = job.getKey();
                     int instanceNumber = job.getInstanceNumber().get();
@@ -77,26 +68,13 @@ public class JobTrackerConfig implements SchedulingConfigurer {
                 Schedule schedule = schedulerService.requestScheduling(null, null);
                 schedulerService.sendActiveJobs(schedule);
             }
-            if(resetQueue.size() > 0)
-                nextRun = Date.from(resetQueue.peek().toInstant());
-            else if(nextRun != null){
-                Date lastRun = nextRun;
-                Calendar nextExecutionTime = new GregorianCalendar();
-                nextExecutionTime.setTime(lastRun);
-                nextExecutionTime.add(Calendar.MILLISECOND, (int) Constants.JOB_TRACKER_PERIOD_SECONDS*1000);
-                nextRun = nextExecutionTime.getTime();
-            }
             schedulerService.releaseWriteLock();
         }, triggerContext -> {
-            if(nextRun == null){
-                Date lastActualExecutionTime = triggerContext.lastActualExecutionTime();
-                Calendar nextExecutionTime = new GregorianCalendar();
-                nextExecutionTime.setTime(lastActualExecutionTime != null ? lastActualExecutionTime : new Date());
-                nextExecutionTime.add(Calendar.MILLISECOND, (int) Constants.JOB_TRACKER_PERIOD_SECONDS*1000);
-                return nextExecutionTime.getTime();
-            } else{
-                return nextRun;
-            }
+            Date lastActualExecutionTime = triggerContext.lastActualExecutionTime();
+            Calendar nextExecutionTime = new GregorianCalendar();
+            nextExecutionTime.setTime(lastActualExecutionTime != null ? lastActualExecutionTime : new Date());
+            nextExecutionTime.add(Calendar.MILLISECOND, (int) Constants.JOB_TRACKER_PERIOD_SECONDS*1000);
+            return nextExecutionTime.getTime();
         });
     }
 

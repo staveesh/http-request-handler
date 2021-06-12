@@ -21,7 +21,6 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 
 @Configuration
@@ -44,9 +43,6 @@ public class DispatcherConfig implements SchedulingConfigurer {
             logger.info("Dispatcher thread is running...");
             jobDispatcher.acquireWriteLock();
             Set<DispatchTask> tasks = jobDispatcher.getTasks();
-            logger.info("Jobs in Dispatcher : "+tasks.stream().map(task ->
-                    task.getJob().getKey()+"-"+task.getJob().getInstanceNumber().get() + ":" + task.getDispatchTime())
-                    .collect(Collectors.toList()));
             Iterator<DispatchTask> iter = tasks.iterator();
             List<DispatchTask> tasksToRun = new ArrayList<>();
             ZonedDateTime nextRun = ZonedDateTime.now().plusSeconds(Constants.JOB_DISPATCHER_PERIOD_SECONDS);
@@ -63,10 +59,6 @@ public class DispatcherConfig implements SchedulingConfigurer {
                 }
             }
             jobDispatcher.releaseWriteLock();
-            logger.info("Jobs going out now : "+tasksToRun.stream().map(task ->
-                    task.getJob().getKey() + ":" + task.getDispatchTime())
-                    .collect(Collectors.toList()));
-            logger.info("Job dispatcher's next run : " + nextRunTimeStamp);
             Map<String, List<MeasurementDescription>> jobMap = new HashMap<>();
             for (DispatchTask task : tasksToRun) {
                 if (!jobMap.containsKey(task.getDeviceId()))

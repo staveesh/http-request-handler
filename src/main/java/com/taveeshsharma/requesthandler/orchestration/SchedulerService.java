@@ -39,20 +39,11 @@ public class SchedulerService {
     private final List<Job> activeJobs = new ArrayList<>();
     private final Set<String> jobInstanceTracker = new HashSet<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-    private final PriorityQueue<ZonedDateTime> jobResetQueue = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
-        if (d1.isBefore(d2))
-            return -1;
-        else if (d1.equals(d2))
-            return 0;
-        else
-            return 1;
-    });
 
     public void addMeasurement(Job job) {
         acquireWriteLock();
         if (job == null) return;
         activeJobs.add(job);
-        jobResetQueue.add(job.getStartTime());
         insertNewJobMetrics(job);
         releaseWriteLock();
     }
@@ -182,9 +173,5 @@ public class SchedulerService {
 
     public Set<String> getJobInstanceTracker() {
         return jobInstanceTracker;
-    }
-
-    public PriorityQueue<ZonedDateTime> getJobResetQueue() {
-        return jobResetQueue;
     }
 }
