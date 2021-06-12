@@ -49,10 +49,12 @@ public class ConflictGraph {
                 if(newJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
                         existingJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)){
                     adjacencyMatrix.get(newJob).add(existingJob);
+                    adjacencyMatrix.get(existingJob).add(newJob);
                 }
                 else if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
                         .getParameters().getTarget())) {
                     adjacencyMatrix.get(newJob).add(existingJob);
+                    adjacencyMatrix.get(existingJob).add(newJob);
                 }
             }
         }
