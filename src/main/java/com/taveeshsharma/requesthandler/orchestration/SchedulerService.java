@@ -63,6 +63,7 @@ public class SchedulerService {
         acquireReadLock();
         if (devices == null) {
             devices = new ArrayList<>(WebSocketConfig.connections.values());
+            logger.info("Available devices : "+devices);
         }
         if (devices.size() == 0) {
             logger.error("Skipping scheduling as no devices have checked in recently");
