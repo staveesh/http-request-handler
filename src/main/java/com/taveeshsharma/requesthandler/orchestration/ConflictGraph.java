@@ -1,6 +1,7 @@
 package com.taveeshsharma.requesthandler.orchestration;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
+import com.taveeshsharma.requesthandler.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,12 @@ public class ConflictGraph {
         adjacencyMatrix.put(newJob, new ArrayList<>());
         for(Job existingJob : jobs){
             if(!newJob.equals(existingJob)) {
-                if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
+                // All TCP jobs are destined to the same server
+                if(newJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
+                        existingJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)){
+                    adjacencyMatrix.get(newJob).add(existingJob);
+                }
+                else if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
                         .getParameters().getTarget())) {
                     adjacencyMatrix.get(newJob).add(existingJob);
                 }
