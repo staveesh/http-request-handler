@@ -24,7 +24,7 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Autowired
-    @Qualifier("edfCeAlgorithm")
+    @Qualifier("roundRobinAlgorithm")
     private SchedulingAlgorithm schedulingAlgorithm;
 
     @Autowired
@@ -119,8 +119,7 @@ public class SchedulerService {
                     int instanceNumber = job.getInstanceNumber().get();
                     JobMetrics metrics = dbManager.findMetricsById(jobKey + "-" + instanceNumber);
                     metrics.setScheduleGeneratedAt(theSchedule.getGeneratedAt());
-                    metrics.setExpectedDispatchTime(schedule.getValue().getDispatchTime());
-                    metrics.setActualDispatchTime(ZonedDateTime.now());
+                    metrics.setDispatchTime(schedule.getValue().getDispatchTime());
                     dbManager.upsertJobMetrics(metrics);
                     jobInstanceTracker.add(instanceKey);
                     it.remove();

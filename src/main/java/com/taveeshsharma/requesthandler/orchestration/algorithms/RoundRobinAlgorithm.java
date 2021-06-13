@@ -50,6 +50,11 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
     @Override
     public Schedule  generateSchedule(List<Job> jobs,
                                                  Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
+
+        // Remove devices that have disconnected
+        List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
+        if(mNodes.size() > devices.size())
+            mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
@@ -80,7 +85,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                         }
                     }
                     if(!hasConflicts && parallelJobs.size() < devices.size()) {
-                        String deviceNumber = networkCosts.get(parallelJobs.size()).getLabel();
+                        String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
                         String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),

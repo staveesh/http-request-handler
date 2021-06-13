@@ -24,9 +24,7 @@ public class JobMetrics {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime scheduleGeneratedAt;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    private ZonedDateTime expectedDispatchTime;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    private ZonedDateTime actualDispatchTime;
+    private ZonedDateTime dispatchTime;
 
     public String getId() {
         return id;
@@ -92,19 +90,11 @@ public class JobMetrics {
         this.scheduleGeneratedAt = scheduleGeneratedAt;
     }
 
-    public ZonedDateTime getExpectedDispatchTime() {
-        return expectedDispatchTime;
+    public ZonedDateTime getDispatchTime() {
+        return dispatchTime;
     }
 
-    public void setExpectedDispatchTime(ZonedDateTime expectedDispatchTime) {
-        this.expectedDispatchTime = expectedDispatchTime;
-    }
-
-    public ZonedDateTime getActualDispatchTime() {
-        return actualDispatchTime;
-    }
-
-    public void setActualDispatchTime(ZonedDateTime actualDispatchTime) {
-        this.actualDispatchTime = actualDispatchTime;
+    public void setDispatchTime(ZonedDateTime dispatchTime) {
+        this.dispatchTime = dispatchTime;
     }
 }

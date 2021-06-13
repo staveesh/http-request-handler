@@ -88,6 +88,10 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
     @Override
     public Schedule generateSchedule(List<Job> jobs,
                                      Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
+        // Remove devices that have disconnected
+        List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
+        if(mNodes.size() > devices.size())
+            mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         Map<Job, ColorAssignment> colorLookup = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
@@ -139,7 +143,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                             ColorAssignment assignedRange = new ColorAssignment(start, end);
                             colorLookup.put(currentJob, assignedRange);
                             schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                            String deviceNumber = networkCosts.get(parallelJobs.size()).getLabel();
+                            String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
                             String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
                             jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
                             currentJob.setDispatchTime(currentSchedulingPoint);
