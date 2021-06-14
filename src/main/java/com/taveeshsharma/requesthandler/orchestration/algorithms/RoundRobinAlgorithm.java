@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Qualifier("edfCeAlgorithm")
+@Qualifier("roundRobinAlgorithm")
 public class RoundRobinAlgorithm extends SchedulingAlgorithm {
     private static final Logger logger = LoggerFactory.getLogger(RoundRobinAlgorithm.class);
 
