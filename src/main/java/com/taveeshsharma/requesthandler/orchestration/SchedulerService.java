@@ -24,7 +24,7 @@ public class SchedulerService {
     private static final Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 
     @Autowired
-    @Qualifier("roundRobinAlgorithm")
+    @Qualifier("edfCeAlgorithm")
     private SchedulingAlgorithm schedulingAlgorithm;
 
     @Autowired
