@@ -91,7 +91,9 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
                             if(mNodes.get(idx).getProbAssignment() >= prob)
                                 break;
                         }
-                        String deviceNumber = mNodes.get(idx).getLabel();
+                        String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
+                        if(idx < mNodes.size())
+                            deviceNumber = mNodes.get(idx).getLabel();
                         String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),

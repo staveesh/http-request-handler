@@ -149,7 +149,9 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                                 if(mNodes.get(idx).getProbAssignment() >= prob)
                                     break;
                             }
-                            String deviceNumber = mNodes.get(idx).getLabel();
+                            String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
+                            if(idx < mNodes.size())
+                                deviceNumber = mNodes.get(idx).getLabel();
                             String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
                             jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
                             currentJob.setDispatchTime(currentSchedulingPoint);
