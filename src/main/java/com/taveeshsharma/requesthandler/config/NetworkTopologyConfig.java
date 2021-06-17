@@ -115,8 +115,19 @@ public class NetworkTopologyConfig {
                 .filter(NetworkNode::isMeasurementNode)
                 .sorted(Comparator.comparing(NetworkNode::getCost))
                 .collect(Collectors.toList());
+        computeAssignmentProbabilities(costs);
         logger.info(costs.stream().map(node -> node.toString()+":"+node.getCost()).collect(Collectors.toList()).toString());
         return costs;
+    }
+
+    private void computeAssignmentProbabilities(List<NetworkNode> costs) {
+        double idx = 0, m = costs.size();
+        for(NetworkNode node : costs){
+            if(node.isMeasurementNode()){
+                node.setProbAssignment((m-idx)/(m+1));
+                idx++;
+            }
+        }
     }
 
     public void computeCosts(NetworkGraph graph){

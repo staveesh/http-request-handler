@@ -85,7 +85,13 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                         }
                     }
                     if(!hasConflicts && parallelJobs.size() < devices.size()) {
-                        String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
+                        double prob = Math.random();
+                        int idx;
+                        for(idx = parallelJobs.size(); idx < mNodes.size(); idx++){
+                            if(mNodes.get(idx).getProbAssignment() >= prob)
+                                break;
+                        }
+                        String deviceNumber = mNodes.get(idx).getLabel();
                         String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),

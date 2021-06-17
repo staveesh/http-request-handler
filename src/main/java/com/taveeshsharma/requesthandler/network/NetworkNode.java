@@ -7,13 +7,16 @@ public class NetworkNode {
     private boolean isGatewayRouter;
     // Only applicable if isMeasurementNode = true
     private Integer cost;
+    // Probability that the device will be assigned to an executing job
+    private Double probAssignment;
 
-    public NetworkNode(boolean isMeasurementNode, String label, String color, boolean isGatewayRouter, Integer cost) {
+    public NetworkNode(boolean isMeasurementNode, String label, String color, boolean isGatewayRouter, Integer cost, Double probAssignment) {
         this.isMeasurementNode = isMeasurementNode;
         this.label = label;
         this.color = color;
         this.isGatewayRouter = isGatewayRouter;
         this.cost = cost;
+        this.probAssignment = probAssignment;
     }
 
     public boolean isMeasurementNode() {
@@ -56,8 +59,16 @@ public class NetworkNode {
         this.cost = cost;
     }
 
+    public Double getProbAssignment() {
+        return probAssignment;
+    }
+
+    public void setProbAssignment(Double probAssignment) {
+        this.probAssignment = probAssignment;
+    }
+
     @Override
     public String toString() {
-        return label+(isGatewayRouter ? "*" : "")+(isMeasurementNode ? "{"+cost+"}" : "");
+        return label+(isGatewayRouter ? "*" : "")+(isMeasurementNode ? "{"+cost+":" +probAssignment+"}" : "");
     }
 }

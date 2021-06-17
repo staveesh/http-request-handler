@@ -5,15 +5,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.DefaultUndirectedGraph;
 import org.jgrapht.graph.builder.GraphTypeBuilder;
 import org.jgrapht.util.SupplierUtil;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Supplier;
 
 public class NetworkGraph {
@@ -42,12 +39,12 @@ public class NetworkGraph {
         List<NetworkNode> accessPoints = new ArrayList<>();
         List<NetworkNode> measurementNodes = new ArrayList<>();
         for (int idx = 1; idx <= numAccessPoints; idx++) {
-            NetworkNode accessPoint = new NetworkNode(false, "AP" + idx, "red", false, 0);
+            NetworkNode accessPoint = new NetworkNode(false, "AP" + idx, "red", false, 0, 0.0);
             accessPoints.add(accessPoint);
             topology.addVertex(accessPoint);
         }
         for (int idx = 1; idx <= numMeasurementNodes; idx++) {
-            NetworkNode mNode = new NetworkNode(true, "M" + idx,"blue", false, 0);
+            NetworkNode mNode = new NetworkNode(true, "M" + idx,"blue", false, 0, 0.0);
             measurementNodes.add(mNode);
             topology.addVertex(mNode);
         }
@@ -127,7 +124,7 @@ public class NetworkGraph {
 
         @Override
         public NetworkNode get() {
-            return new NetworkNode(false, "dummy", "dummy", false, 0);
+            return new NetworkNode(false, "dummy", "dummy", false, 0, 0.0);
         }
 
     }

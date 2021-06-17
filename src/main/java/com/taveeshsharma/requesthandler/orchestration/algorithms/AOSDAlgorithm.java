@@ -143,7 +143,13 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                             ColorAssignment assignedRange = new ColorAssignment(start, end);
                             colorLookup.put(currentJob, assignedRange);
                             schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                            String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
+                            double prob = Math.random();
+                            int idx;
+                            for(idx = parallelJobs.size(); idx < mNodes.size(); idx++){
+                                if(mNodes.get(idx).getProbAssignment() >= prob)
+                                    break;
+                            }
+                            String deviceNumber = mNodes.get(idx).getLabel();
                             String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
                             jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
                             currentJob.setDispatchTime(currentSchedulingPoint);
