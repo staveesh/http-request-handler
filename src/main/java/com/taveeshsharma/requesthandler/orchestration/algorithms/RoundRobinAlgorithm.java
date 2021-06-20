@@ -48,12 +48,12 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
     }
 
     @Override
-    public Schedule  generateSchedule(List<Job> jobs,
-                                                 Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
+    public Schedule generateSchedule(List<Job> jobs,
+                                     Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
 
         // Remove devices that have disconnected
         List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
-        if(mNodes.size() > devices.size())
+        if (mNodes.size() > devices.size())
             mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
@@ -71,11 +71,21 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
             // Reset parallel jobs list by removing the jobs that have finished execution
-            parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
-                    Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
+            Set<Integer> devicesToExclude = new HashSet<>();
+            ListIterator<Job> iter = parallelJobs.listIterator();
+            int remIdx = 0;
+            while(iter.hasNext()){
+                Job job = iter.next();
+                if(ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
+                        Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint))
+                    iter.remove();
+                else
+                    devicesToExclude.add(remIdx);
+                remIdx++;
+            }
             for (Job currentJob : jobs) {
-                logger.info("Current job : "+currentJob.getKey());
-                logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
+                logger.info("Current job : " + currentJob.getKey());
+                logger.info("Parallel Jobs : " + parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
                 if (!jobAssignments.containsKey(currentJob)) {
                     boolean hasConflicts = false;
                     for (Job alreadyScheduledJob : parallelJobs) {
@@ -84,22 +94,22 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
                             hasConflicts = true;
                         }
                     }
-                    if(!hasConflicts && parallelJobs.size() < devices.size()) {
+                    if (!hasConflicts && parallelJobs.size() < devices.size()) {
                         double prob = Math.random();
                         int idx;
-                        for(idx = parallelJobs.size(); idx < mNodes.size(); idx++){
-                            if(mNodes.get(idx).getProbAssignment() >= prob)
+                        for (idx = parallelJobs.size(); idx < mNodes.size(); idx++) {
+                            if (mNodes.get(idx).getProbAssignment() >= prob && !devicesToExclude.contains(idx))
                                 break;
                         }
                         String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
-                        if(idx < mNodes.size())
+                        if (idx < mNodes.size())
                             deviceNumber = mNodes.get(idx).getLabel();
-                        String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
+                        String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1)) - 1);
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
                                 currentJob.getEndTime().withZoneSameInstant(ZoneId.systemDefault()),
-                                currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()),deviceId));
+                                currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()), deviceId));
                         currentJob.setDispatchTime(currentSchedulingPoint);
                         jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint,
                                 deviceId));

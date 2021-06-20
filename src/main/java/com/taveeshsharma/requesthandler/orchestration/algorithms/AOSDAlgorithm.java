@@ -119,8 +119,18 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
             ZonedDateTime currentSchedulingPoint = schedulingPoints.poll();
             slotStart = 1 + (int) ChronoUnit.SECONDS.between(firstSchedulingPoint, currentSchedulingPoint);
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
-            parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
-                    Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
+            Set<Integer> devicesToExclude = new HashSet<>();
+            ListIterator<Job> iter = parallelJobs.listIterator();
+            int remIdx = 0;
+            while(iter.hasNext()){
+                Job job = iter.next();
+                if(ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
+                        Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint))
+                    iter.remove();
+                else
+                    devicesToExclude.add(remIdx);
+                remIdx++;
+            }
             for (Job currentJob : jobs) {
                 if (!jobAssignments.containsKey(currentJob)) {
                     logger.info("Current Job : " + currentJob.getKey());
@@ -146,7 +156,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
                             double prob = Math.random();
                             int idx;
                             for(idx = parallelJobs.size(); idx < mNodes.size(); idx++){
-                                if(mNodes.get(idx).getProbAssignment() >= prob)
+                                if (mNodes.get(idx).getProbAssignment() >= prob && !devicesToExclude.contains(idx))
                                     break;
                             }
                             String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
