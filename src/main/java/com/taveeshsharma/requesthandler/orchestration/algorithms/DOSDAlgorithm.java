@@ -22,8 +22,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Qualifier("dosdAlgorithm")
-public class DOSDAlgorithm extends SchedulingAlgorithm {
+@Qualifier("dosd")
+public class DOSDAlgorithm implements SchedulingAlgorithm {
 
     private static final Logger logger = LoggerFactory.getLogger(DOSDAlgorithm.class);
 
@@ -160,7 +160,7 @@ public class DOSDAlgorithm extends SchedulingAlgorithm {
         }
         Schedule schedule = new Schedule(ZonedDateTime.now(), jobAssignments);
         logger.info("Scheduling complete");
-        super.printSchedule(jobAssignments);
+        printSchedule(jobAssignments);
         return schedule;
     }
 }

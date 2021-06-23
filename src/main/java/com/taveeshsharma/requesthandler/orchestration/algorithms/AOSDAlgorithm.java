@@ -22,8 +22,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Qualifier("aosdAlgorithm")
-public class AOSDAlgorithm extends SchedulingAlgorithm {
+@Qualifier("aosd")
+public class AOSDAlgorithm implements SchedulingAlgorithm {
 
     private static final Logger logger = LoggerFactory.getLogger(AOSDAlgorithm.class);
 
@@ -156,7 +156,7 @@ public class AOSDAlgorithm extends SchedulingAlgorithm {
         }
         Schedule schedule = new Schedule(ZonedDateTime.now(), jobAssignments);
         logger.info("Scheduling complete");
-        super.printSchedule(jobAssignments);
+        printSchedule(jobAssignments);
         return schedule;
     }
 }

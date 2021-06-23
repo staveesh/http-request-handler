@@ -14,6 +14,7 @@ import org.jgrapht.nio.dot.DOTImporter;
 import org.jgrapht.util.SupplierUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,12 +25,24 @@ import java.util.stream.Collectors;
 @Configuration
 public class NetworkTopologyConfig {
 
+    @Value("${network.topology.file}")
+    private String topologyFile;
+
+    @Value("${network.topology.num.access.points}")
+    private int numAccessPoints;
+
+    @Value("${network.topology.num.measurement.nodes}")
+    private int numMeasurementNodes;
+
+    @Value("${network.topology.edge.probability}")
+    private double edgeProbability;
+
     private static final Logger logger = LoggerFactory.getLogger(NetworkTopologyConfig.class);
 
     public NetworkGraph createOrImportGraph() throws IOException {
-        NetworkGraph graph = new NetworkGraph(8,4,0.2);
+        NetworkGraph graph = new NetworkGraph(numAccessPoints, numMeasurementNodes, edgeProbability);
         // TODO: Move this path to properties file
-        File topFile = new File("/var/lib/graphs/topology.dot");
+        File topFile = new File("/var/lib/graphs/"+topologyFile);
         if(topFile.exists()) {
             try (InputStream fStream = new FileInputStream(topFile)) {
                 DOTImporter<NetworkNode, DefaultEdge> dotImporter = new DOTImporter<>();

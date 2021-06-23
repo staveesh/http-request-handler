@@ -16,16 +16,16 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public abstract class SchedulingAlgorithm {
+public interface SchedulingAlgorithm {
 
-    private static final Logger logger = LoggerFactory.getLogger(SchedulingAlgorithm.class);
+    static final Logger logger = LoggerFactory.getLogger(SchedulingAlgorithm.class);
 
     public abstract void preprocessJobs(ConflictGraph graph, List<String> devices);
 
     public abstract Schedule generateSchedule(List<Job> jobs,
                                               Map<Job, List<Job>> adjacencyMatrix, List<String> devices);
 
-    public void printSchedule(Map<Job, Assignment> schedule) {
+    public default void printSchedule(Map<Job, Assignment> schedule) {
         for (Map.Entry<Job, Assignment> jobAssignment : schedule.entrySet()) {
             logger.info(String.format("Job with key %s scheduled on device %s at time %s",
                     jobAssignment.getKey().getKey(),

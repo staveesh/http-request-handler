@@ -20,8 +20,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Qualifier("edfCeAlgorithm")
-public class EDFCEAlgorithm extends SchedulingAlgorithm{
+@Qualifier("edf")
+public class EDFCEAlgorithm implements SchedulingAlgorithm{
 
     private static final Logger logger = LoggerFactory.getLogger(EDFCEAlgorithm.class);
 
@@ -104,7 +104,7 @@ public class EDFCEAlgorithm extends SchedulingAlgorithm{
         }
         Schedule schedule = new Schedule(ZonedDateTime.now(), jobAssignments);
         logger.info("Scheduling complete");
-        super.printSchedule(jobAssignments);
+        printSchedule(jobAssignments);
         return schedule;
     }
 }

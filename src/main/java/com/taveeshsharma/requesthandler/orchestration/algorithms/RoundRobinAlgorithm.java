@@ -20,8 +20,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Qualifier("roundRobinAlgorithm")
-public class RoundRobinAlgorithm extends SchedulingAlgorithm {
+@Qualifier("rr")
+public class RoundRobinAlgorithm implements SchedulingAlgorithm {
     private static final Logger logger = LoggerFactory.getLogger(RoundRobinAlgorithm.class);
 
     @Autowired
@@ -104,7 +104,7 @@ public class RoundRobinAlgorithm extends SchedulingAlgorithm {
         }
         Schedule schedule = new Schedule(ZonedDateTime.now(), jobAssignments);
         logger.info("Scheduling complete");
-        super.printSchedule(jobAssignments);
+        printSchedule(jobAssignments);
         return schedule;
     }
 
