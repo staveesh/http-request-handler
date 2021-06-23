@@ -1,7 +1,6 @@
 package com.taveeshsharma.requesthandler.orchestration.algorithms;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.network.NetworkNode;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Schedule;
@@ -10,7 +9,6 @@ import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +22,6 @@ import java.util.stream.Collectors;
 public class RoundRobinAlgorithm implements SchedulingAlgorithm {
     private static final Logger logger = LoggerFactory.getLogger(RoundRobinAlgorithm.class);
 
-    @Autowired
-    private List<NetworkNode> networkCosts;
-
     /**
      * Performs scheduling in such a way that jobs that arrive first get scheduled first.
      *
@@ -34,7 +29,7 @@ public class RoundRobinAlgorithm implements SchedulingAlgorithm {
      * @return
      */
     @Override
-    public void preprocessJobs(ConflictGraph graph, List<String> devices) {
+    public void preprocessJobs(ConflictGraph graph) {
         logger.info("Preprocessing jobs using Round Robin scheme");
         List<Job> jobs = graph.getJobs();
         jobs.sort((j1, j2) -> {
@@ -49,12 +44,7 @@ public class RoundRobinAlgorithm implements SchedulingAlgorithm {
 
     @Override
     public Schedule  generateSchedule(List<Job> jobs,
-                                                 Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
-
-        // Remove devices that have disconnected
-        List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
-        if(mNodes.size() > devices.size())
-            mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
+                                                 Map<Job, List<Job>> adjacencyMatrix){
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
@@ -84,9 +74,8 @@ public class RoundRobinAlgorithm implements SchedulingAlgorithm {
                             hasConflicts = true;
                         }
                     }
-                    if(!hasConflicts && parallelJobs.size() < devices.size()) {
-                        String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
-                        String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
+                    if(!hasConflicts) {
+                        String deviceId = currentJob.getDeviceId();
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),

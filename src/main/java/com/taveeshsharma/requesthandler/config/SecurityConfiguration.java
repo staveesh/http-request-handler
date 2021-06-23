@@ -47,7 +47,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/schedule").permitAll()
                 .antMatchers("/signup").permitAll()
-                .antMatchers("/mobiperf/**").permitAll()
+                .antMatchers("/powerqope/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)

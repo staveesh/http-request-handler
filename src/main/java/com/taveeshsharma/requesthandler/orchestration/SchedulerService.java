@@ -89,9 +89,9 @@ public class SchedulerService {
             graph = new ConflictGraph(jobsToSchedule);
             graph.buildDefault();
         }
-        schedulingAlgorithm.preprocessJobs(graph, devices);
+        schedulingAlgorithm.preprocessJobs(graph);
         Schedule newSchedule = schedulingAlgorithm.generateSchedule(graph.getJobs(),
-                graph.getAdjacencyMatrix(), devices);
+                graph.getAdjacencyMatrix());
         releaseReadLock();
         return newSchedule;
     }

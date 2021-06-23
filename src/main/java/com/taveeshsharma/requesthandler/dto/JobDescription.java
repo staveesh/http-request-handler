@@ -7,6 +7,7 @@ public class JobDescription {
     private MeasurementDescription measurementDescription;
     private Integer nodeCount;
     private JobInterval jobInterval;
+    private String deviceId;
 
     @JsonProperty("measurementDescription")
     public MeasurementDescription getMeasurementDescription() {
@@ -33,12 +34,12 @@ public class JobDescription {
         this.jobInterval = jobInterval;
     }
 
-    @Override
-    public String toString() {
-        return "JobDescription{" +
-                "measurementDescription=" + measurementDescription +
-                ", nodeCount=" + nodeCount +
-                ", jobInterval=" + jobInterval +
-                '}';
+    @JsonProperty("deviceId")
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }

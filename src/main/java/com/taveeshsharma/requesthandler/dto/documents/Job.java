@@ -35,6 +35,7 @@ public class Job {
     private AtomicInteger instanceNumber;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime dispatchTime;
+    private String deviceId;
 
     public Job() {
     }
@@ -57,6 +58,7 @@ public class Job {
         }
         this.instanceNumber = new AtomicInteger(1);
         this.dispatchTime = null;
+        this.deviceId = description.getDeviceId();
     }
 
 
@@ -166,6 +168,14 @@ public class Job {
                 this.jobInterval.getMinutes()*60 +
                 this.getJobInterval().getSeconds();
         return totalSeconds != 0;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public void updateInstanceNumber(){

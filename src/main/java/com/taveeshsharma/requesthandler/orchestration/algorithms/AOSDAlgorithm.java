@@ -1,7 +1,6 @@
 package com.taveeshsharma.requesthandler.orchestration.algorithms;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.network.NetworkNode;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ColorAssignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
@@ -27,11 +26,8 @@ public class AOSDAlgorithm implements SchedulingAlgorithm {
 
     private static final Logger logger = LoggerFactory.getLogger(AOSDAlgorithm.class);
 
-    @Autowired
-    private List<NetworkNode> networkCosts;
-
     @Override
-    public void preprocessJobs(ConflictGraph graph, List<String> devices) {
+    public void preprocessJobs(ConflictGraph graph) {
         Map<Job, List<Job>> adjacencyMatrix = graph.getAdjacencyMatrix();
         List<Job> jobs = graph.getJobs();
         jobs.sort(Comparator.comparingLong(j -> Constants.JOB_EXECUTION_TIMES.get(j.getType()) +
@@ -87,11 +83,7 @@ public class AOSDAlgorithm implements SchedulingAlgorithm {
 
     @Override
     public Schedule generateSchedule(List<Job> jobs,
-                                     Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
-        // Remove devices that have disconnected
-        List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
-        if(mNodes.size() > devices.size())
-            mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
+                                     Map<Job, List<Job>> adjacencyMatrix) {
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         Map<Job, ColorAssignment> colorLookup = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
@@ -139,13 +131,12 @@ public class AOSDAlgorithm implements SchedulingAlgorithm {
                     if(startIndex + numberOfSlots <= availableColors.size()) {
                         int start = availableColors.get(startIndex);
                         int end = availableColors.get(startIndex + numberOfSlots - 1);
-                        if (start == slotStart && parallelJobs.size() < devices.size()) {
+                        if (start == slotStart) {
                             ColorAssignment assignedRange = new ColorAssignment(start, end);
                             colorLookup.put(currentJob, assignedRange);
                             schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                            String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
-                            String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
-                            jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
+                            jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint,
+                                    currentJob.getDeviceId()));
                             currentJob.setDispatchTime(currentSchedulingPoint);
                             parallelJobs.add(currentJob);
                             schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint, numberOfSlots));

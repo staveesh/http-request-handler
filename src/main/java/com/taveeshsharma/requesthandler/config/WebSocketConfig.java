@@ -31,7 +31,7 @@ public class WebSocketConfig extends AbstractSecurityWebSocketMessageBrokerConfi
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/mobiperf");
+        registry.addEndpoint("/powerqope");
     }
 
     @EventListener
