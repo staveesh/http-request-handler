@@ -100,7 +100,7 @@ public class DispatcherConfig implements SchedulingConfigurer {
                     logger.error("Error converting jobs to valid JSON");
                 }
             }
-            logger.info("Active Jobs Sent To Phones");
+            logger.info("Active jobs sent to measurement nodes");
         }, triggerContext -> {
             if (nextRunTimeStamp == null)
                 nextRunTimeStamp = new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(Constants.JOB_DISPATCHER_PERIOD_SECONDS));
