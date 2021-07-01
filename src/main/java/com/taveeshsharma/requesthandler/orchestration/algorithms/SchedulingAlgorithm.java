@@ -1,20 +1,15 @@
 package com.taveeshsharma.requesthandler.orchestration.algorithms;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.network.NetworkNode;
-import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
+import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Schedule;
-import com.taveeshsharma.requesthandler.utils.ApiUtils;
-import com.taveeshsharma.requesthandler.utils.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 public interface SchedulingAlgorithm {
 

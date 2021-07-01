@@ -1,7 +1,6 @@
 package com.taveeshsharma.requesthandler.orchestration.algorithms;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.network.NetworkNode;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ColorAssignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
@@ -11,7 +10,6 @@ import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +24,6 @@ import java.util.stream.Collectors;
 public class DOSDAlgorithm implements SchedulingAlgorithm {
 
     private static final Logger logger = LoggerFactory.getLogger(DOSDAlgorithm.class);
-
-    @Autowired
-    private List<NetworkNode> networkCosts;
 
     @Override
     public void preprocessJobs(ConflictGraph graph, List<String> devices) {
@@ -88,10 +83,6 @@ public class DOSDAlgorithm implements SchedulingAlgorithm {
     @Override
     public Schedule generateSchedule(List<Job> jobs,
                                      Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
-        // Remove devices that have disconnected
-        List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
-        if(mNodes.size() > devices.size())
-            mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         Map<Job, ColorAssignment> colorLookup = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
@@ -121,6 +112,8 @@ public class DOSDAlgorithm implements SchedulingAlgorithm {
             logger.info("Current scheduling point : " + currentSchedulingPoint.withZoneSameInstant(ZoneId.systemDefault()));
             parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
+            // Shuffle devices list at each scheduling point to ensure better job distribution
+            Collections.shuffle(devices);
             for (Job currentJob : jobs) {
                 if (!jobAssignments.containsKey(currentJob)) {
                     logger.info("Current Job : " + currentJob.getKey());
@@ -147,8 +140,7 @@ public class DOSDAlgorithm implements SchedulingAlgorithm {
                             colorLookup.put(currentJob, assignedRange);
                             logger.info("Assigned color range : " + assignedRange);
                             schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                            String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
-                            String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
+                            String deviceId = devices.get(parallelJobs.size());
                             jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
                             currentJob.setDispatchTime(currentSchedulingPoint);
                             parallelJobs.add(currentJob);

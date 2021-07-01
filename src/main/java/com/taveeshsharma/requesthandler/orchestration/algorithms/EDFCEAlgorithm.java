@@ -1,16 +1,14 @@
 package com.taveeshsharma.requesthandler.orchestration.algorithms;
 
 import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.network.NetworkNode;
-import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
+import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +22,6 @@ import java.util.stream.Collectors;
 public class EDFCEAlgorithm implements SchedulingAlgorithm{
 
     private static final Logger logger = LoggerFactory.getLogger(EDFCEAlgorithm.class);
-
-    @Autowired
-    private List<NetworkNode> networkCosts;
 
     /**
      * Performs scheduling in such a way that jobs with earliest deadlines get scheduled first.
@@ -51,10 +46,6 @@ public class EDFCEAlgorithm implements SchedulingAlgorithm{
     @Override
     public Schedule  generateSchedule(List<Job> jobs,
                                       Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
-        // Remove devices that have disconnected
-        List<NetworkNode> mNodes = new ArrayList<>(networkCosts);
-        if(mNodes.size() > devices.size())
-            mNodes.removeIf(node -> Integer.parseInt(node.getLabel().substring(1)) > devices.size());
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
@@ -73,6 +64,8 @@ public class EDFCEAlgorithm implements SchedulingAlgorithm{
             // Reset parallel jobs list by removing the jobs that have finished execution
             parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
+            // Shuffle devices list at each scheduling point to ensure better job distribution
+            Collections.shuffle(devices);
             for (Job currentJob : jobs) {
                 logger.info("Current job : "+currentJob.getKey());
                 logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
@@ -85,8 +78,7 @@ public class EDFCEAlgorithm implements SchedulingAlgorithm{
                         }
                     }
                     if(!hasConflicts && parallelJobs.size() < devices.size()) {
-                        String deviceNumber = mNodes.get(parallelJobs.size()).getLabel();
-                        String deviceId = devices.get(Integer.parseInt(deviceNumber.substring(1))-1);
+                        String deviceId = devices.get(parallelJobs.size());
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
