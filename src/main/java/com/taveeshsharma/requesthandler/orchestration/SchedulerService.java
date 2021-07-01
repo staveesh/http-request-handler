@@ -138,7 +138,7 @@ public class SchedulerService {
             String currKey = job.getKey();
             if (currKey.equals(key)) {
                 int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
-                String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
+                String nodeId = jobDesc.getString("deviceId");
                 JobMetrics metrics = dbManager.findMetricsById(key + "-" + instanceNumber);
                 metrics.setCompletionTime(completionTime);
                 metrics.setNodeId(nodeId);
