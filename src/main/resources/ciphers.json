@@ -1,0 +1,614 @@
+[
+ {
+   "name": "TLS_AES_128_GCM_SHA256",
+   "tlsVersion": "TLSv1.3",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 54186,
+   "rank": 1,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 43065,
+   "rank": 2,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-CHACHA20-POLY1305",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 32684,
+   "rank": 3,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "TLS_AES_256_GCM_SHA384",
+   "tlsVersion": "TLSv1.3",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 19928,
+   "rank": 4,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-CHACHA20-POLY1305",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 10815,
+   "rank": 5,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES256-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 2473,
+   "rank": 6,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 1869,
+   "rank": 7,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 744,
+   "rank": 8,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "TLS_CHACHA20_POLY1305_SHA256",
+   "tlsVersion": "TLSv1.3",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 339,
+   "rank": 9,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-CHACHA20-POLY1305",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 13,
+   "rank": 10,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES256-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "high",
+   "count": 5,
+   "rank": 11,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES256-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 86533,
+   "rank": 12,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "TLS_CHACHA20_POLY1305_SHA256",
+   "tlsVersion": "TLSv1.3",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 73451,
+   "rank": 13,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 62396,
+   "rank": 14,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "TLS_AES_256_GCM_SHA384",
+   "tlsVersion": "TLSv1.3",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 54512,
+   "rank": 15,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-CHACHA20-POLY1305",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 47548,
+   "rank": 16,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 39473,
+   "rank": 17,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES256-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 34154,
+   "rank": 18,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 34066,
+   "rank": 19,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES256-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 27183,
+   "rank": 20,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "TLS_AES_128_GCM_SHA256",
+   "tlsVersion": "TLSv1.3",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 20192,
+   "rank": 21,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ARIA256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 11450,
+   "rank": 22,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES256-CCM",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 8302,
+   "rank": 23,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES256-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 8217,
+   "rank": 24,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-CHACHA20-POLY1305",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 6219,
+   "rank": 25,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-ARIA256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 4789,
+   "rank": 26,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-CHACHA20-POLY1305",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 2582,
+   "rank": 27,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES256-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 557,
+   "rank": 28,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES256-CCM",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 555,
+   "rank": 29,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-ARIA256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "high",
+   "count": 353,
+   "rank": 30,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "medium",
+   "count": 280,
+   "rank": 31,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "medium",
+   "count": 216,
+   "rank": 32,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "medium",
+   "count": 1,
+   "rank": 33,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "medium",
+   "count": 75286,
+   "rank": 34,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "medium",
+   "count": 67200,
+   "rank": 35,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-CCM",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "medium",
+   "count": 14193,
+   "rank": 36,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES256-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "medium",
+   "count": 14108,
+   "rank": 37,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "CAMELLIA256-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "medium",
+   "count": 11521,
+   "rank": 38,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ARIA256-GCM-SHA384",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "medium",
+   "count": 9423,
+   "rank": 39,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 37405,
+   "rank": 40,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 1372,
+   "rank": 41,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 314,
+   "rank": 42,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 205,
+   "rank": 43,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 137,
+   "rank": 44,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 70,
+   "rank": 45,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Preferred",
+   "level": "low",
+   "count": 7,
+   "rank": 46,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 89742,
+   "rank": 47,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 78907,
+   "rank": 48,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 71015,
+   "rank": 49,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 68048,
+   "rank": 50,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 39816,
+   "rank": 51,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 34469,
+   "rank": 52,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 34191,
+   "rank": 53,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 25418,
+   "rank": 54,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES128-CCM",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 14321,
+   "rank": 55,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "AES128-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 14235,
+   "rank": 56,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-RSA-CAMELLIA128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 13572,
+   "rank": 57,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "CAMELLIA128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 11524,
+   "rank": 58,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ARIA128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 11429,
+   "rank": 59,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ARIA128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 9404,
+   "rank": 60,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES128-CCM",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 7240,
+   "rank": 61,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-AES128-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 7154,
+   "rank": 62,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-CAMELLIA128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 5972,
+   "rank": 63,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "DHE-RSA-ARIA128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 4783,
+   "rank": 64,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES128-CCM8",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 555,
+   "rank": 65,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-AES128-CCM",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 555,
+   "rank": 66,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-CAMELLIA128-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 416,
+   "rank": 67,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ },
+ {
+   "name": "ECDHE-ECDSA-ARIA128-GCM-SHA256",
+   "tlsVersion": "TLSv1.2",
+   "preference": "Accepted",
+   "level": "low",
+   "count": 347,
+   "rank": 68,
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Cipher"
+ }
+]
