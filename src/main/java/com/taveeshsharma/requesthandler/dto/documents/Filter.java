@@ -5,24 +5,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("filters")
 public class Filter {
-    private String vantagePoint;
-    private String domain;
+    private String networkType;
     private String recursive;
     private String dnsType;
-    private Double sslTime;
     private Double pageLoadTime;
+    private String level;
+    private String ipAddress;
 
-    @JsonProperty("vantagePoint")
-    public String getVantagePoint() {
-        return vantagePoint;
+    @JsonProperty("networkType")
+    public String getNetworkType() {
+        return networkType;
     }
 
-    public void setVantagePoint(String vantagePoint) {
-        this.vantagePoint = vantagePoint;
-    }
-    @JsonProperty("domain")
-    public String getDomain() {
-        return domain;
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
     }
 
     @JsonProperty("recursive")
@@ -34,9 +30,6 @@ public class Filter {
         this.recursive = recursive;
     }
 
-    public void setDomain(String domain) {
-        this.domain = domain;
-    }
     @JsonProperty("dnsType")
     public String getDnsType() {
         return dnsType;
@@ -45,14 +38,7 @@ public class Filter {
     public void setDnsType(String dnsType) {
         this.dnsType = dnsType;
     }
-    @JsonProperty("sslTime")
-    public Double getSslTime() {
-        return sslTime;
-    }
 
-    public void setSslTime(Double sslTime) {
-        this.sslTime = sslTime;
-    }
     @JsonProperty("pageLoadTime")
     public Double getPageLoadTime() {
         return pageLoadTime;
@@ -60,5 +46,22 @@ public class Filter {
 
     public void setPageLoadTime(Double pageLoadTime) {
         this.pageLoadTime = pageLoadTime;
+    }
+
+    @JsonProperty("level")
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+    @JsonProperty("ipAddress")
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
     }
 }

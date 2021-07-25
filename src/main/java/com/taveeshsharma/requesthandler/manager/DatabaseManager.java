@@ -1,9 +1,6 @@
 package com.taveeshsharma.requesthandler.manager;
 
-import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
-import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
-import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
+import com.taveeshsharma.requesthandler.dto.documents.*;
 import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
 import com.taveeshsharma.requesthandler.measurements.Measurements;
 import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
@@ -45,4 +42,8 @@ public interface DatabaseManager {
     public void upsertJobMetrics(JobMetrics metrics);
 
     public String findLastSummaryCheckinTime(String deviceId);
+
+    public Cipher findBestCipherForLevel(String level);
+
+    public Filter findBestFilter(String networkType, String level);
 }

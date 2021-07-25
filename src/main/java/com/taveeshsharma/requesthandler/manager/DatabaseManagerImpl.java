@@ -1,16 +1,10 @@
 package com.taveeshsharma.requesthandler.manager;
 
-import com.taveeshsharma.requesthandler.dto.documents.Job;
-import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
-import com.taveeshsharma.requesthandler.repository.JobMetricsRepository;
-import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
-import com.taveeshsharma.requesthandler.repository.JobRepository;
+import com.taveeshsharma.requesthandler.dto.documents.*;
+import com.taveeshsharma.requesthandler.repository.*;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
-import com.taveeshsharma.requesthandler.dto.documents.ScheduleRequest;
 import com.taveeshsharma.requesthandler.measurements.*;
-import com.taveeshsharma.requesthandler.repository.PersonalDataRepository;
-import com.taveeshsharma.requesthandler.repository.ScheduleRequestRepository;
 import org.apache.commons.math3.util.Precision;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
@@ -61,6 +55,12 @@ public class DatabaseManagerImpl implements DatabaseManager{
 
     @Value("${spring.influxdb.retention-policy}")
     private String RP_NAME;
+
+    @Autowired
+    private CiphersRepository ciphersRepository;
+
+    @Autowired
+    private FiltersRepository filtersRepository;
 
     @Override
     public void insertScheduledJob(ScheduleRequest request) {
@@ -409,5 +409,15 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Override
     public void upsertJobMetrics(JobMetrics metrics) {
         jobMetricsRepository.save(metrics);
+    }
+
+    @Override
+    public Cipher findBestCipherForLevel(String level) {
+        return ciphersRepository.findBestCipherByLevel(level);
+    }
+
+    @Override
+    public Filter findBestFilter(String networkType, String level){
+        return filtersRepository.findBestFilter(networkType, level);
     }
 }
