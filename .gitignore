@@ -5,8 +5,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-/src/main/resources/ciphers.json
-/src/main/resources/filters.json
+!**/src/main/resources/ciphers.json
+!**/src/main/resources/filters.json
 
 ### STS ###-Dspring.profiles.active=test
 .apt_generated
