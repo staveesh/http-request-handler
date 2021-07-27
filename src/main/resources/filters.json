@@ -1,0 +1,672 @@
+[
+ {
+   "networkType": "4G",
+   "recursive": "adguard_adblock",
+   "dnsType": "dns",
+   "pageLoadTime": 8734,
+   "level": "low",
+   "ipAddress": "176.103.130.131",
+   "url": "https://dns.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_adblock",
+   "dnsType": "doh",
+   "pageLoadTime": 10130.5,
+   "level": "high",
+   "ipAddress": "176.103.130.131",
+   "url": "https://dns.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_adblock",
+   "dnsType": "dot",
+   "pageLoadTime": 9685,
+   "level": "medium",
+   "ipAddress": "176.103.130.131",
+   "url": "https://dns.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_family",
+   "dnsType": "dns",
+   "pageLoadTime": 8754,
+   "level": "low",
+   "ipAddress": "176.103.130.132",
+   "url": "https://dns-family.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_family",
+   "dnsType": "doh",
+   "pageLoadTime": 10129,
+   "level": "high",
+   "ipAddress": "176.103.130.132",
+   "url": "https://dns-family.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_family",
+   "dnsType": "dot",
+   "pageLoadTime": 9608,
+   "level": "medium",
+   "ipAddress": "176.103.130.132",
+   "url": "https://dns-family.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 9548,
+   "level": "low",
+   "ipAddress": "176.103.130.136",
+   "url": "https://dns-unfiltered.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 11905,
+   "level": "high",
+   "ipAddress": "176.103.130.136",
+   "url": "https://dns-unfiltered.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "adguard_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 10234,
+   "level": "medium",
+   "ipAddress": "176.103.130.136",
+   "url": "https://dns-unfiltered.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_adult",
+   "dnsType": "dns",
+   "pageLoadTime": 9113.5,
+   "level": "low",
+   "ipAddress": "185.228.168.10",
+   "url": "https://doh.cleanbrowsing.org/doh/adult-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_adult",
+   "dnsType": "doh",
+   "pageLoadTime": 15556.5,
+   "level": "high",
+   "ipAddress": "185.228.168.10",
+   "url": "https://doh.cleanbrowsing.org/doh/adult-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_adult",
+   "dnsType": "dot",
+   "pageLoadTime": 10194,
+   "level": "medium",
+   "ipAddress": "185.228.168.10",
+   "url": "https://doh.cleanbrowsing.org/doh/adult-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_family",
+   "dnsType": "dns",
+   "pageLoadTime": 8823,
+   "level": "low",
+   "ipAddress": "185.228.168.9",
+   "url": "https://doh.cleanbrowsing.org/doh/family-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_family",
+   "dnsType": "doh",
+   "pageLoadTime": 11146.5,
+   "level": "high",
+   "ipAddress": "185.228.168.9",
+   "url": "https://doh.cleanbrowsing.org/doh/family-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_family",
+   "dnsType": "dot",
+   "pageLoadTime": 10083,
+   "level": "medium",
+   "ipAddress": "185.228.168.9",
+   "url": "https://doh.cleanbrowsing.org/doh/family-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 8996,
+   "level": "low",
+   "ipAddress": "185.228.168.168",
+   "url": "https://doh.cleanbrowsing.org/doh/security-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 7894,
+   "level": "high",
+   "ipAddress": "185.228.168.168",
+   "url": "https://doh.cleanbrowsing.org/doh/security-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cleanbrowsing_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 10311,
+   "level": "medium",
+   "ipAddress": "185.228.168.168",
+   "url": "https://doh.cleanbrowsing.org/doh/security-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_family",
+   "dnsType": "dns",
+   "pageLoadTime": 6303,
+   "level": "low",
+   "ipAddress": "1.1.1.3",
+   "url": "https://family.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_family",
+   "dnsType": "doh",
+   "pageLoadTime": 7522,
+   "level": "high",
+   "ipAddress": "1.1.1.3",
+   "url": "https://family.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_family",
+   "dnsType": "dot",
+   "pageLoadTime": 7198,
+   "level": "medium",
+   "ipAddress": "1.1.1.3",
+   "url": "https://family.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_security",
+   "dnsType": "dns",
+   "pageLoadTime": 6578,
+   "level": "low",
+   "ipAddress": "1.1.1.2",
+   "url": "https://security.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_security",
+   "dnsType": "dot",
+   "pageLoadTime": 7093,
+   "level": "medium",
+   "ipAddress": "1.1.1.2",
+   "url": "https://security.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 6623,
+   "level": "low",
+   "ipAddress": "1.1.1.1",
+   "url": "https://cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 7309.5,
+   "level": "high",
+   "ipAddress": "1.1.1.1",
+   "url": "https://cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "cloudflare_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 7246,
+   "level": "medium",
+   "ipAddress": "1.1.1.1",
+   "url": "https://cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_security",
+   "dnsType": "dns",
+   "pageLoadTime": 7281,
+   "level": "low",
+   "ipAddress": "9.9.9.9",
+   "url": "https://dns9.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_security",
+   "dnsType": "dot",
+   "pageLoadTime": 9494,
+   "level": "medium",
+   "ipAddress": "9.9.9.9",
+   "url": "https://dns9.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_security_edns",
+   "dnsType": "dns",
+   "pageLoadTime": 8258,
+   "level": "low",
+   "ipAddress": "",
+   "url": "https://dns11.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_security_edns",
+   "dnsType": "dot",
+   "pageLoadTime": 8966,
+   "level": "medium",
+   "ipAddress": "",
+   "url": "https://dns11.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 7612,
+   "level": "low",
+   "ipAddress": "9.9.9.10",
+   "url": "https://dns10.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 8219.5,
+   "level": "high",
+   "ipAddress": "9.9.9.10",
+   "url": "https://dns10.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "4G",
+   "recursive": "quad9_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 10029,
+   "level": "medium",
+   "ipAddress": "9.9.9.10",
+   "url": "https://dns10.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_adblock",
+   "dnsType": "dns",
+   "pageLoadTime": 9881,
+   "level": "low",
+   "ipAddress": "176.103.130.131",
+   "url": "https://dns.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_adblock",
+   "dnsType": "doh",
+   "pageLoadTime": 15089,
+   "level": "high",
+   "ipAddress": "176.103.130.131",
+   "url": "https://dns.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_adblock",
+   "dnsType": "dot",
+   "pageLoadTime": 11333,
+   "level": "medium",
+   "ipAddress": "176.103.130.131",
+   "url": "https://dns.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_family",
+   "dnsType": "dns",
+   "pageLoadTime": 9423.5,
+   "level": "low",
+   "ipAddress": "176.103.130.132",
+   "url": "https://dns-family.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_family",
+   "dnsType": "doh",
+   "pageLoadTime": 7373.5,
+   "level": "high",
+   "ipAddress": "176.103.130.132",
+   "url": "https://dns-family.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_family",
+   "dnsType": "dot",
+   "pageLoadTime": 11127,
+   "level": "medium",
+   "ipAddress": "176.103.130.132",
+   "url": "https://dns-family.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 11720,
+   "level": "low",
+   "ipAddress": "176.103.130.136",
+   "url": "https://dns-unfiltered.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 7779,
+   "level": "high",
+   "ipAddress": "176.103.130.136",
+   "url": "https://dns-unfiltered.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "adguard_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 13133,
+   "level": "medium",
+   "ipAddress": "176.103.130.136",
+   "url": "https://dns-unfiltered.adguard.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_adult",
+   "dnsType": "dns",
+   "pageLoadTime": 10248.5,
+   "level": "low",
+   "ipAddress": "185.228.168.10",
+   "url": "https://doh.cleanbrowsing.org/doh/adult-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_adult",
+   "dnsType": "doh",
+   "pageLoadTime": 10755.5,
+   "level": "high",
+   "ipAddress": "185.228.168.10",
+   "url": "https://doh.cleanbrowsing.org/doh/adult-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_adult",
+   "dnsType": "dot",
+   "pageLoadTime": 11027.5,
+   "level": "medium",
+   "ipAddress": "185.228.168.10",
+   "url": "https://doh.cleanbrowsing.org/doh/adult-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_family",
+   "dnsType": "dns",
+   "pageLoadTime": 9718,
+   "level": "low",
+   "ipAddress": "185.228.168.9",
+   "url": "https://doh.cleanbrowsing.org/doh/family-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_family",
+   "dnsType": "doh",
+   "pageLoadTime": 10048,
+   "level": "high",
+   "ipAddress": "185.228.168.9",
+   "url": "https://doh.cleanbrowsing.org/doh/family-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_family",
+   "dnsType": "dot",
+   "pageLoadTime": 11323,
+   "level": "medium",
+   "ipAddress": "185.228.168.9",
+   "url": "https://doh.cleanbrowsing.org/doh/family-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 9953,
+   "level": "low",
+   "ipAddress": "185.228.168.168",
+   "url": "https://doh.cleanbrowsing.org/doh/security-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 10189.5,
+   "level": "high",
+   "ipAddress": "185.228.168.168",
+   "url": "https://doh.cleanbrowsing.org/doh/security-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cleanbrowsing_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 11380,
+   "level": "medium",
+   "ipAddress": "185.228.168.168",
+   "url": "https://doh.cleanbrowsing.org/doh/security-filter",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_family",
+   "dnsType": "dns",
+   "pageLoadTime": 10055.5,
+   "level": "low",
+   "ipAddress": "1.1.1.3",
+   "url": "https://family.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_family",
+   "dnsType": "doh",
+   "pageLoadTime": 10208,
+   "level": "high",
+   "ipAddress": "1.1.1.3",
+   "url": "https://family.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_family",
+   "dnsType": "dot",
+   "pageLoadTime": 10563,
+   "level": "medium",
+   "ipAddress": "1.1.1.3",
+   "url": "https://family.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_security",
+   "dnsType": "dns",
+   "pageLoadTime": 9652,
+   "level": "low",
+   "ipAddress": "1.1.1.2",
+   "url": "https://security.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_security",
+   "dnsType": "dot",
+   "pageLoadTime": 10237,
+   "level": "medium",
+   "ipAddress": "1.1.1.2",
+   "url": "https://security.cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 12488,
+   "level": "low",
+   "ipAddress": "1.1.1.1",
+   "url": "https://cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 9751,
+   "level": "high",
+   "ipAddress": "1.1.1.1",
+   "url": "https://cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "cloudflare_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 9946,
+   "level": "medium",
+   "ipAddress": "1.1.1.1",
+   "url": "https://cloudflare-dns.com/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "default",
+   "dnsType": "dns",
+   "pageLoadTime": 9447,
+   "level": "low",
+   "ipAddress": "",
+   "url": "",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_security",
+   "dnsType": "dns",
+   "pageLoadTime": 12199,
+   "level": "low",
+   "ipAddress": "9.9.9.9",
+   "url": "https://dns9.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_security",
+   "dnsType": "dot",
+   "pageLoadTime": 11512,
+   "level": "medium",
+   "ipAddress": "9.9.9.9",
+   "url": "https://dns9.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_security_edns",
+   "dnsType": "dns",
+   "pageLoadTime": 10555,
+   "level": "low",
+   "ipAddress": "",
+   "url": "https://dns11.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_security_edns",
+   "dnsType": "dot",
+   "pageLoadTime": 11277.5,
+   "level": "medium",
+   "ipAddress": "",
+   "url": "https://dns11.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_standard",
+   "dnsType": "dns",
+   "pageLoadTime": 10326.5,
+   "level": "low",
+   "ipAddress": "9.9.9.10",
+   "url": "https://dns10.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_standard",
+   "dnsType": "doh",
+   "pageLoadTime": 9994,
+   "level": "high",
+   "ipAddress": "9.9.9.10",
+   "url": "https://dns10.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ },
+ {
+   "networkType": "WiFi",
+   "recursive": "quad9_standard",
+   "dnsType": "dot",
+   "pageLoadTime": 11765,
+   "level": "medium",
+   "ipAddress": "9.9.9.10",
+   "url": "https://dns10.quad9.net/dns-query",
+   "_class": "com.taveeshsharma.requesthandler.dto.documents.Filter"
+ }
+]

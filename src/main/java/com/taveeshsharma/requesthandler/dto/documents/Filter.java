@@ -11,6 +11,7 @@ public class Filter {
     private Double pageLoadTime;
     private String level;
     private String ipAddress;
+    private String url;
 
     @JsonProperty("networkType")
     public String getNetworkType() {
@@ -63,5 +64,14 @@ public class Filter {
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    @JsonProperty("url")
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
