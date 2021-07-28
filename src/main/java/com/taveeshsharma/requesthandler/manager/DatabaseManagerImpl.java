@@ -120,6 +120,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
                 p = createDNSPoint(jsonObject);
                 break;
             case Constants.HTTP_TYPE:
+                logger.info("HTTP : "+jsonObject);
                 p = createHttpPoint(jsonObject);
                 break;
             case Constants.TRACERT_TYPE:
