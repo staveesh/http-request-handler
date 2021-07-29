@@ -10,7 +10,6 @@ services:
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
     volumes:
-      - /var/lib/qosmon/graphs:/var/lib/graphs
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     networks:
