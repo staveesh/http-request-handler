@@ -22,6 +22,8 @@ public class SchedulingAlgoConfig {
                 return new DOSDAlgorithm();
             case "aosd":
                 return new AOSDAlgorithm();
+            case "random":
+                return new RandomAlgorithm();
         }
         return null;
     }
