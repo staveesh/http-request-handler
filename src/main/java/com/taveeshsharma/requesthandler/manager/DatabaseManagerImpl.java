@@ -259,6 +259,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
         try {
             Measurements measurements = T.newInstance();
             measurements.setTarget(getTargetKey(object.getJSONObject("parameters"), object.getString("type")));
+            measurements.setInstanceNumber(object.getJSONObject("parameters").getInt("instanceNumber"));
             if(object.has("taskKey"))
                 measurements.setTaskKey(object.getString("taskKey"));
             else

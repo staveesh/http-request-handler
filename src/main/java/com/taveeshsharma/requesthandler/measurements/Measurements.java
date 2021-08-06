@@ -24,6 +24,9 @@ public class Measurements {
     @Column(name="target")
     private String target;
 
+    @Column(name = "instance_number")
+    private Integer instanceNumber;
+
     public String getTarget() {
         return target;
     }
@@ -53,5 +56,13 @@ public class Measurements {
 
     public void setTime(Instant time) {
         this.time = time;
+    }
+
+    public Integer getInstanceNumber() {
+        return instanceNumber;
+    }
+
+    public void setInstanceNumber(Integer instanceNumber) {
+        this.instanceNumber = instanceNumber;
     }
 }
