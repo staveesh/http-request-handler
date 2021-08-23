@@ -29,7 +29,7 @@ public class Constants {
         put(DNS_TYPE, 6L);
         put(HTTP_TYPE, 6L);
         put(TRACERT_TYPE, 12L);
-        put(TCP_TYPE, 16L);
+        put(TCP_TYPE, 40L);
     }};
 
     public static final long JOB_DISPATCHER_PERIOD_SECONDS = 30L;

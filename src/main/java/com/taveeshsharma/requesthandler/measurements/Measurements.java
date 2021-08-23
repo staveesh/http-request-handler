@@ -27,6 +27,15 @@ public class Measurements {
     @Column(name = "instance_number")
     private Integer instanceNumber;
 
+    @Column(name = "exp_start")
+    private Long expStart;
+
+    @Column(name = "exp_end")
+    private long expEnd;
+
+    @Column(name = "device_id")
+    private String deviceId;
+
     public String getTarget() {
         return target;
     }
@@ -64,5 +73,29 @@ public class Measurements {
 
     public void setInstanceNumber(Integer instanceNumber) {
         this.instanceNumber = instanceNumber;
+    }
+
+    public Long getExpStart() {
+        return expStart;
+    }
+
+    public void setExpStart(Long expStart) {
+        this.expStart = expStart;
+    }
+
+    public long getExpEnd() {
+        return expEnd;
+    }
+
+    public void setExpEnd(long expEnd) {
+        this.expEnd = expEnd;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 }
