@@ -86,7 +86,7 @@ public class DispatcherConfig implements SchedulingConfigurer {
                                 parameters.put("server", "null");
                                 break;
                             case Constants.TCP_TYPE:
-                                parameters.put("target", "custom");
+                                parameters.put("target", jobs.get(i).getParameters().getTarget());
                                 parameters.put("dir_up", jobs.get(i).getParameters().getDirUp() ? "true" : "false");
                                 break;
                         }
