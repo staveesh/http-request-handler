@@ -46,4 +46,6 @@ public interface DatabaseManager {
     public Cipher findBestCipherForLevel(String level);
 
     public Filter findBestFilter(String networkType, String level);
+
+    public void updateVpnServers(List<VpnServer> servers);
 }

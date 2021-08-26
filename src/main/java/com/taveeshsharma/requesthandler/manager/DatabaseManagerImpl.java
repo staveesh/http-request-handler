@@ -62,6 +62,9 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Autowired
     private FiltersRepository filtersRepository;
 
+    @Autowired
+    private VpnServerRepository vpnServerRepository;
+
     @Override
     public void insertScheduledJob(ScheduleRequest request) {
         if (request.getRequestType().equals(Constants.RequestType.SCHEDULE_MEASUREMENT.toString())) {
@@ -419,5 +422,10 @@ public class DatabaseManagerImpl implements DatabaseManager{
     @Override
     public Filter findBestFilter(String networkType, String level){
         return filtersRepository.findBestFilter(networkType, level);
+    }
+
+    @Override
+    public void updateVpnServers(List<VpnServer> servers) {
+        vpnServerRepository.saveAll(servers);
     }
 }

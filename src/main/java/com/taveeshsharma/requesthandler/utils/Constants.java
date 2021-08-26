@@ -34,4 +34,6 @@ public class Constants {
 
     public static final long JOB_DISPATCHER_PERIOD_SECONDS = 30L;
     public static final long JOB_TRACKER_PERIOD_SECONDS = 20L;
+    public static final long VPN_SERVER_DOWNLOADER_PERIOD_SECONDS = 3600L;
+    public static final String VPN_SERVER_DOWNLOAD_URL = "http://www.vpngate.net/api/iphone/";
 }
