@@ -45,12 +45,7 @@ public class ConflictGraph {
         adjacencyMatrix.put(newJob, new ArrayList<>());
         for (Job existingJob : jobs) {
             if (!newJob.equals(existingJob)) {
-                // All TCP jobs are destined to the same server
-                if (newJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
-                        existingJob.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)) {
-                    adjacencyMatrix.get(newJob).add(existingJob);
-                    adjacencyMatrix.get(existingJob).add(newJob);
-                } else if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
+                if (newJob.getParameters().getTarget().equalsIgnoreCase(existingJob
                         .getParameters().getTarget())) {
                     adjacencyMatrix.get(newJob).add(existingJob);
                     adjacencyMatrix.get(existingJob).add(newJob);
@@ -76,9 +71,7 @@ public class ConflictGraph {
             Job j1 = jobs.get(idx1);
             for (int idx2 = idx1 + 1; idx2 < jobs.size(); idx2++) {
                 Job j2 = jobs.get(idx2);
-                if ((j1.getMeasurementDescription().getType().equals(Constants.TCP_TYPE) &&
-                        j2.getMeasurementDescription().getType().equals(Constants.TCP_TYPE)) ||
-                        j1.getParameters().getTarget().equals(j2.getParameters().getTarget())) {
+                if (j1.getParameters().getTarget().equals(j2.getParameters().getTarget())) {
                     adjacencyMatrix.get(j1).add(j2);
                     adjacencyMatrix.get(j2).add(j1);
                 }

@@ -6,6 +6,7 @@ import com.taveeshsharma.requesthandler.dto.documents.*;
 import com.taveeshsharma.requesthandler.manager.UserManager;
 import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
 import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
+import com.taveeshsharma.requesthandler.network.Topology;
 import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import com.taveeshsharma.requesthandler.utils.*;
 import com.taveeshsharma.requesthandler.dto.AppNetworkUsage;
@@ -159,4 +160,12 @@ public class RequestHandler {
         NodesResponse<AccessPointMeasurement> response = new NodesResponse<>(data, bssids);
         return ResponseEntity.ok().body(response);
     }
+
+    @RequestMapping(value = "/load-topology", method = RequestMethod.POST)
+    public ResponseEntity<?> loadTopology(@RequestBody Topology topology){
+        // TODO: Validate the topology here
+        schedulerService.setTopology(topology);
+        return ResponseEntity.ok().build();
+    }
+
 }

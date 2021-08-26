@@ -4,6 +4,7 @@ import com.taveeshsharma.requesthandler.config.WebSocketConfig;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
+import com.taveeshsharma.requesthandler.network.Topology;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
 import org.json.JSONObject;
@@ -37,6 +38,8 @@ public class SchedulerService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    private Topology topology;
+
     private final List<Job> activeJobs = new ArrayList<>();
     private final Set<String> jobInstanceTracker = new HashSet<>();
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -47,6 +50,14 @@ public class SchedulerService {
         activeJobs.add(job);
         insertNewJobMetrics(job);
         releaseWriteLock();
+    }
+
+    public Topology getTopology() {
+        return topology;
+    }
+
+    public void setTopology(Topology topology) {
+        this.topology = topology;
     }
 
     private void insertNewJobMetrics(Job job) {
