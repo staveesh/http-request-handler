@@ -4,6 +4,8 @@ import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.orchestration.Assignment;
 import com.taveeshsharma.requesthandler.orchestration.ConflictGraph;
 import com.taveeshsharma.requesthandler.orchestration.Schedule;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.ZonedDateTime;
@@ -20,7 +22,8 @@ public class RandomAlgorithm implements SchedulingAlgorithm{
     }
 
     @Override
-    public Schedule generateSchedule(List<Job> jobs, Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
+    public Schedule generateSchedule(List<Job> jobs, Map<Job, List<Job>> adjacencyMatrix, List<String> devices,
+                                     Graph<String, DefaultEdge> netGraph) {
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         for(Job job : jobs){
             // Assign jobs to a random device

@@ -8,6 +8,9 @@ import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,7 +85,7 @@ public class DOSDAlgorithm implements SchedulingAlgorithm {
 
     @Override
     public Schedule generateSchedule(List<Job> jobs,
-                                     Map<Job, List<Job>> adjacencyMatrix, List<String> devices) {
+                                     Map<Job, List<Job>> adjacencyMatrix, List<String> devices, Graph<String, DefaultEdge> netGraph) {
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         Map<Job, ColorAssignment> colorLookup = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
@@ -117,7 +120,7 @@ public class DOSDAlgorithm implements SchedulingAlgorithm {
             for (Job currentJob : jobs) {
                 if (!jobAssignments.containsKey(currentJob)) {
                     logger.info("Current Job : " + currentJob.getKey());
-                    logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
+                    logger.info("Parallel Jobs : " + parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
                     List<Integer> availableColors = new ArrayList<>(allColors);
                     // Remove colors that have already been assigned
                     List<ColorAssignment> rangesToRemove = new ArrayList<>();
@@ -131,20 +134,44 @@ public class DOSDAlgorithm implements SchedulingAlgorithm {
                     logger.info("Available colors : " + availableColors);
                     int numberOfSlots = Constants.JOB_EXECUTION_TIMES.get(currentJob.getType()).intValue();
                     int startIndex = findFirstConsecutiveSequence(availableColors, numberOfSlots);
-                    if(startIndex + numberOfSlots <= availableColors.size()) {
+                    if (startIndex + numberOfSlots <= availableColors.size()) {
                         int start = availableColors.get(startIndex);
                         int end = availableColors.get(startIndex + numberOfSlots - 1);
                         logger.info("Start of consecutive sequence : " + startIndex);
                         if (start == slotStart && parallelJobs.size() < devices.size()) {
-                            ColorAssignment assignedRange = new ColorAssignment(start, end);
-                            colorLookup.put(currentJob, assignedRange);
-                            logger.info("Assigned color range : " + assignedRange);
-                            schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                            String deviceId = devices.get(parallelJobs.size());
-                            jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
-                            currentJob.setDispatchTime(currentSchedulingPoint);
-                            parallelJobs.add(currentJob);
-                            schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint, numberOfSlots));
+                            boolean hasConflicts = false;
+                            for (Job alreadyScheduledJob : parallelJobs) {
+                                DijkstraShortestPath sp = new DijkstraShortestPath(netGraph);
+                                String src1 = jobAssignments.get(alreadyScheduledJob).getDeviceKey().toLowerCase();
+                                String target1 = "t" + Integer.parseInt(alreadyScheduledJob.getParameters().getTarget().split("\\.")[3]);
+                                List<DefaultEdge> path1 = sp.getPath(src1, target1).getEdgeList();
+                                logger.info("Path1 : "+path1);
+                                String src2 = devices.get(parallelJobs.size()).toLowerCase();
+                                String target2 = "t" + Integer.parseInt(currentJob.getParameters().getTarget().split("\\.")[3]);
+                                List<DefaultEdge> path2 = sp.getPath(src2, target2).getEdgeList();
+                                logger.info("Path2 : "+path2);
+                                for (DefaultEdge edge1 : path1) {
+                                    for (DefaultEdge edge2 : path2) {
+                                        if (edge1.equals(edge2)) {
+                                            hasConflicts = true;
+                                            break;
+                                        }
+                                    }
+                                    if (hasConflicts)
+                                        break;
+                                }
+                            }
+                            if(!hasConflicts) {
+                                ColorAssignment assignedRange = new ColorAssignment(start, end);
+                                colorLookup.put(currentJob, assignedRange);
+                                logger.info("Assigned color range : " + assignedRange);
+                                schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
+                                String deviceId = devices.get(parallelJobs.size());
+                                jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
+                                currentJob.setDispatchTime(currentSchedulingPoint);
+                                parallelJobs.add(currentJob);
+                                schedulingPoints.add(ApiUtils.addSeconds(currentSchedulingPoint, numberOfSlots));
+                            }
                         }
                     }
                 }

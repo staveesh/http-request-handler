@@ -4,9 +4,13 @@ import com.taveeshsharma.requesthandler.config.WebSocketConfig;
 import com.taveeshsharma.requesthandler.dto.documents.Job;
 import com.taveeshsharma.requesthandler.dto.documents.JobMetrics;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
+import com.taveeshsharma.requesthandler.network.Link;
 import com.taveeshsharma.requesthandler.network.Topology;
 import com.taveeshsharma.requesthandler.orchestration.algorithms.SchedulingAlgorithm;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.SimpleGraph;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +43,7 @@ public class SchedulerService {
     private SimpMessagingTemplate messagingTemplate;
 
     private Topology topology;
+    private Graph<String, DefaultEdge> netGraph;
 
     private final List<Job> activeJobs = new ArrayList<>();
     private final Set<String> jobInstanceTracker = new HashSet<>();
@@ -58,6 +63,26 @@ public class SchedulerService {
 
     public void setTopology(Topology topology) {
         this.topology = topology;
+        netGraph = new SimpleGraph<>(DefaultEdge.class);
+        // Add switch vertices
+        for(int i = 1; i <= topology.getnSwitches(); i++)
+            netGraph.addVertex("s"+i);
+        // Add host vertices
+        for(int i = 1; i <= topology.getnHosts(); i++)
+            netGraph.addVertex("h"+i);
+        // Add target vertices
+        for(int i = 1; i <= topology.getnSwitches(); i++)
+            netGraph.addVertex("t"+i);
+        // Add links
+        for(Link link : topology.getLinks()){
+            String node1 = link.getNode();
+            for(String node2 : link.getNeighbors()) {
+                if (!netGraph.containsEdge(node1, node2)) {
+                    netGraph.addEdge(node1, node2);
+                }
+            }
+        }
+        logger.info("Network graph created : "+netGraph);
     }
 
     private void insertNewJobMetrics(Job job) {
@@ -102,7 +127,7 @@ public class SchedulerService {
         }
         schedulingAlgorithm.preprocessJobs(graph, devices);
         Schedule newSchedule = schedulingAlgorithm.generateSchedule(graph.getJobs(),
-                graph.getAdjacencyMatrix(), devices);
+                graph.getAdjacencyMatrix(), devices, netGraph);
         releaseReadLock();
         return newSchedule;
     }

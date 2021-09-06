@@ -7,6 +7,9 @@ import com.taveeshsharma.requesthandler.orchestration.Schedule;
 import com.taveeshsharma.requesthandler.utils.ApiUtils;
 import com.taveeshsharma.requesthandler.utils.Constants;
 import com.taveeshsharma.requesthandler.utils.NoDuplicatesPriorityQueue;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultEdge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,7 +48,7 @@ public class EDFCEAlgorithm implements SchedulingAlgorithm{
 
     @Override
     public Schedule  generateSchedule(List<Job> jobs,
-                                      Map<Job, List<Job>> adjacencyMatrix, List<String> devices){
+                                      Map<Job, List<Job>> adjacencyMatrix, List<String> devices, Graph<String, DefaultEdge> netGraph){
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         PriorityQueue<ZonedDateTime> schedulingPoints = new NoDuplicatesPriorityQueue<>((d1, d2) -> {
             if (d1.isBefore(d2))
@@ -75,6 +78,27 @@ public class EDFCEAlgorithm implements SchedulingAlgorithm{
                         // If current job doesn't conflict with already running parallel job, schedule it
                         if (adjacencyMatrix.get(alreadyScheduledJob).contains(currentJob)) {
                             hasConflicts = true;
+                        }
+                        if(!hasConflicts && parallelJobs.size() < devices.size()){
+                            DijkstraShortestPath sp = new DijkstraShortestPath(netGraph);
+                            String src1 = jobAssignments.get(alreadyScheduledJob).getDeviceKey().toLowerCase();
+                            String target1 = "t"+Integer.parseInt(alreadyScheduledJob.getParameters().getTarget().split("\\.")[3]);
+                            List<DefaultEdge> path1 = sp.getPath(src1, target1).getEdgeList();
+                            logger.info("Path1 : "+path1);
+                            String src2 = devices.get(parallelJobs.size()).toLowerCase();
+                            String target2 = "t"+Integer.parseInt(currentJob.getParameters().getTarget().split("\\.")[3]);
+                            List<DefaultEdge> path2 = sp.getPath(src2, target2).getEdgeList();
+                            logger.info("Path2 : "+path2);
+                            for(DefaultEdge edge1 : path1){
+                                for(DefaultEdge edge2: path2){
+                                    if(edge1.equals(edge2)){
+                                        hasConflicts = true;
+                                        break;
+                                    }
+                                }
+                                if(hasConflicts)
+                                    break;
+                            }
                         }
                     }
                     if(!hasConflicts && parallelJobs.size() < devices.size()) {
