@@ -9,6 +9,7 @@ import com.taveeshsharma.requesthandler.dto.DeviceSecurityConfig;
 import com.taveeshsharma.requesthandler.dto.documents.Cipher;
 import com.taveeshsharma.requesthandler.dto.documents.Filter;
 import com.taveeshsharma.requesthandler.dto.documents.PersonalData;
+import com.taveeshsharma.requesthandler.dto.documents.VpnServer;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import org.json.JSONObject;
@@ -64,7 +65,10 @@ public class WebSocketController {
         String networkType = params.getString("networkType");
         Cipher cipher = dbManager.findBestCipherForLevel(level);
         Filter filter = dbManager.findBestFilter(networkType, level);
-        DeviceSecurityConfig config = new DeviceSecurityConfig(filter, cipher);
+        VpnServer vpn = new VpnServer();
+        if(level.equalsIgnoreCase("high"))
+            vpn = dbManager.getBestVpnServer();
+        DeviceSecurityConfig config = new DeviceSecurityConfig(filter, cipher, vpn);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             messagingTemplate.convertAndSendToUser(deviceId, "/queue/best-config", objectMapper.writeValueAsString(config));

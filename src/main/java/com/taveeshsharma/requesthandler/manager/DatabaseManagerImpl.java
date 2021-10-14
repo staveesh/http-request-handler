@@ -428,4 +428,9 @@ public class DatabaseManagerImpl implements DatabaseManager{
     public void updateVpnServers(List<VpnServer> servers) {
         vpnServerRepository.saveAll(servers);
     }
+
+    @Override
+    public VpnServer getBestVpnServer() {
+        return vpnServerRepository.sortByPingAndSpeed();
+    }
 }

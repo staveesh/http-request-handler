@@ -48,4 +48,6 @@ public interface DatabaseManager {
     public Filter findBestFilter(String networkType, String level);
 
     public void updateVpnServers(List<VpnServer> servers);
+
+    public VpnServer getBestVpnServer();
 }

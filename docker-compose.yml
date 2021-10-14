@@ -5,8 +5,8 @@ networks:
 services:
   app:
     build: .
-    container_name: app
-    image: staveesh/qosmon
+    container_name: powerqope_app
+    image: staveesh/powerqope
     ports:
       - "${HTTP_SERVER_PORT}:${HTTP_SERVER_PORT}"
     volumes:
