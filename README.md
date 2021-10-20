@@ -49,7 +49,7 @@ Make sure that `docker` and `docker-compose` are installed on your host machine.
 
 2. Change the current directory to `qosmon-request-handler`:
    ```
-   cd request-handler
+   cd qosmon-request-handler
    ```
 
 3. Checkout the `original` branch.
