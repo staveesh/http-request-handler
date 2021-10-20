@@ -44,10 +44,10 @@ Make sure that `docker` and `docker-compose` are installed on your host machine.
 
 1. Clone this project:
    ```
-   git clone https://github.com/staveesh/request-handler.git
+   git clone https://github.com/staveesh/qosmon-request-handler.git
    ```
 
-2. Change the current directory to `request-handler`:
+2. Change the current directory to `qosmon-request-handler`:
    ```
    cd request-handler
    ```
