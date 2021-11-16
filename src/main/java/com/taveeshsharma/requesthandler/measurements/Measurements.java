@@ -15,6 +15,9 @@ public class Measurements {
     @Column(name = "time")
     private Instant time;
 
+    @Column(name = "deviceId")
+    private String deviceId;
+
     @Column(name="taskKey", tag = true)
     private String taskKey;
 
@@ -30,6 +33,14 @@ public class Measurements {
 
     public void setTarget(String target) {
         this.target = target;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public void setTaskKey(String taskKey) {

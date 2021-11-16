@@ -134,17 +134,19 @@ public class SchedulerService {
         ZonedDateTime completionTime = ZonedDateTime.now();
         //assuming the JsonObj has key field mapping which measurement failed
         String key = jobDesc.getString("taskKey");
-        for (Job job : activeJobs) {
-            String currKey = job.getKey();
-            if (currKey.equals(key)) {
-                int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
-                String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
-                JobMetrics metrics = dbManager.findMetricsById(key + "-" + instanceNumber);
-                metrics.setCompletionTime(completionTime);
-                metrics.setNodeId(nodeId);
-                metrics.setExecutionTime(jobDesc.getLong("executionTime"));
-                dbManager.upsertJob(job);
-                dbManager.upsertJobMetrics(metrics);
+        if(!key.equalsIgnoreCase("user_initiated")) {
+            for (Job job : activeJobs) {
+                String currKey = job.getKey();
+                if (currKey.equals(key)) {
+                    int instanceNumber = jobDesc.getJSONObject("parameters").getInt("instanceNumber");
+                    String nodeId = jobDesc.getJSONObject("properties").getString("deviceId");
+                    JobMetrics metrics = dbManager.findMetricsById(key + "-" + instanceNumber);
+                    metrics.setCompletionTime(completionTime);
+                    metrics.setNodeId(nodeId);
+                    metrics.setExecutionTime(jobDesc.getLong("executionTime"));
+                    dbManager.upsertJob(job);
+                    dbManager.upsertJobMetrics(metrics);
+                }
             }
         }
         releaseWriteLock();

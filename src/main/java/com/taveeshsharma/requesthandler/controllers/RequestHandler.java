@@ -4,12 +4,8 @@ import com.taveeshsharma.requesthandler.dto.AuthenticationResponse;
 import com.taveeshsharma.requesthandler.dto.NodesResponse;
 import com.taveeshsharma.requesthandler.dto.documents.*;
 import com.taveeshsharma.requesthandler.manager.UserManager;
-import com.taveeshsharma.requesthandler.measurements.AccessPointMeasurement;
-import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
 import com.taveeshsharma.requesthandler.orchestration.SchedulerService;
 import com.taveeshsharma.requesthandler.utils.*;
-import com.taveeshsharma.requesthandler.dto.AppNetworkUsage;
-import com.taveeshsharma.requesthandler.dto.TotalAppUsage;
 import com.taveeshsharma.requesthandler.manager.DatabaseManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -136,27 +131,5 @@ public class RequestHandler {
                 "Received GET request for retrieving job description with type = %s", type));
         List<ScheduleRequest> jobs = dbManager.getScheduledJobs(type);
         return ResponseEntity.ok().body(jobs);
-    }
-
-    @RequestMapping(value = "/nodes",method = RequestMethod.GET)
-    public ResponseEntity<?> getActiveNodes() {
-        List<MobileDeviceMeasurement> data = dbManager.getAvailableDevices();
-        List<String> deviceIds = data.stream()
-                .map(MobileDeviceMeasurement::getDeviceId)
-                .distinct()
-                .collect(Collectors.toList());
-        NodesResponse<MobileDeviceMeasurement> response = new NodesResponse<>(data, deviceIds);
-        return ResponseEntity.ok().body(response);
-    }
-
-    @RequestMapping(value = "/access-points", method = RequestMethod.GET)
-    public ResponseEntity<?> getAllAccessPointsForAnode(@RequestParam("id") String deviceId) {
-        List<AccessPointMeasurement> data = dbManager.getAllAccessPoints(deviceId);
-        List<String> bssids = data.stream()
-                .map(AccessPointMeasurement::getBSSID)
-                .distinct()
-                .collect(Collectors.toList());
-        NodesResponse<AccessPointMeasurement> response = new NodesResponse<>(data, bssids);
-        return ResponseEntity.ok().body(response);
     }
 }

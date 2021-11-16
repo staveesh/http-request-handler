@@ -1,7 +1,5 @@
 package com.taveeshsharma.requesthandler.dto;
 
-import com.taveeshsharma.requesthandler.measurements.MobileDeviceMeasurement;
-
 import java.util.List;
 
 public class NodesResponse<T> {

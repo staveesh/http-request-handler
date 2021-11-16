@@ -63,12 +63,11 @@ public class WebSocketController {
         String level = params.getString("level");
         String deviceId = params.getString("deviceId");
         String networkType = params.getString("networkType");
-        Cipher cipher = dbManager.findBestCipherForLevel(level);
         Filter filter = dbManager.findBestFilter(networkType, level);
         VpnServer vpn = new VpnServer();
         if(level.equalsIgnoreCase("high"))
             vpn = dbManager.getBestVpnServer();
-        DeviceSecurityConfig config = new DeviceSecurityConfig(filter, cipher, vpn);
+        DeviceSecurityConfig config = new DeviceSecurityConfig(filter, vpn);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             messagingTemplate.convertAndSendToUser(deviceId, "/queue/best-config", objectMapper.writeValueAsString(config));
