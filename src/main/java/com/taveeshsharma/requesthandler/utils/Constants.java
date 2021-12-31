@@ -18,7 +18,9 @@ public class Constants {
             PING_TYPE = "ping",
             DNS_TYPE = "dns_lookup",
             HTTP_TYPE = "http",
-            TRACERT_TYPE = "traceroute";
+            SPEED_TEST_TYPE = "speed",
+            TRACERT_TYPE = "traceroute",
+            VIDEO_TEST_TYPE = "video";
     public static final String ACCESS_POINT_TYPE = "ap_info";
     public static final String MOBILE_DEVICE_TYPE = "mobile_devices";
 

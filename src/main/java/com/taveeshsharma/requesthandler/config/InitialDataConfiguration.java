@@ -14,8 +14,9 @@ public class InitialDataConfiguration {
         Resource rolesData = new ClassPathResource("roles.json");
         Resource ciphersData = new ClassPathResource("ciphers.json");
         Resource filtersData = new ClassPathResource("filters.json");
+        Resource vpnData = new ClassPathResource("vpn.json");
         Jackson2RepositoryPopulatorFactoryBean factory = new Jackson2RepositoryPopulatorFactoryBean();
-        factory.setResources(new Resource[]{rolesData, ciphersData, filtersData});
+        factory.setResources(new Resource[]{rolesData, ciphersData, filtersData, vpnData});
         return factory;
     }
 }

@@ -149,9 +149,12 @@ public class SchedulerService {
                 }
             }
         }
+        logger.info(jobDesc.toString());
         releaseWriteLock();
-        if (jobDesc.getBoolean("success"))
+        if (jobDesc.getBoolean("success")) {
+            logger.info(jobDesc.toString());
             dbManager.writeValues(jobDesc);
+        }
     }
 
     public void acquireReadLock() {

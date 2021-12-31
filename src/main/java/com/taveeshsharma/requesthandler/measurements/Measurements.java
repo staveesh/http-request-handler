@@ -10,7 +10,7 @@ import java.time.Instant;
  * All the other network measurement extend from this class.
  */
 // TODO: Add boolean flag "success"
-@Measurement(name="SuperMeasurement")
+@Measurement(name = "SuperMeasurement")
 public class Measurements {
     @Column(name = "time")
     private Instant time;
@@ -18,14 +18,25 @@ public class Measurements {
     @Column(name = "deviceId")
     private String deviceId;
 
-    @Column(name="taskKey", tag = true)
+    @Column(name = "taskKey", tag = true)
     private String taskKey;
 
     @Column(name = "username")
     private String userName;
 
-    @Column(name="target")
+    @Column(name = "target")
     private String target;
+
+    @Column(name = "cipher_level")
+    private String cipherLevel;
+    @Column(name = "sec_level")
+    private String secLevel;
+    @Column(name = "filter")
+    private String filter;
+    @Column(name = "filter_provider")
+    private String filterProvider;
+    @Column(name = "vpn_server")
+    private String vpnServer;
 
     public String getTarget() {
         return target;
@@ -50,6 +61,7 @@ public class Measurements {
     public String getTaskKey() {
         return taskKey;
     }
+
     public void setUserName(String userName) {
         this.userName = userName;
     }
@@ -64,5 +76,45 @@ public class Measurements {
 
     public void setTime(Instant time) {
         this.time = time;
+    }
+
+    public String getCipherLevel() {
+        return cipherLevel;
+    }
+
+    public void setCipherLevel(String cipherLevel) {
+        this.cipherLevel = cipherLevel;
+    }
+
+    public String getSecLevel() {
+        return secLevel;
+    }
+
+    public void setSecLevel(String secLevel) {
+        this.secLevel = secLevel;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
+    }
+
+    public String getFilterProvider() {
+        return filterProvider;
+    }
+
+    public void setFilterProvider(String filterProvider) {
+        this.filterProvider = filterProvider;
+    }
+
+    public String getVpnServer() {
+        return vpnServer;
+    }
+
+    public void setVpnServer(String vpnServer) {
+        this.vpnServer = vpnServer;
     }
 }

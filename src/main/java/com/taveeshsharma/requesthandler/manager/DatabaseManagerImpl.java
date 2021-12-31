@@ -108,6 +108,12 @@ public class DatabaseManagerImpl implements DatabaseManager{
             case Constants.HTTP_TYPE:
                 p = createHttpPoint(jsonObject);
                 break;
+            case Constants.SPEED_TEST_TYPE:
+                p = createSpeedPoint(jsonObject);
+                break;
+            case Constants.VIDEO_TEST_TYPE:
+                p = createVideoPoint(jsonObject);
+                break;
             default:
                 p = null;
                 break;
@@ -125,7 +131,6 @@ public class DatabaseManagerImpl implements DatabaseManager{
     }
 
     private Point createHttpPoint(JSONObject jsonObject) {
-        JSONObject measurementValues = jsonObject.getJSONObject("values");
         long time = jsonObject.getLong("timestamp");
         JSONObject values = jsonObject.getJSONObject("values");
         HTTPMeasurement httpMeasurement = (HTTPMeasurement) buildMeasurements(jsonObject, HTTPMeasurement.class);
@@ -141,17 +146,51 @@ public class DatabaseManagerImpl implements DatabaseManager{
                 .build();
     }
 
+    private Point createSpeedPoint(JSONObject jsonObject) {
+        long time = jsonObject.getLong("timestamp");
+        JSONObject values = jsonObject.getJSONObject("values");
+        SpeedTestMeasurement speedTestMeasurement = (SpeedTestMeasurement) buildMeasurements(jsonObject, SpeedTestMeasurement.class);
+        speedTestMeasurement.setPing(Double.parseDouble(values.getString("ping")));
+        speedTestMeasurement.setUpload(Double.parseDouble(values.getString("upload")));
+        speedTestMeasurement.setDownload(Double.parseDouble(values.getString("download")));
+        return Point.measurementByPOJO(SpeedTestMeasurement.class)
+                .time(time, TimeUnit.MICROSECONDS)
+                .addFieldsFromPOJO(speedTestMeasurement)
+                .build();
+    }
+
+    private Point createVideoPoint(JSONObject jsonObject) {
+        long time = jsonObject.getLong("timestamp");
+        JSONObject values = jsonObject.getJSONObject("values");
+        VideoTestMeasurement videoTestMeasurement = (VideoTestMeasurement) buildMeasurements(jsonObject, VideoTestMeasurement.class);
+        videoTestMeasurement.setBuffer(Double.parseDouble(values.getString("buffer")));
+        videoTestMeasurement.setLoadTime(Double.parseDouble(values.getString("loadTime")));
+        videoTestMeasurement.setBandwidth(Double.parseDouble(values.getString("bandwidth")));
+        return Point.measurementByPOJO(VideoTestMeasurement.class)
+                .time(time, TimeUnit.MICROSECONDS)
+                .addFieldsFromPOJO(videoTestMeasurement)
+                .build();
+    }
+
     private Measurements buildMeasurements(JSONObject object, Class<? extends Measurements> T){
         try {
             Measurements measurements = T.newInstance();
             String user = object.getString("accountName");
             measurements.setDeviceId(object.getString("deviceId"));
             measurements.setUserName(ApiUtils.hashUserName(user));
-            measurements.setTarget(getTargetKey(object.getJSONObject("parameters"), object.getString("type")));
+            if(object.has("parameters"))
+                measurements.setTarget(getTargetKey(object.getJSONObject("parameters"), object.getString("type")));
+            JSONObject values = object.getJSONObject("values");
             if(object.has("taskKey"))
                 measurements.setTaskKey(object.getString("taskKey"));
             else
                 measurements.setTaskKey("N.A");
+            if(values.has("cipherLevel"))
+                measurements.setCipherLevel(values.getString("cipherLevel"));
+            measurements.setSecLevel(values.getString("secLevel"));
+            measurements.setFilter(values.getString("filter"));
+            measurements.setFilterProvider(values.getString("filterProvider"));
+            measurements.setVpnServer(values.getString("vpnServer"));
             return measurements;
         } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
