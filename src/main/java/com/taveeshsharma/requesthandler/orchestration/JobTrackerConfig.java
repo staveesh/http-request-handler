@@ -56,7 +56,9 @@ public class JobTrackerConfig implements SchedulingConfigurer {
                     metrics.setId(jobKey+"-"+instanceNumber);
                     metrics.setInstanceNumber(instanceNumber);
                     metrics.setJobKey(jobKey);
-                    metrics.setAddedToQueueAt(ZonedDateTime.now());
+                    ZonedDateTime enq = ZonedDateTime.now();
+                    job.setAddedToQueueAt(enq);
+                    metrics.setAddedToQueueAt(enq);
                     dbManager.upsertJob(job);
                     dbManager.upsertJobMetrics(metrics);
                     logger.info("Job id with " + job.getKey() + " is reset");

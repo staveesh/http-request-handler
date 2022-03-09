@@ -93,6 +93,7 @@ public class SchedulerService {
         metrics.setInstanceNumber(instanceNumber);
         metrics.setJobKey(key);
         metrics.setAddedToQueueAt(ZonedDateTime.now());
+        job.setAddedToQueueAt(metrics.getAddedToQueueAt());
         dbManager.upsertJobMetrics(metrics);
     }
 

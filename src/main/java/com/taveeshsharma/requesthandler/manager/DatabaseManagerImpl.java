@@ -260,10 +260,13 @@ public class DatabaseManagerImpl implements DatabaseManager{
             Measurements measurements = T.newInstance();
             measurements.setTarget(getTargetKey(object.getJSONObject("parameters"), object.getString("type")));
             measurements.setInstanceNumber(object.getJSONObject("parameters").getInt("instanceNumber"));
+            measurements.setAddedToQueueAt(object.getJSONObject("parameters").getString("addedToQueueAt"));
+            measurements.setDispatchTime(object.getJSONObject("parameters").getString("dispatchTime"));
             JSONObject measurementValues = object.getJSONObject("values");
             measurements.setExpStart(Long.parseLong(measurementValues.getString("expStart")));
-            measurements.setExpStart(Long.parseLong(measurementValues.getString("expEnd")));
+            measurements.setExpEnd(Long.parseLong(measurementValues.getString("expEnd")));
             measurements.setDeviceId(object.getString("deviceId"));
+            measurements.setCompletionTime(System.currentTimeMillis());
             if(object.has("taskKey"))
                 measurements.setTaskKey(object.getString("taskKey"));
             else

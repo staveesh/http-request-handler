@@ -27,6 +27,12 @@ public class Measurements {
     @Column(name = "instance_number")
     private Integer instanceNumber;
 
+    @Column(name = "added_to_queue_at")
+    private String addedToQueueAt;
+
+    @Column(name = "dispatch_time")
+    private String dispatchTime;
+
     @Column(name = "exp_start")
     private Long expStart;
 
@@ -35,6 +41,9 @@ public class Measurements {
 
     @Column(name = "device_id")
     private String deviceId;
+
+    @Column(name = "completion_time")
+    private Long completionTime;
 
     public String getTarget() {
         return target;
@@ -97,5 +106,29 @@ public class Measurements {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getAddedToQueueAt() {
+        return addedToQueueAt;
+    }
+
+    public void setAddedToQueueAt(String addedToQueueAt) {
+        this.addedToQueueAt = addedToQueueAt;
+    }
+
+    public String getDispatchTime() {
+        return dispatchTime;
+    }
+
+    public void setDispatchTime(String dispatchTime) {
+        this.dispatchTime = dispatchTime;
+    }
+
+    public Long getCompletionTime() {
+        return completionTime;
+    }
+
+    public void setCompletionTime(Long completionTime) {
+        this.completionTime = completionTime;
     }
 }
