@@ -137,34 +137,12 @@ public class AOSDAlgorithm implements SchedulingAlgorithm {
                         int start = availableColors.get(startIndex);
                         int end = availableColors.get(startIndex + numberOfSlots - 1);
                         if (start == slotStart && parallelJobs.size() < devices.size()) {
-                            boolean hasConflicts = false;
-                            for (Job alreadyScheduledJob : parallelJobs) {
-                                DijkstraShortestPath sp = new DijkstraShortestPath(netGraph);
-                                String src1 = jobAssignments.get(alreadyScheduledJob).getDeviceKey().toLowerCase();
-                                String target1 = "t" + Integer.parseInt(alreadyScheduledJob.getParameters().getTarget().split("\\.")[3]);
-                                List<DefaultEdge> path1 = sp.getPath(src1, target1).getEdgeList();
-                                logger.info("Path1 : "+path1);
-                                String src2 = devices.get(parallelJobs.size()).toLowerCase();
-                                String target2 = "t" + Integer.parseInt(currentJob.getParameters().getTarget().split("\\.")[3]);
-                                List<DefaultEdge> path2 = sp.getPath(src2, target2).getEdgeList();
-                                logger.info("Path2 : "+path2);
-                                for (DefaultEdge edge1 : path1) {
-                                    for (DefaultEdge edge2 : path2) {
-                                        if (edge1.equals(edge2)) {
-                                            hasConflicts = true;
-                                            break;
-                                        }
-                                    }
-                                    if (hasConflicts)
-                                        break;
-                                }
-                            }
-                            if(!hasConflicts) {
+                            if(parallelJobs.size() == 0) {
                                 ColorAssignment assignedRange = new ColorAssignment(start, end);
                                 colorLookup.put(currentJob, assignedRange);
                                 logger.info("Assigned color range : " + assignedRange);
                                 schedulingPoints.add(currentSchedulingPoint.plusSeconds(numberOfSlots));
-                                String deviceId = devices.get(parallelJobs.size());
+                                String deviceId = devices.get(0);
                                 jobAssignments.put(currentJob, new Assignment(currentSchedulingPoint, deviceId));
                                 currentJob.setDispatchTime(currentSchedulingPoint);
                                 parallelJobs.add(currentJob);
