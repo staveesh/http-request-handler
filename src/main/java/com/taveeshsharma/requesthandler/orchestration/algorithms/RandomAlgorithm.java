@@ -27,7 +27,6 @@ public class RandomAlgorithm implements SchedulingAlgorithm{
         Map<Job, Assignment> jobAssignments = new HashMap<>();
         for(Job job : jobs){
             // Assign jobs to a random device
-            job.setDispatchTime(job.getStartTime());
             jobAssignments.put(job, new Assignment(job.getStartTime(), devices.get(new Random().nextInt(devices.size()))));
         }
         Schedule schedule = new Schedule(ZonedDateTime.now(), jobAssignments);
