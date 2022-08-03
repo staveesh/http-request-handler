@@ -18,10 +18,6 @@ public class MeasurementDescription {
     private Long priority;
     private Parameters parameters;
     private Integer instanceNumber;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    private ZonedDateTime addedToQueueAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    private ZonedDateTime dispatchTime;
 
     @JsonProperty("type")
     public String getType() {
@@ -104,38 +100,18 @@ public class MeasurementDescription {
         this.instanceNumber = instanceNumber;
     }
 
-    @JsonProperty("addedToQueueAt")
-    public ZonedDateTime getAddedToQueueAt() {
-        return addedToQueueAt;
-    }
-
-    public void setAddedToQueueAt(ZonedDateTime addedToQueueAt) {
-        this.addedToQueueAt = addedToQueueAt;
-    }
-
-    @JsonProperty("dispatchTime")
-    public ZonedDateTime getDispatchTime() {
-        return dispatchTime;
-    }
-
-    public void setDispatchTime(ZonedDateTime dispatchTime) {
-        this.dispatchTime = dispatchTime;
-    }
 
     @Override
     public String toString() {
         return "MeasurementDescription{" +
                 "type='" + type + '\'' +
                 ", key='" + key + '\'' +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 ", intervalSec=" + intervalSec +
                 ", count=" + count +
                 ", priority=" + priority +
                 ", parameters=" + parameters +
-                ", instanceNumber=" + instanceNumber +
-                ", addedToQueueAt=" + addedToQueueAt +
-                ", dispatchTime=" + dispatchTime +
                 '}';
     }
 }

@@ -22,6 +22,11 @@ public class TCPMeasurement extends Measurements{
     @Column(name = "duration")
     private Double measurementDuration;
 
+    //added
+    @Column(name = "dir_up")
+    private boolean dirUp;
+
+
     @Column(name = "mean_speed")
     private Double meanSpeed;
 
@@ -33,6 +38,7 @@ public class TCPMeasurement extends Measurements{
 
     @Column(name = "max_speed")
     private Double maxSpeed;
+
 
     public String getSpeedValues() {
         return speedValues;
@@ -57,7 +63,15 @@ public class TCPMeasurement extends Measurements{
     public void setMeasurementDuration(Double measurementDuration) {
         this.measurementDuration = measurementDuration;
     }
+    //added
+    public Boolean getDirUp(){
+        return this.dirUp;
+    }
+    public void setDirUp(Boolean dirUp) {
+        this.dirUp = dirUp;
 
+    }
+        
     public Double getMeanSpeed() {
         return meanSpeed;
     }

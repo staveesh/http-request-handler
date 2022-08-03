@@ -93,7 +93,6 @@ public class SchedulerService {
         metrics.setInstanceNumber(instanceNumber);
         metrics.setJobKey(key);
         metrics.setAddedToQueueAt(ZonedDateTime.now());
-        job.setAddedToQueueAt(metrics.getAddedToQueueAt());
         dbManager.upsertJobMetrics(metrics);
     }
 
@@ -171,6 +170,7 @@ public class SchedulerService {
         ZonedDateTime completionTime = ZonedDateTime.now();
         //assuming the JsonObj has key field mapping which measurement failed
         String key = jobDesc.getString("taskKey");
+        logger.info(jobDesc.toString());
         for (Job job : activeJobs) {
             String currKey = job.getKey();
             if (currKey.equals(key)) {

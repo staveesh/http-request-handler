@@ -27,12 +27,6 @@ public class Measurements {
     @Column(name = "instance_number")
     private Integer instanceNumber;
 
-    @Column(name = "added_to_queue_at")
-    private String addedToQueueAt;
-
-    @Column(name = "dispatch_time")
-    private String dispatchTime;
-
     @Column(name = "exp_start")
     private Long expStart;
 
@@ -42,8 +36,11 @@ public class Measurements {
     @Column(name = "device_id")
     private String deviceId;
 
-    @Column(name = "completion_time")
-    private Long completionTime;
+    @Column(name="lat")
+    private Double latitudevalue;
+
+    @Column(name="long")
+    private Double longitudevalue;
 
     public String getTarget() {
         return target;
@@ -107,28 +104,16 @@ public class Measurements {
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
     }
-
-    public String getAddedToQueueAt() {
-        return addedToQueueAt;
+    public Double getlatitude() {
+        return latitudevalue;
     }
-
-    public void setAddedToQueueAt(String addedToQueueAt) {
-        this.addedToQueueAt = addedToQueueAt;
+    public void setlatitude(Double latitudevalue) {
+        this.latitudevalue = latitudevalue;
     }
-
-    public String getDispatchTime() {
-        return dispatchTime;
+    public Double getlongitude() {
+        return longitudevalue;
     }
-
-    public void setDispatchTime(String dispatchTime) {
-        this.dispatchTime = dispatchTime;
-    }
-
-    public Long getCompletionTime() {
-        return completionTime;
-    }
-
-    public void setCompletionTime(Long completionTime) {
-        this.completionTime = completionTime;
+    public void setlongitude(Double longitudevalue) {
+        this.longitudevalue = longitudevalue;
     }
 }

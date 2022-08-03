@@ -150,6 +150,8 @@ public class DatabaseManagerImpl implements DatabaseManager{
     private Point createTCPPoint(JSONObject jsonObject){
         JSONObject measurementValues = jsonObject.getJSONObject("values");
         long time = jsonObject.getLong("timestamp");
+        JSONObject parameters = jsonObject.getJSONObject("parameters");
+        boolean dir_up = parameters.getBoolean("dir_up");
         TCPMeasurement tcpMeasurement = (TCPMeasurement) buildMeasurements(jsonObject, TCPMeasurement.class);
 
         tcpMeasurement.setSpeedValues(measurementValues.getString("tcp_speed_results"));
@@ -162,6 +164,7 @@ public class DatabaseManagerImpl implements DatabaseManager{
         tcpMeasurement.setMedianSpeed(ApiUtils.median(values));
         tcpMeasurement.setStdDevSpeed(ApiUtils.stddev(values, mean));
         tcpMeasurement.setMaxSpeed(ApiUtils.max(values));
+        tcpMeasurement.setDirUp(dir_up);
         return Point.measurementByPOJO(TCPMeasurement.class)
                 .time(time, TimeUnit.MICROSECONDS)
                 .addFieldsFromPOJO(tcpMeasurement)
@@ -260,13 +263,14 @@ public class DatabaseManagerImpl implements DatabaseManager{
             Measurements measurements = T.newInstance();
             measurements.setTarget(getTargetKey(object.getJSONObject("parameters"), object.getString("type")));
             measurements.setInstanceNumber(object.getJSONObject("parameters").getInt("instanceNumber"));
-            measurements.setAddedToQueueAt(object.getJSONObject("parameters").getString("addedToQueueAt"));
-            measurements.setDispatchTime(object.getJSONObject("parameters").getString("dispatchTime"));
             JSONObject measurementValues = object.getJSONObject("values");
-            measurements.setExpStart(Long.parseLong(measurementValues.getString("expStart")));
-            measurements.setExpEnd(Long.parseLong(measurementValues.getString("expEnd")));
+            //measurements.setExpStart(Long.parseLong(measurementValues.getString("expStart")));
+            //measurements.setExpStart(Long.parseLong(measurementValues.getString("expEnd")));
             measurements.setDeviceId(object.getString("deviceId"));
-            measurements.setCompletionTime(System.currentTimeMillis());
+            measurements.setlatitude(object.getJSONObject("properties").getJSONObject("location").getDouble("latitude"));
+            measurements.setlongitude(object.getJSONObject("properties").getJSONObject("location").getDouble("longitude"));
+
+
             if(object.has("taskKey"))
                 measurements.setTaskKey(object.getString("taskKey"));
             else

@@ -34,8 +34,6 @@ public class Job {
     private ZonedDateTime nextReset;
     private AtomicInteger instanceNumber;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    private ZonedDateTime addedToQueueAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
     private ZonedDateTime dispatchTime;
 
     public Job() {
@@ -58,7 +56,6 @@ public class Job {
                             description.getJobInterval());
         }
         this.instanceNumber = new AtomicInteger(1);
-        this.addedToQueueAt = null;
         this.dispatchTime = null;
     }
 
@@ -210,14 +207,6 @@ public class Job {
         }
     }
 
-    public ZonedDateTime getAddedToQueueAt() {
-        return addedToQueueAt;
-    }
-
-    public void setAddedToQueueAt(ZonedDateTime addedToQueueAt) {
-        this.addedToQueueAt = addedToQueueAt;
-    }
-
     public MeasurementDescription getMeasurementDescription() {
         MeasurementDescription description = new MeasurementDescription();
         description.setType(type);
@@ -229,8 +218,6 @@ public class Job {
         description.setPriority(priority);
         description.setParameters(parameters);
         description.setInstanceNumber(instanceNumber.get());
-        description.setAddedToQueueAt(addedToQueueAt);
-        description.setDispatchTime(dispatchTime);
         return description;
     }
 }

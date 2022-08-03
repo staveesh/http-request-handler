@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @Qualifier("rr")
 public class RoundRobinAlgorithm implements SchedulingAlgorithm {
     private static final Logger logger = LoggerFactory.getLogger(RoundRobinAlgorithm.class);
-    private static int ASSIGNED_DEVICE = 0;
 
     /**
      * Performs scheduling in such a way that jobs that arrive first get scheduled first.
@@ -67,13 +66,42 @@ public class RoundRobinAlgorithm implements SchedulingAlgorithm {
             // Reset parallel jobs list by removing the jobs that have finished execution
             parallelJobs.removeIf(job -> ApiUtils.addSeconds(jobAssignments.get(job).getDispatchTime(),
                     Constants.JOB_EXECUTION_TIMES.get(job.getType())).equals(currentSchedulingPoint));
+            // Shuffle devices list at each scheduling point to ensure better job distribution
+            Collections.shuffle(devices);
             for (Job currentJob : jobs) {
                 logger.info("Current job : "+currentJob.getKey());
                 logger.info("Parallel Jobs : "+parallelJobs.stream().map(Job::getKey).collect(Collectors.toList()));
                 if (!jobAssignments.containsKey(currentJob)) {
-                    if(parallelJobs.size() == 0) {
-                        ASSIGNED_DEVICE = (ASSIGNED_DEVICE + 1) % devices.size();
-                        String deviceId = devices.get(ASSIGNED_DEVICE);
+                    boolean hasConflicts = false;
+                    for (Job alreadyScheduledJob : parallelJobs) {
+                        // If current job doesn't conflict with already running parallel job, schedule it
+                        if (adjacencyMatrix.get(alreadyScheduledJob).contains(currentJob)) {
+                            hasConflicts = true;
+                        }
+                        if(!hasConflicts && parallelJobs.size() < devices.size()){
+                            DijkstraShortestPath sp = new DijkstraShortestPath(netGraph);
+                            String src1 = jobAssignments.get(alreadyScheduledJob).getDeviceKey().toLowerCase();
+                            String target1 = "t"+Integer.parseInt(alreadyScheduledJob.getParameters().getTarget().split("\\.")[3]);
+                            List<DefaultEdge> path1 = sp.getPath(src1, target1).getEdgeList();
+                            logger.info("Path1 : "+path1);
+                            String src2 = devices.get(parallelJobs.size()).toLowerCase();
+                            String target2 = "t"+Integer.parseInt(currentJob.getParameters().getTarget().split("\\.")[3]);
+                            List<DefaultEdge> path2 = sp.getPath(src2, target2).getEdgeList();
+                            logger.info("Path2 : "+path2);
+                            for(DefaultEdge edge1 : path1){
+                                for(DefaultEdge edge2: path2){
+                                    if(edge1.equals(edge2)){
+                                        hasConflicts = true;
+                                        break;
+                                    }
+                                }
+                                if(hasConflicts)
+                                    break;
+                            }
+                        }
+                    }
+                    if(!hasConflicts && parallelJobs.size() < devices.size()) {
+                        String deviceId = devices.get(parallelJobs.size());
                         logger.info(String.format("Scheduling Job ( key = %s, startTime = %s, endTime = %s) at %s on device %s",
                                 currentJob.getKey(),
                                 currentJob.getStartTime().withZoneSameInstant(ZoneId.systemDefault()),
